@@ -24,6 +24,9 @@
 </template>
 
 <script>
+
+const url = 'http://sisyphos.vimedia.ru/'
+
 export default {
   props: ['report', 'editReport','reports'], // получаем переменную facility
   methods: {
@@ -31,7 +34,7 @@ export default {
       this.editReport(this.report);
     },
     del: function () {
-      this.axios.delete(`http://192.168.100.100:6552/api/report/${this.report.id}`).then(result => {
+      this.axios.delete(url + `api/report/${this.report.id}`).then(result => {
         if (result.status === 200) {
           this.reports.splice(this.reports.indexOf(this.report), 1) // удаления объекта из коллекции
         }

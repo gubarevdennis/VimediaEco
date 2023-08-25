@@ -65,6 +65,8 @@
 // Функция для определения id объекта по имени
 import ReportSelect from "./reportSelect.vue";
 
+const url = 'http://sisyphos.vimedia.ru/'
+
 function getIdByName(facilities, name) {
   for (let i = 0; i < facilities.length; i++) {
     if (facilities[i].name === name) {
@@ -120,7 +122,7 @@ export default {
   },
   // указываем связь данного компонента с полученными от сервара данными
   created: function () {
-    this.axios.get("http://192.168.100.100:6552/api/facility").then(result => {
+    this.axios.get(url + "api/facility").then(result => {
           // Вставляем объекты только вслучае если их не было до этого в массиве на фронтенде
           return result.data.forEach(facility => {
             if (this.facilities.find((f) => f.id === facility.id) === undefined)
@@ -185,7 +187,7 @@ export default {
               // Если все поля заполнены, то делаем запрос - нет ошибка
               if (r.facility && r.hoursOfWorking && r.typeOfWork && this.sumHoursPerDay >= 8) {
                 // если нет id создаем новую позицию
-                this.axios.post('http://192.168.100.100:6552/api/report', r).then(data => {
+                this.axios.post(url + 'api/report', r).then(data => {
 
                   if (this.id) {
                     let index = getIndexForPost(this.reports, data.data.id) // получеам индекс коллекции

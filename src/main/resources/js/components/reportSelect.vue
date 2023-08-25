@@ -39,6 +39,8 @@
 
 <script>
 
+const url = 'http://sisyphos.vimedia.ru/'
+
 // Функция для определения id объекта по имени
 function getIdByName(facilities, name) {
   for (let i = 0; i < facilities.length; i++) {

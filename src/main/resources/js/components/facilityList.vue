@@ -31,6 +31,9 @@
 <script>
 import facilityRow from "./facilityRow.vue";
 import FacilityForm from "./facilityForm.vue";
+
+const url = 'http://sisyphos.vimedia.ru/'
+
 export default {
   props: ['facilities', 'profile', 'role', 'profileId'],
   components: {
@@ -53,7 +56,7 @@ export default {
   // указываем связь данного компонента с полученными от сервара данными
   created: function () {
     if (this.role === 'admin' || this.role === 'Директор' || this.role === 'HR') {
-      this.axios.get("http://192.168.100.100:6552/api/user").then(result =>
+      this.axios.get(url + "api/user").then(result =>
           result
               .data
               .forEach(u => {
@@ -65,7 +68,7 @@ export default {
                 )}))
     } else {
 // фильтруем под человека
-      this.axios.get("http://192.168.100.100:6552/api/user/" + this.profileId).then(result =>
+      this.axios.get(url + "api/user/" + this.profileId).then(result =>
           result
               .data
               .reports.forEach(r => {

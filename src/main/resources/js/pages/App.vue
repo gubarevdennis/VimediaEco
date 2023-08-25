@@ -35,7 +35,7 @@
 
       <v-toolbar-title>{{appBoardName}}</v-toolbar-title>
 
-      <v-btn href="http://192.168.100.100:6552/logout" variant="text" icon="mdi-logout"></v-btn>
+      <v-btn href="http://sisyphos.vimedia.ru/logout" variant="text" icon="mdi-logout"></v-btn>
 
     </v-app-bar>
     <v-main>

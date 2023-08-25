@@ -16,6 +16,9 @@
 </template>
 
 <script>
+
+const url = 'http://sisyphos.vimedia.ru/'
+
 export default {
   props: ['user', 'editUser','users'], // получаем переменную user
   methods: {
@@ -23,7 +26,7 @@ export default {
       this.editUser(this.user);
     },
     del: function () {
-      this.axios.delete(`http://192.168.100.100:6552/api/user/${this.user.id}`).then(result => {
+      this.axios.delete(url + `api/user/${this.user.id}`).then(result => {
         if (result.status === 200) {
           this.users.splice(this.users.indexOf(this.user), 1) // удаления объекта из коллекции
         }

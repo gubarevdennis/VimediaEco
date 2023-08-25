@@ -22,6 +22,9 @@
 </template>
 
 <script>
+
+const url = 'http://sisyphos.vimedia.ru/'
+
 import userForm from "./userForm.vue";
 import userRow from "./userRow.vue";
 export default {
@@ -44,7 +47,7 @@ export default {
   // указываем связь данного компонента с полученными от сервара данными
   created: function () {
     // Вставляем пользователей только вслучае, если их не было до этого в массиве на фронтенде
-    this.axios.get("http://192.168.100.100:6552/api/user").then(result =>
+    this.axios.get(url + "api/user").then(result =>
         result.data.forEach(user => {
           if (this.users.find((u) => u.id === user.id) === undefined)
             return this.users.push(user)

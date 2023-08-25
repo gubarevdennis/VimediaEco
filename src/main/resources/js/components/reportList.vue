@@ -46,6 +46,8 @@
 import reportRow from "./reportRow.vue";
 import reportForm from "./reportForm.vue";
 
+const url = 'http://sisyphos.vimedia.ru/'
+
 export default {
   props: [ 'users', 'facilities', 'appBoardName', 'profileId'],
   components: {
@@ -90,7 +92,7 @@ export default {
     //   })
     // }
     if (this.role === 'admin' || this.role === 'Директор' || this.role === 'HR') {
-      this.axios.get("http://192.168.100.100:6552/api/user").then(result =>
+      this.axios.get(url + "api/user").then(result =>
           result
               .data
               .forEach(u => {
@@ -103,7 +105,7 @@ export default {
                 )}))
     } else {
 // фильтруем под человека
-      this.axios.get("http://192.168.100.100:6552/api/user/" + this.profileId).then(result =>
+      this.axios.get(url + "api/user/" + this.profileId).then(result =>
           result
               .data
               .reports.forEach(r => {

@@ -16,6 +16,9 @@
 </template>
 
 <script>
+
+const url = 'http://sisyphos.vimedia.ru/'
+
 export default {
   props: ['facility', 'editFacility','facilities', 'role'], // получаем переменную facility
   methods: {
@@ -23,7 +26,7 @@ export default {
       this.editFacility(this.facility);
     },
     del: function () {
-      this.axios.delete(`http://192.168.100.100:6552/api/facility/${this.facility.id}`).then(result => {
+      this.axios.delete(url + `api/facility/${this.facility.id}`).then(result => {
            if (result.status === 200) {
              this.facilities.splice(this.facilities.indexOf(this.facility), 1) // удаления объекта из коллекции
            }

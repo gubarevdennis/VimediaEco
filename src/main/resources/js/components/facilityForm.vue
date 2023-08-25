@@ -23,6 +23,9 @@
 </template>
 
 <script>
+
+const url = 'http://sisyphos.vimedia.ru/'
+
 // Функция для определения индекса элементов коллекции
 function getIndex(list, id) {
   for (let i = 0; i < list.length; i++) {
@@ -55,7 +58,7 @@ export default {
         facility = {id: this.id, name: this.name, color: this.colorNumber};
 
         // если есть id в data, тогда обноволяем информацию
-        this.axios.post('http://192.168.100.100:6552/api/facility', facility).then(res => {
+        this.axios.post(url + 'api/facility', facility).then(res => {
                      let index = getIndex(this.facilities, res.data.id) // получеам индекс коллекции
           console.log(index)
           console.log(this.facilities)
@@ -66,7 +69,7 @@ export default {
 
       } else {
         // если нет id создаем новую позицию
-        this.axios.post('http://192.168.100.100:6552/api/facility', facility).then(data => {
+        this.axios.post(url + 'api/facility', facility).then(data => {
               this.facilities.push(data.data)
               this.name = ''
               this.id = '';
