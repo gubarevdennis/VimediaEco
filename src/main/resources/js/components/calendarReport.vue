@@ -372,13 +372,13 @@ export default {
         )
       }
     },
-    // Для просчета часов наработки по месяцам
+    // Для просчета часов наработки по месяцам и типу работы
     getHoursOfWorkByMonthAndWorkType: function (report, typeOfWorking) {
       this.sumHoursByMonth = []
       for (let i = 1; i < 4; i++) {
         this.axios.get(`http://192.168.100.100:6552/api/facility/sumTime/facility/${report.facility.id}/month/${i}/typeOfWork/${typeOfWorking}`).then(result => {
 
-              this.sumHoursByMonth.push({
+              this.sumHoursByMonth.push({ // надо сделать сортировку потом чтобы вывод был по попорядку
                 key: i,
                 facilityId: report.facility.id,
                 hoursOfWorking: result.data[0],
@@ -390,7 +390,7 @@ export default {
         )
       }
     },
-    //Для просчета часов наработки по пользователям и месяцам
+    //Для просчета часов наработки по пользователям, месяцам и типу работы
     getHoursOfWorkingByUserMonthAndWorkType: function (report, typeOfWorking) {
       this.sumHoursByMonthAndUser = []
       for (let i = 1; i < 4; i++) {
@@ -467,8 +467,8 @@ export default {
               result
                   .data
                   .reports.forEach(r => {
+                    this.reports.push(r)
                     if (!this.facilities.find((f) => f.id === r.facility.id)) {
-                      this.reports.push(r)
                       this.facilities.push(r.facility)
                     }
                   }
