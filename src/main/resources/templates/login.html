@@ -11,12 +11,24 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
     <link href="https://getbootstrap.com/docs/4.0/examples/signin/signin.css" rel="stylesheet" crossorigin="anonymous"/>
 </head>
+<style>
+    body {
+        background-image: url(https://wkazarin.ru/wp-content/uploads/2021/04/sisyphian_rock.jpg); /* Путь к фоновому изображению */
+        height:100%;
+        width:100%;
+        background-repeat: no-repeat;
+        /* Фоновое изображение выровнено по центру в горизонтальной и вертикальной плоскостях */   background-position: center center;
+        /* Фон не повторяется */   background-repeat: no-repeat;
+        /* Фон зафиксирован в области просмотра и потому не двигается, когда высота контента превышает высоту изображения */   background-attachment: fixed;
+        /* Это свойство заставляет фон менять масштаб при изменении размеров содержащего его контейнера*/   background-size: cover;
+    }
+</style>
 <body>
 
 <div class="container">
     <form class="form-signin" th:action="@{/login}" method="post">
-        <h1 align="center" class="form-signin-heading">VIMEDIA</h1>
-        <h5 align="center" class="form-signin-heading">Сервис учета рабочего времени</h5>
+        <h1 style="color: #EBB652" align="center" class="form-signin-heading">VIMEDIA</h1>
+        <h5 style="color: #F9F9F9" align="center" class="form-signin-heading">Сервис учета рабочего времени</h5>
 
         <div style="color: red" align="center" th:if="${param.error}">
             Неправильное имя пользователя или пароль

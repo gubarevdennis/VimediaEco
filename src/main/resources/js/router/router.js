@@ -9,6 +9,10 @@ import loginPage from "../pages/loginPage.vue";
 const router = createRouter({
   routes: [
     {
+      path: '/',
+      redirect: '/reports'
+    },
+    {
       path: '/reports', component: reportList
     },
     {

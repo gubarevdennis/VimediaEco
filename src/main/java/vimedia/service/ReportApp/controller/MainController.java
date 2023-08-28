@@ -11,8 +11,10 @@ import vimedia.service.ReportApp.model.User;
 import vimedia.service.ReportApp.repo.UserRepo;
 import vimedia.service.ReportApp.service.MyUserDetails;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/")
@@ -40,7 +42,12 @@ public class MainController {
 
     @GetMapping("/login")
     public String loginPage(Model model) {
-        List<User> users = userRepo.findAll();;
+        List<User> users = userRepo.findAll().stream().sorted(new Comparator<User>() {
+            @Override
+            public int compare(User o1, User o2) {
+                return o1.getName().toUpperCase().compareTo(o2.getName().toUpperCase());
+            }
+        }).collect(Collectors.toList());
         model.addAttribute("users", users);
         return "login";
     }

@@ -5,11 +5,14 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import vimedia.service.ReportApp.model.Facility;
 import vimedia.service.ReportApp.model.User;
 import vimedia.service.ReportApp.model.Views;
 import vimedia.service.ReportApp.repo.UserRepo;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -27,7 +30,12 @@ public class UserController {
     @GetMapping
     @JsonView(Views.IdName.class)
     public List<User> list() {
-        return userRepo.findAll();
+        return userRepo.findAll().stream().sorted(new Comparator<User>() {
+            @Override
+            public int compare(User o1, User o2) {
+                return o1.getName().toUpperCase().compareTo(o2.getName().toUpperCase());
+            }
+        }).collect(Collectors.toList());
     }
 
     @GetMapping("{id}")

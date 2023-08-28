@@ -6,11 +6,14 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import vimedia.service.ReportApp.model.Facility;
+import vimedia.service.ReportApp.model.User;
 import vimedia.service.ReportApp.model.Views;
 import vimedia.service.ReportApp.repo.FacilityRepo;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/facility")
@@ -25,7 +28,12 @@ public class FacilityController {
     @GetMapping
     @JsonView(Views.IdName.class)
     public List<Facility> list() {
-        return facilityRepo.findAll() ;
+        return facilityRepo.findAll().stream().sorted(new Comparator<Facility>() {
+            @Override
+            public int compare(Facility o1, Facility o2) {
+                return o1.getName().toUpperCase().compareTo(o2.getName().toUpperCase());
+            }
+        }).collect(Collectors.toList());
     }
 
     @GetMapping("/sumTime/{id}")

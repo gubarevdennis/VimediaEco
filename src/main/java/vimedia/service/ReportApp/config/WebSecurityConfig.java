@@ -55,7 +55,7 @@ public class WebSecurityConfig {
 //                .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
                 .formLogin(formLogin -> formLogin
                         .loginPage("/login")
-                        .permitAll())
+                        .permitAll().defaultSuccessUrl("/reports"))
                 .logout(LogoutConfigurer::permitAll);
 
         return http.build();
