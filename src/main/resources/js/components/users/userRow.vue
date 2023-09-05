@@ -17,7 +17,9 @@
 
 <script>
 
-const url = 'http://sisyphos.vimedia.ru/'
+const url = 'http://localhost:'
+const port = '9000/'
+//const url = 'http://reports.vimedia.ru/'
 
 export default {
   props: ['user', 'editUser','users'], // получаем переменную user
@@ -26,7 +28,7 @@ export default {
       this.editUser(this.user);
     },
     del: function () {
-      this.axios.delete(url + `api/user/${this.user.id}`).then(result => {
+      this.axios.delete(url+ port + `api/user/${this.user.id}`).then(result => {
         if (result.status === 200) {
           this.users.splice(this.users.indexOf(this.user), 1) // удаления объекта из коллекции
         }

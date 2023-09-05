@@ -1,8 +1,9 @@
 <template>
-  <v-app>
+  <v-app >
     <v-navigation-drawer
         v-model="drawer"
         temporary
+        color="#F9F9F9"
     >
       <v-list-item
           align="center"
@@ -13,10 +14,12 @@
       <v-divider></v-divider>
 
       <v-list density="compact" nav>
+        <v-btn block to="/cabinet" @click="changeAppBoardNameCabinet">Мой кабинет</v-btn>
         <v-btn block to="/reports" @click="changeAppBoardNameReports">Мои отчеты</v-btn>
         <v-btn block to="/facilities" @click="changeAppBoardNameFacilities">Мои объекты</v-btn>
         <v-btn block v-if="this.role === 'admin' || this.role === 'Директор' || this.role === 'HR'" to="/users" @click="changeAppBoardNameUsers">Мои коллеги</v-btn>
         <v-btn block to="/byUser" @click="changeAppBoardNameByUser">Календарь</v-btn>
+        <v-btn block v-if=" this.role === 'Директор'" to="/month" @click="changeAppBoardNameByUser">Основной отчет</v-btn>
       </v-list>
 
       <v-list-item
@@ -28,17 +31,17 @@
 
 
     <v-app-bar
-        color="black"
+        color="#0B0B0B"
         prominent
     >
-      <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon style="color: #F9F9F9" variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
 
-      <v-toolbar-title>{{appBoardName}}</v-toolbar-title>
+      <v-toolbar-title style="color: #F9F9F9">{{appBoardName}}</v-toolbar-title>
 
-      <v-btn href="http://sisyphos.vimedia.ru/logout" variant="text" icon="mdi-logout"></v-btn>
+      <v-btn style="color: #F9F9F9" href="http://localhost:9000/logout" variant="text" icon="mdi-logout"></v-btn>
 
     </v-app-bar>
-    <v-main>
+    <v-main style="background: #0B0B0B">
       <router-view :profile="profile" :role="role" :profileId="profileId" :reports="reports" :facilities="facilities" :users="users" ></router-view>
     </v-main>
   </v-app>
@@ -77,6 +80,9 @@ export default {
     },
     changeAppBoardNameByUser() {
       this.appBoardName="Сервис учета рабочего времени Vimedia"
+    },
+    changeAppBoardNameCabinet() {
+      this.appBoardName="Личный кабинет Vimedia"
     }
 
   },

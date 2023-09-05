@@ -6,7 +6,10 @@
     <v-card-title align="center">
       Сегодня
       <br>
-      {{nowDate()}}
+      <div style="color: #EBB652" >
+        {{nowDate()}}
+      </div>
+
     </v-card-title>
 
     <v-row
@@ -14,25 +17,31 @@
         no-gutters
     >
       <v-col align="start">
-        <report-form :reports="reports" :facilities="facilities" :reportAttr="report" :profileId="profileId" />
+        <report-form :reports="reports" :facilities="facilities" :reportAttr="report" :profileId="profileId"
+                     :editReportStatus="editReportStatus"
+
+        />
       </v-col>
     </v-row>
-    <v-card-title>
-      Отчеты
+    <br>
+    <v-divider></v-divider>
+    <br>
+    <v-card-title style="font-size: 20px" align="center">
+      Список отчетов
     </v-card-title>
     <br>
-    <v-row>
+
       <v-select
           variant="outlined"
           @update:modelValue="clicked"
-          label="Выберите день"
+          label="Выберите день для просмотра"
           :items="['Сегодня','Вчера','Позавчера','Три дня назад','Четыре дня назад','Пять дней назад','Шесть дней назад']"
           :item-value="offsetText"
       ></v-select>
-    </v-row>
-    <v-card  v-if="isDirector" v-for="facility in facilities" :key="facility.id" color="#DCDCDC">
-      <v-card-title v-text="facility.name"></v-card-title>
-      <v-card v-for="report in sortedReportsByFacility(facility)" class="pa-2 ma-2" >
+
+    <v-card  v-for="facility in facilities" :key="facility.id" color="#DCDCDC">
+      <v-card v-for="report in sortedReportsByFacility(facility)" class=" ma-3 pa-2" >
+        <v-card-title v-text="facility.name"></v-card-title>
         <report-row v-bind:key="report.id"
                     :report="report"
                     :editReport="editReport" :reports="reports"
@@ -46,10 +55,12 @@
 import reportRow from "./reportRow.vue";
 import reportForm from "./reportForm.vue";
 
-const url = 'http://sisyphos.vimedia.ru/'
+const url = 'http://localhost:'
+const port = '9000/'
+//const url = 'http://reports.vimedia.ru/'
 
 export default {
-  props: [ 'users', 'facilities', 'appBoardName', 'profileId'],
+  props: [ 'users', 'appBoardName', 'profileId', 'reports'],
   components: {
     reportRow,
     reportForm
@@ -63,7 +74,9 @@ export default {
       offsetText: '',
       isDirector: true,
       facilities: [],
-      reports: []
+      subFacilities: [],
+      reports: [],
+      editReportStatus: false
     }
   },
   computed: {
@@ -80,19 +93,8 @@ export default {
   },
   // указываем связь данного компонента с полученными от сервара данными
   created: function () {
-    // if (this.role === 'admin') {
-    //   // Получаем отчеты
-    //   this.axios.get("http://localhost:9000/api/report").then(result => {
-    //     result.data.forEach(report => this.reports.push(report))
-    //   })
-    // } else {
-    //   // Получаем отчеты
-    //   this.axios.get("http://localhost:9000/api/report/" + this.profileId).then(result => {
-    //     result.data.forEach(report => this.reports.push(report))
-    //   })
-    // }
     if (this.role === 'admin' || this.role === 'Директор' || this.role === 'HR') {
-      this.axios.get(url + "api/user").then(result =>
+      this.axios.get(url+ port + "api/user").then(result =>
           result
               .data
               .forEach(u => {
@@ -105,33 +107,30 @@ export default {
                 )}))
     } else {
 // фильтруем под человека
-      this.axios.get(url + "api/user/" + this.profileId).then(result =>
+      this.axios.get(url+ port + "api/user/" + this.profileId).then(result =>
           result
               .data
               .reports.forEach(r => {
+
                 this.reports.push(r)
                 if (!this.facilities.find((f) => f.id === r.facility.id)) {
                   this.facilities.push(r.facility)
+                  console.log(this.facilities)
                 }
               }
           )
       )
     }
-
-    // // Получаем объекты
-    //  this.axios.get("http://localhost:9000/api/facility").then(result => {
-    //        // Вставляем объекты только вслучае если их не было до этого в массиве на фронтенде
-    //        return result.data.forEach(facility => {
-    //          if (this.facilities.find((f) => f.id === facility.id) === undefined)
-    //            return this.facilities.push(facility)
-    //        })
-    //      }
-    //  )
   },
   methods: {
     editReport: function (report) {
+      this.editReportStatus = true
       this.report = report
+
       console.log("Функция editReport " + report.text)
+    },
+    facilityStatus: function () {
+
     },
     sortedReportsByFacility(facility) {
       // Выводим текущую дату
@@ -173,12 +172,21 @@ export default {
     nowDate: function () {
       // Выводим текущую дату
       var date = new Date()
+      var options = { year: 'numeric', month: 'long', day: 'numeric' }; // weekday: 'long',
+
+      return date.toLocaleDateString("ru", options)
 
       // Форматируем текущую дату (добавляем нули, гду нужно и когда нужно)
       return (date.getDate() < 10 ? '0' + date.getDate() : date.getDate())
           + '-' + (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1)) + '-' + date.getFullYear()
     },
   },
+  watch: {
+    reportAttr: function (newVal, oldVal) {
+      this.text = newVal.text;
+      this.id = newVal.id;
+    },
+  }
 }
 
 </script>

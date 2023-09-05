@@ -4,7 +4,7 @@
 
 <script>
 
-import reportList from "../components/reportList.vue";
+import reportList from "../components/reports/reportList.vue";
 
 export default {
   components: {

@@ -1,25 +1,28 @@
 <template>
   <v-container align="center">
 
-    <report-select v-for="form in reportForms" v-bind:key="form" @click="clickOnSelect(form)"
-                   :reports="reports" :reportAttr="reportAttr" :facilities="facilities"
-                   :facilityName="facilityName"
-                   :workingType="workingType"
-                   :workingTime="workingTime"
-                   :facilityId="facilityId"
-                   :clickSel1="clickSel1"
-                   :clickSel2="clickSel2"
-                   :clickSel3="clickSel3"
+    <v-row >
+        <report-select v-for="form in reportForms" v-bind:key="form" @click="clickOnSelect(form)"
+                       :reports="reports" :reportAttr="reportAttr" :facilities="facilities"
+                       :subFacilityName="subFacilityName"
+                       :workingType="workingType"
+                       :workingTime="workingTime"
+                       :facilityId="facilityId"
+                       :clickSel1="clickSel1"
+                       :clickSel2="clickSel2"
+                       :clickSel3="clickSel3"
+                       :clickSelSubFac="clickSelSubFac"
 
 
-    ></report-select>
-
-    <v-row align="center" justify="center" >
-      <v-btn align="center" @click="addReportForm">
-        +
-      </v-btn>
+        ></report-select>
     </v-row>
+    <v-btn width="180" align="center" @click="addReportForm">
+      +
+    </v-btn>
+
     <br>
+    <br>
+
 
     <v-select
         variant="outlined"
@@ -37,6 +40,12 @@
       </v-banner-text>
     </v-row>
 
+    <v-row justify="center" justify-sm="center">
+      <v-banner-text v-if="reportSendConfirmField" style="color: green; font-size: 18px;" >
+        Отчет отправлен. Спасибо за работу!
+      </v-banner-text>
+    </v-row>
+
 
     <br>
     <br>
@@ -50,9 +59,9 @@
     </v-row>
 
 
-    <v-row justify="end">
+    <v-row justify="center" >
       <!--// v-model для того чтобы с input пробросить в data в поле text -->
-      <v-btn @click="save">
+      <v-btn color="#EBB652" style="font-size: 20px" height="50" width="250" @click="save">
         Отправить отчет
       </v-btn>
     </v-row>
@@ -65,7 +74,9 @@
 // Функция для определения id объекта по имени
 import ReportSelect from "./reportSelect.vue";
 
-const url = 'http://sisyphos.vimedia.ru/'
+const url = 'http://localhost:'
+const port = '9000/'
+//const url = 'http://reports.vimedia.ru/'
 
 function getIdByName(facilities, name) {
   for (let i = 0; i < facilities.length; i++) {
@@ -97,7 +108,7 @@ function getIndex(list, id) {
 }
 export default {
   components: {ReportSelect},
-  props: ['reports', 'reportAttr', 'facilities'], // чтобы рабоать с данной переменной и передавать ее выше в корень
+  props: ['reports', 'reportAttr', 'facilities', 'subFacilities', 'editReportStatus', 'addFacilityFromForm'], // чтобы рабоать с данной переменной и передавать ее выше в корень
   // функция нужна для того чтобы у каждого компонента было свое уникальное хранилище
   data() {
     return {
@@ -118,11 +129,14 @@ export default {
       sumHoursPerDay: 0,
       reportDay: '',
       offsetText: '',
+      subFacilityName: '',
+      subFacilityNames: [],
+      reportSendConfirmField: false,
     }
   },
   // указываем связь данного компонента с полученными от сервара данными
   created: function () {
-    this.axios.get(url + "api/facility").then(result => {
+    this.axios.get(url+ port + "api/facility").then(result => {
           // Вставляем объекты только вслучае если их не было до этого в массиве на фронтенде
           return result.data.forEach(facility => {
             if (this.facilities.find((f) => f.id === facility.id) === undefined)
@@ -133,6 +147,7 @@ export default {
   },
   methods: {
     save: function () {
+      this.defaultFacilityName = ''
       // Обнуляем счетчик времени наработки в день
       this.sumHoursPerDay = 0
 
@@ -171,6 +186,7 @@ export default {
                   {
                     id: this.id ? this.id : undefined,
                     facility: {id: getIdByName(this.facilities, f.name)},
+                    subFacility: {name: this.subFacilityName.name},
                     typeOfWork: this.workingTypes[f.formId - 1].name,
                     text: this.text,
                     hoursOfWorking: this.workingTimes[f.formId - 1].name,
@@ -179,16 +195,17 @@ export default {
               )
             }
         )
-
-        // Отправка в базу данных всех заполненных отчетов
+        ////////////////////////////////////////////////////
+        // Отправка в базу данных всех заполненных отчетов//
+        ////////////////////////////////////////////////////
         this.reportsForSend.forEach(r => {
               console.log(r)
 
               // Если все поля заполнены, то делаем запрос - нет ошибка
-              if (r.facility && r.hoursOfWorking && r.typeOfWork && this.sumHoursPerDay >= 8) {
+              if (r.facility && r.hoursOfWorking && r.typeOfWork && (this.sumHoursPerDay >= 8 ? true : this.editReportStatus)) {
                 // если нет id создаем новую позицию
-                this.axios.post(url + 'api/report', r).then(data => {
-
+                this.axios.post(url+ port + 'api/report', r).then(data => {
+                  this.reportSendConfirmField = true // выводим сообщение об успешной отправке
                   if (this.id) {
                     let index = getIndexForPost(this.reports, data.data.id) // получеам индекс коллекции
                     this.reports.splice(index, 1, data.data);
@@ -212,6 +229,7 @@ export default {
       }
     },
     clickOnSelect: function (form) {
+      this.reportSendConfirmField = false // убираем сообщение при редактировании полей
       this.form = form
     },
 
@@ -288,6 +306,27 @@ export default {
       // Массив имен объектов для отправки
       console.log(this.workingTypes)
     },
+    clickSelSubFac: function (subFacilityName) {
+      if (this.subFacilityNames.find(f => (f.id === this.subFacilityNames.formId)) !== undefined) {
+        this.subFacilityName = {
+          name: subFacilityName
+        }
+      } else {
+        this.subFacilityName = {
+          name: subFacilityName,
+          formId: this.form
+        }
+      }
+
+      if (this.subFacilityNames.find(f => (f.formId === this.subFacilityName.formId)) !== undefined) {
+        // Заменяем элемент массива отчетов для отправки
+        let index = getIndex(this.subFacilityNames, this.subFacilityName.formId) // получеам индекс коллекции
+        console.log(index + " index")
+        this.subFacilityNames.splice(index-1, 1, this.subFacilityName);
+      } else {
+        this.subFacilityNames.push(this.subFacilityName)
+      }
+    },
     addReportForm: function (){
       this.countReportForms++
       this.reportForms.push(this.countReportForms)
@@ -332,6 +371,7 @@ export default {
 // функция следит на изменениями переменной
   watch: {
     reportAttr: function (newVal, oldVal) {
+
       this.text = newVal.text;
       this.id = newVal.id;
     },

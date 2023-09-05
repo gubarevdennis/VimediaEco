@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 @ToString(of = {"id","reportDay"})
 @EqualsAndHashCode(of = {"id"})
 public class Report {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonView(Views.Id.class)
@@ -33,6 +34,11 @@ public class Report {
     @ManyToOne
     @JsonIgnoreProperties("reports")
     private Facility facility;
+
+    @JsonView(Views.IdName.class)
+    @ManyToOne
+    @JsonIgnoreProperties("reports")
+    private SubFacility subFacility;
 
     @JsonView(Views.IdName.class)
     @ManyToOne
@@ -102,6 +108,13 @@ public class Report {
 
     public void setText(String text) {
         this.text = text;
+    }
+    public SubFacility getSubFacility() {
+        return subFacility;
+    }
+
+    public void setSubFacility(SubFacility subFacility) {
+        this.subFacility = subFacility;
     }
 
     public int getHoursOfWorking() {

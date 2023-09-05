@@ -1,9 +1,11 @@
 import {createRouter, createWebHistory} from 'vue-router'
-import userList from "../components/userList.vue";
-import facilityList from "../components/facilityList.vue";
-import reportList from "../components/reportList.vue";
-import calendarReport from "../components/calendarReport.vue";
+import userList from "../components/users/userList.vue";
+import facilityList from "../components/facilities/facilityList.vue";
+import reportList from "../components/reports/reportList.vue";
+import calendarReport from "../components/calendar/calendarReport.vue";
 import loginPage from "../pages/loginPage.vue";
+import cabinet from "../components/personalCabinet/cabinet.vue";
+import mainReport from "../components/mainReport/mainReport.vue";
 
 
 const router = createRouter({
@@ -26,6 +28,12 @@ const router = createRouter({
     },
     {
       path: '/login', component: loginPage
+    },
+    {
+      path: '/cabinet', component: cabinet
+    },
+    {
+      path: '/month', component: mainReport
     }
   ],
   history: createWebHistory()

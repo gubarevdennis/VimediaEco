@@ -17,7 +17,7 @@
         label="Укажите роль сотрудника..."
         :items="['Монтажник','Программист','Прораб','Сборщик','Бухгалтер',
         'Директор','Менеджер', 'Кладовщик', 'Закупщик','HR','Проектировщик',
-        'Диспетчер','Начальник сборочного цеха','Начальник проектного отдела',
+        'Диспетчер','Руководитель сборочного цеха','Руководитель проектного отдела',
         'Руководитель отдела ведения проектов', 'Руководитель проектов']"
         :item-value="role"
     ></v-select>
@@ -33,7 +33,9 @@
 
 <script>
 
-const url = 'http://sisyphos.vimedia.ru/'
+const url = 'http://localhost:'
+const port = '9000/'
+//const url = 'http://reports.vimedia.ru/'
 
 // Функция для определения индекса элементов коллекции
 function getIndex(list, id) {
@@ -74,7 +76,7 @@ export default {
         };
 
         // если есть id в data, тогда обноволяем информацию
-        this.axios.post(url + 'api/user', user).then(res => {
+        this.axios.post(url+ port + 'api/user', user).then(res => {
           let index = getIndex(this.users, res.data.id) // получеам индекс коллекции
 
           this.users.splice(index, 1, res.data);
@@ -87,7 +89,7 @@ export default {
 
       } else {
         // если нет id создаем новую позицию
-        this.axios.post(url + 'api/user', user).then(data => {
+        this.axios.post(url+ port + 'api/user', user).then(data => {
           this.users.push(data.data)
 
           // Очищаем поля

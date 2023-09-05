@@ -7,9 +7,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import vimedia.service.ReportApp.model.Report;
+import vimedia.service.ReportApp.model.SubFacility;
 import vimedia.service.ReportApp.model.User;
 import vimedia.service.ReportApp.model.Views;
 import vimedia.service.ReportApp.repo.ReportRepo;
+import vimedia.service.ReportApp.repo.SubFacilityRepo;
 import vimedia.service.ReportApp.repo.UserRepo;
 import vimedia.service.ReportApp.service.MyUserDetails;
 
@@ -22,12 +24,14 @@ import java.util.List;
 @RequestMapping("/api/report")
 public class ReportController {
     private final ReportRepo reportRepo;
+    private final SubFacilityRepo subFacilityRepo;
     private final UserRepo userRepo;
 
     @Autowired
-    public ReportController(ReportRepo reportRepo, UserRepo userRepo) {
+    public ReportController(ReportRepo reportRepo, UserRepo userRepo, SubFacilityRepo subFacilityRepo) {
         this.reportRepo = reportRepo;
         this.userRepo = userRepo;
+        this.subFacilityRepo = subFacilityRepo;
     }
 
     @GetMapping()
@@ -45,6 +49,10 @@ public class ReportController {
     @JsonView(Views.IdName.class)
     public Report create(@RequestBody Report report, @AuthenticationPrincipal MyUserDetails myUserDetails) {
         report.setCreationDate(LocalDateTime.now());
+        // Добавляем подобъект
+        if (report.getSubFacility() != null) {
+            report.setSubFacility(subFacilityRepo.findByName(report.getSubFacility().getName()).orElse(null));
+        }
 
         // Проверяем указан ли день отчета
         if (report.getReportDay() == null) {

@@ -3,7 +3,7 @@
     <v-row>
       <v-col>
         <v-card-title class="text-green-accent-4">
-          {{userNameForReportRow}}
+          {{report.subFacility ? report.subFacility.name + ' - ' : ''}} {{report.hoursOfWorking}} ч
         </v-card-title>
         <v-card-text>
           {{report.typeOfWork}} - {{report.text}}
@@ -25,7 +25,10 @@
 
 <script>
 
-const url = 'http://sisyphos.vimedia.ru/'
+
+const url = 'http://localhost:'
+const port = '9000/'
+//const url = 'http://reports.vimedia.ru/'
 
 export default {
   props: ['report', 'editReport','reports'], // получаем переменную facility
@@ -34,7 +37,7 @@ export default {
       this.editReport(this.report);
     },
     del: function () {
-      this.axios.delete(url + `api/report/${this.report.id}`).then(result => {
+      this.axios.delete(url+ port + `api/report/${this.report.id}`).then(result => {
         if (result.status === 200) {
           this.reports.splice(this.reports.indexOf(this.report), 1) // удаления объекта из коллекции
         }
@@ -47,6 +50,7 @@ export default {
     },
     userNameForReportRow: function () {
       if (this.report.user) return this.report.user.name // возвращает не нулевое значение
+      console.log(this.report)
     }
   },
 }
