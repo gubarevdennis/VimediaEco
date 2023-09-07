@@ -1,8 +1,7 @@
 <template>
   <v-sheet color="#393a34">
     <v-row justify="center">
-      <v-col align="center" cols="auto" v-for="day in daysPerOneWeek(w)">
-        {{w}}
+      <v-col align="center" cols="auto" v-for="day in daysPerOneWeek(w)" v-bind:key="day">
         <day :reports="reports" :day="day"></day>
       </v-col>
     </v-row>

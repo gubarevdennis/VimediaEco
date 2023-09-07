@@ -42,9 +42,10 @@ import facilityRow from "./facilityRow.vue";
 import FacilityForm from "./facilityForm.vue";
 
 
-const url = 'http://localhost:'
-const port = '9000/'
-//const url = 'http://reports.vimedia.ru/'
+// const url = 'http://localhost:'
+// const port = '9000/'
+// const url = 'http://reports.vimedia.ru/'
+// const port = ''
 
 export default {
   props: ['facilities', 'profile', 'role', 'profileId', 'addSubFacility'],
@@ -75,7 +76,7 @@ export default {
     // Добавление объектов
     if (this.role === 'admin' || this.role === 'Директор' || this.role === 'HR'
         || this.role === 'Менеджер' || this.role === 'Руководитель отдела ведения проектов') {
-      this.axios.get(url+ port + "api/facility").then(result =>
+      this.axios.get( "api/facility").then(result =>
           result
               .data
               .forEach(fac => {
@@ -89,7 +90,7 @@ export default {
                 ))
     } else {
 // фильтруем под человека
-      this.axios.get(url+ port + "api/user/" + this.profileId).then(result =>
+      this.axios.get("api/user/" + this.profileId).then(result =>
           result
               .data
               .reports.forEach(r => {

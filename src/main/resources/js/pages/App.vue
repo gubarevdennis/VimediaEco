@@ -19,7 +19,7 @@
         <v-btn block to="/facilities" @click="changeAppBoardNameFacilities">Мои объекты</v-btn>
         <v-btn block v-if="this.role === 'admin' || this.role === 'Директор' || this.role === 'HR'" to="/users" @click="changeAppBoardNameUsers">Мои коллеги</v-btn>
         <v-btn block to="/byUser" @click="changeAppBoardNameByUser">Календарь</v-btn>
-        <v-btn block v-if=" this.role === 'Директор'" to="/month" @click="changeAppBoardNameByUser">Основной отчет</v-btn>
+        <v-btn block v-if=" this.role === 'Директор'" to="/mainReport" @click="changeAppBoardNameByUser">Основной отчет</v-btn>
       </v-list>
 
       <v-list-item
@@ -38,7 +38,7 @@
 
       <v-toolbar-title style="color: #F9F9F9">{{appBoardName}}</v-toolbar-title>
 
-      <v-btn style="color: #F9F9F9" href="http://localhost:9000/logout" variant="text" icon="mdi-logout"></v-btn>
+      <v-btn style="color: #F9F9F9" href="http://reports.vimedia.ru/logout" variant="text" icon="mdi-logout"></v-btn>
 
     </v-app-bar>
     <v-main style="background: #0B0B0B">

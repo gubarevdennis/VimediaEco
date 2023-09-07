@@ -14,7 +14,6 @@
 <script>
 export default {
   props: ['day'],
-  name: "dayNumber"
 }
 </script>
 

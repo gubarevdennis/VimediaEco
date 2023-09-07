@@ -26,9 +26,10 @@
 <script>
 
 
-const url = 'http://localhost:'
-const port = '9000/'
-//const url = 'http://reports.vimedia.ru/'
+// const url = 'http://localhost:'
+// const port = '9000/'
+// const url = 'http://reports.vimedia.ru/'
+// const port = ''
 
 export default {
   props: ['report', 'editReport','reports'], // получаем переменную facility
@@ -37,7 +38,7 @@ export default {
       this.editReport(this.report);
     },
     del: function () {
-      this.axios.delete(url+ port + `api/report/${this.report.id}`).then(result => {
+      this.axios.delete(`api/report/${this.report.id}`).then(result => {
         if (result.status === 200) {
           this.reports.splice(this.reports.indexOf(this.report), 1) // удаления объекта из коллекции
         }

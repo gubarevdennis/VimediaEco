@@ -1,7 +1,7 @@
 <template>
   <v-row justify="center">
     <v-col align="center" cols="auto">
-        <user-by-hour v-for="report in filteredByDayReports(day)" :report="report"></user-by-hour>
+        <user-by-hour v-for="report in filteredByDayReports(day)" :report="report" v-bind:key="report.id"></user-by-hour>
     </v-col>
   </v-row>
 </template>
@@ -9,7 +9,6 @@
 <script>
 import UserByHour from "./userByHour.vue";
 export default {
-  name: "usersByDay",
   components: {UserByHour},
   props: ['reports', 'day'],
   data() {

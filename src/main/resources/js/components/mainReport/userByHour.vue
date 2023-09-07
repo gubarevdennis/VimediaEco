@@ -12,7 +12,6 @@
 <script>
 
 export default {
-  name: "userByHour",
   props: ['report'],
   color: '',
 

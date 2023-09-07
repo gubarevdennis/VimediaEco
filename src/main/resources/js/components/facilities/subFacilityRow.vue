@@ -21,9 +21,10 @@
 
 
 
-const url = 'http://localhost:'
-const port = '9000/'
-//const url = 'http://reports.vimedia.ru/'
+// const url = 'http://localhost:'
+// const port = '9000/'
+// const url = 'http://reports.vimedia.ru/'
+// const port = ''
 
 export default {
   props: ['facility','subFacilityInner', 'editSubFacility','facilities', 'role', 'subFacilities', 'deleteSubFacility'], // получаем переменную facility
@@ -34,7 +35,7 @@ export default {
       this.editSubFacility(this.subFacilityInner);
     },
     del: function () {
-      this.axios.delete(url+ port + `api/subFacility/${this.subFacilityInner.id}`).then(result => {
+      this.axios.delete( `api/subFacility/${this.subFacilityInner.id}`).then(result => {
            if (result.status === 200) {
              this.deleteSubFacility(this.subFacilityInner)
              // удаления объекта из коллекции

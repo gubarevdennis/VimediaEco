@@ -62,9 +62,10 @@
 
 <script>
 
-const url = 'http://localhost:'
-const port = '9000/'
-//const url = 'http://reports.vimedia.ru/'
+// const url = 'http://localhost:'
+// const port = '9000/'
+// const url = 'http://reports.vimedia.ru/'
+// const port = ''
 
 // Функция для определения индекса элементов коллекции
 function getIndex(list, id) {
@@ -102,7 +103,7 @@ export default {
         if (!(this.password === '')) {
 
           // если есть id в data, тогда обноволяем информацию
-          this.axios.post(url + port + 'api/user', user).then(res => {
+          this.axios.post('api/user', user).then(res => {
 
             this.errorStatus = false
             this.passSendStatusFunc()

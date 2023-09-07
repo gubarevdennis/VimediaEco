@@ -36,9 +36,10 @@
 <script>
 
 
-const url = 'http://localhost:'
-const port = '9000/'
-//const url = 'http://reports.vimedia.ru/'
+// const url = 'http://localhost:'
+// const port = '9000/'
+// const url = 'http://reports.vimedia.ru/'
+// const port = ''
 
 // Функция для определения индекса элементов коллекции
 function getIndex(list, id) {
@@ -90,7 +91,7 @@ export default {
         facility = {id: this.id, name: this.nameFac, color: this.colorNumber};
 
         // если есть id в data, тогда обноволяем информацию
-        this.axios.post(url+ port + 'api/facility', facility).then(res => {
+        this.axios.post( 'api/facility', facility).then(res => {
                      let index = getIndex(this.facilities, res.data.id) // получеам индекс коллекции
                      this.facilities.splice(index, 1, res.data);
                      this.nameFac = '';
@@ -98,7 +99,7 @@ export default {
         })
       } else {
         // если нет id создаем новую позицию
-        this.axios.post(url+ port + 'api/facility', facility).then(data => {
+        this.axios.post('api/facility', facility).then(data => {
               this.facilities.push(data.data)
               this.nameFac = ''
               this.id = '';
@@ -106,7 +107,7 @@ export default {
       }
 
         // Логика добавления подобъекта
-        this.axios.post(url+ port + 'api/subFacility', subFacility).then(data => {
+        this.axios.post('api/subFacility', subFacility).then(data => {
           this.subFacilityNames.push(data.data.name)
 
           // Цепляем подбобъект для вывода

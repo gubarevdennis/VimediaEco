@@ -31,8 +31,8 @@ public class Report {
     private LocalDate reportDay;
 
     @JsonView(Views.IdName.class)
-    @ManyToOne
-    @JsonIgnoreProperties("reports")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"reports", "subFacilities"})
     private Facility facility;
 
     @JsonView(Views.IdName.class)

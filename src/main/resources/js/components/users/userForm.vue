@@ -33,9 +33,10 @@
 
 <script>
 
-const url = 'http://localhost:'
-const port = '9000/'
-//const url = 'http://reports.vimedia.ru/'
+// const url = 'http://localhost:'
+// const port = '9000/'
+// const url = 'http://reports.vimedia.ru/'
+// const port = ''
 
 // Функция для определения индекса элементов коллекции
 function getIndex(list, id) {
@@ -76,7 +77,7 @@ export default {
         };
 
         // если есть id в data, тогда обноволяем информацию
-        this.axios.post(url+ port + 'api/user', user).then(res => {
+        this.axios.post('api/user', user).then(res => {
           let index = getIndex(this.users, res.data.id) // получеам индекс коллекции
 
           this.users.splice(index, 1, res.data);
@@ -89,7 +90,7 @@ export default {
 
       } else {
         // если нет id создаем новую позицию
-        this.axios.post(url+ port + 'api/user', user).then(data => {
+        this.axios.post('api/user', user).then(data => {
           this.users.push(data.data)
 
           // Очищаем поля

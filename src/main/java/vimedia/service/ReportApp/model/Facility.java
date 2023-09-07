@@ -33,7 +33,7 @@ public class Facility {
     private LocalDateTime creationDate;
 
     @OneToMany(mappedBy = "facility")
-    @JsonView(Views.IdName.class)
+//    @JsonView(Views.IdName.class)
     @JsonIgnoreProperties("facility")
     private List<Report> reports;
 

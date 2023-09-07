@@ -60,9 +60,10 @@
 <script>
 
 
-const url = 'http://localhost:'
-const port = '9000/'
-//const url = 'http://reports.vimedia.ru/'
+// const url = 'http://localhost:'
+// const port = '9000/'
+// const url = 'http://reports.vimedia.ru/'
+// const port = ''
 
 // Функция для определения id объекта по имени
 function getIdByName(facilities, name) {
@@ -86,7 +87,7 @@ function getIndex(list, id) {
 export default {
   props: ['reports', 'reportAttr','facilities',
     'facilityId', 'workingTime', 'workingType','facilityName', 'subFacilityName',
-    'clickSel1', 'clickSel2', 'clickSel3', 'clickSelSubFac',
+    'clickSel1', 'clickSel2', 'clickSel3', 'clickSelSubFac', 'url', 'port'
   ], // чтобы рабоать с данной переменной и передавать ее выше в корень
   // функция нужна для того чтобы у каждого компонента было свое уникальное хранилище
   data() {

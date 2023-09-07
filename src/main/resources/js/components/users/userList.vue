@@ -24,9 +24,10 @@
 <script>
 
 
-const url = 'http://localhost:'
-const port = '9000/'
-//const url = 'http://reports.vimedia.ru/'
+// const url = 'http://localhost:'
+// const port = '9000/'
+// const url = 'http://reports.vimedia.ru/'
+// const port = ''
 
 import userForm from "./userForm.vue";
 import userRow from "./userRow.vue";
@@ -50,7 +51,7 @@ export default {
   // указываем связь данного компонента с полученными от сервара данными
   created: function () {
     // Вставляем пользователей только вслучае, если их не было до этого в массиве на фронтенде
-    this.axios.get(url+ port + "api/user").then(result =>
+    this.axios.get("api/user").then(result =>
         result.data.forEach(user => {
           if (this.users.find((u) => u.id === user.id) === undefined)
             return this.users.push(user)

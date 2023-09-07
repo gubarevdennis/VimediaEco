@@ -55,12 +55,13 @@
 import reportRow from "./reportRow.vue";
 import reportForm from "./reportForm.vue";
 
-const url = 'http://localhost:'
-const port = '9000/'
-//const url = 'http://reports.vimedia.ru/'
+// const url = 'http://localhost:'
+// const port = '9000/'
+// const url = 'http://reports.vimedia.ru/'
+// const port = ''
 
 export default {
-  props: [ 'users', 'appBoardName', 'profileId', 'reports'],
+  props: [ 'users', 'appBoardName', 'profileId', 'reports', 'url', 'port'],
   components: {
     reportRow,
     reportForm
@@ -93,8 +94,10 @@ export default {
   },
   // указываем связь данного компонента с полученными от сервара данными
   created: function () {
+
+
     if (this.role === 'admin' || this.role === 'Директор' || this.role === 'HR') {
-      this.axios.get(url+ port + "api/user").then(result =>
+      this.axios.get("/api/user").then(result =>
           result
               .data
               .forEach(u => {
@@ -107,7 +110,7 @@ export default {
                 )}))
     } else {
 // фильтруем под человека
-      this.axios.get(url+ port + "api/user/" + this.profileId).then(result =>
+      this.axios.get("/api/user/" + this.profileId).then(result =>
           result
               .data
               .reports.forEach(r => {

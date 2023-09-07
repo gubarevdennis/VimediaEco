@@ -33,7 +33,7 @@ const router = createRouter({
       path: '/cabinet', component: cabinet
     },
     {
-      path: '/month', component: mainReport
+      path: '/mainReport', component: mainReport
     }
   ],
   history: createWebHistory()

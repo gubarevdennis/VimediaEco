@@ -4,16 +4,15 @@
           label
           rounded="lg"
   >
-    <v-card-text style="font-size: 15px; color: #EBB652">
-      {{hoursByDay(day)*625 + ' р.'}}
-    </v-card-text>
+    <v-card-title style="font-size: 15px; color: #EBB652">
+      {{hoursByDay(day) + ' ч.'}}
+    </v-card-title>
   </v-sheet>
 </template>
 
 <script>
 export default {
-  name: "moneyPerDay",
-  props: ['day', 'reports'],
+  props: ['day', 'reports', 'url', 'port'],
   data() {
     return {
       hours: 0,
@@ -22,14 +21,15 @@ export default {
   methods: {
     hoursByDay(day) {
       this.hours = 0;
+      var calcHours = 0;
 
       var filteredByDayReports = this.reports.filter(r => (new Date(
           r.reportDay.substr(6, 4),
           r.reportDay.substr(3, 2) - 1,
           r.reportDay.substr(0, 2))).toString() === day.toString())
 
-      filteredByDayReports.forEach(r => this.hours += r.hoursOfWorking)
-      return this.hours
+      filteredByDayReports.forEach(r => calcHours += r.hoursOfWorking)
+      return this.hours = calcHours
     },
   }
 }

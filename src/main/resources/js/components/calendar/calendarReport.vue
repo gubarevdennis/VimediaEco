@@ -58,9 +58,10 @@ import {useScreens} from 'vue-screen-utils'
 import CalendarPage from "./calendarPage.vue";
 
 
-const url = 'http://localhost:'
-const port = '9000/'
-//const url = 'http://reports.vimedia.ru/'
+// const url = 'http://localhost:'
+// const port = '9000/'
+// const url = 'http://reports.vimedia.ru/'
+// const port = ''
 
 function setColorByWork(work) {
   switch (work) {
@@ -149,7 +150,7 @@ function removeDuplicates(arr) {
 
 export default {
   components: {CalendarPage},
-  props: ['facilities', 'profile', 'role', 'profileId'],
+  props: ['facilities', 'profile', 'role', 'profileId', 'url', 'port'],
   data() {
     return {
       facilities: [],
@@ -341,7 +342,7 @@ export default {
     getHoursOfWorkByMonth: function (report) {
       this.sumHoursByMonth = []
       for (let i = 1; i < 4; i++) {
-        this.axios.get(url+ port + `api/facility/sumTime/facility/${report.facility.id}/month/${i}`).then(result => {
+        this.axios.get(`api/facility/sumTime/facility/${report.facility.id}/month/${i}`).then(result => {
 
               this.sumHoursByMonth.push({
                 key: i,
@@ -360,7 +361,7 @@ export default {
       this.sumHoursByMonthAndUser = []
       for (let i = 1; i < 4; i++) {
 
-        this.axios.get(url+ port + `api/facility/sumTime/facility/${report.facility.id}/user/${report.user.id}/month/${i}`).then(result => {
+        this.axios.get(`api/facility/sumTime/facility/${report.facility.id}/user/${report.user.id}/month/${i}`).then(result => {
 
               this.sumHoursByMonthAndUser.push({
                 key: i,
@@ -380,7 +381,7 @@ export default {
     getHoursOfWorkByMonthAndWorkType: function (report, typeOfWorking) {
       this.sumHoursByMonth = []
       for (let i = 1; i < 4; i++) {
-        this.axios.get(url+ port + `api/facility/sumTime/facility/${report.facility.id}/month/${i}/typeOfWork/${typeOfWorking}`).then(result => {
+        this.axios.get( `api/facility/sumTime/facility/${report.facility.id}/month/${i}/typeOfWork/${typeOfWorking}`).then(result => {
 
               this.sumHoursByMonth.push({ // надо сделать сортировку потом чтобы вывод был по попорядку
                 key: i,
@@ -399,7 +400,7 @@ export default {
       this.sumHoursByMonthAndUser = []
       for (let i = 1; i < 4; i++) {
 
-        this.axios.get(url+ port + `api/facility/sumTime/facility/${report.facility.id}/user/${report.user.id}/month/${i}/typeOfWork/${typeOfWorking}`, typeOfWorking).then(result => {
+        this.axios.get( `api/facility/sumTime/facility/${report.facility.id}/user/${report.user.id}/month/${i}/typeOfWork/${typeOfWorking}`, typeOfWorking).then(result => {
 
               this.sumHoursByMonthAndUser.push({
                 key: i,
@@ -419,7 +420,7 @@ export default {
     sortWorkHoursByWorkTypes: function (typeOfWork) {
       {
         if (this.role === 'admin' || this.role === 'Директор' || this.role === 'HR') {
-          this.axios.get(url+ port + "api/user").then(result =>
+          this.axios.get("api/user").then(result =>
               result
                   .data
                   .forEach(u => {
@@ -447,7 +448,7 @@ export default {
         this.sumHoursByMonthAndUser = []
 
         if (this.role === 'admin' || this.role === 'Директор' || this.role === 'HR') {
-          this.axios.get(url+ port + "api/user").then(result =>
+          this.axios.get( "api/user").then(result =>
               result
                   .data
                   .forEach(u => {
@@ -467,7 +468,7 @@ export default {
 
         } else {
 // фильтруем под человека
-          this.axios.get(url+ port + "api/user/" + this.profileId).then(result =>
+          this.axios.get( "api/user/" + this.profileId).then(result =>
               result
                   .data
                   .reports.forEach(r => {

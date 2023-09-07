@@ -2,8 +2,11 @@
 
   <div class="main" >
     <v-sheet color="#393a34">
+      <v-card-title align="center" style="color: #FFE075; font-size: 25px">
+        {{nowDate()}}
+      </v-card-title>
       <v-row justify="center"
-             align="center" v-for="w in [1,2,3,4,5]">
+             align="center" v-for="w in [1,2,3,4,5]" v-bind:key="w">
         <v-sheet color="#393a34">
           <br>
           <week :reports="reports" :daysPerWeek="daysPerWeek" :w="w"></week>
@@ -20,10 +23,6 @@
 
 <script>
 
-
-const url = 'http://localhost:'
-const port = '9000/'
-//const url = 'http://reports.vimedia.ru/'
 
 Date.prototype.addDays = function(days) {
   var date = new Date(this.valueOf());
@@ -79,7 +78,14 @@ export default {
         currentDate = currentDate.addDays(1);
       }
       return this.daysPerMonth;
-    }
+    },
+    nowDate: function () {
+      // Выводим текущую дату
+      var date = new Date()
+      var options = { month: 'long' }; // weekday: 'long',
+
+      return date.toLocaleDateString("ru", options).toUpperCase()
+    },
   }
 }
 </script>

@@ -33,10 +33,12 @@
 
 
 
+// const url = 'http://localhost:'
+// const port = '9000/'
+// const url = 'http://reports.vimedia.ru/'
+// const port = ''
+
 import SubFacilityRow from "./subFacilityRow.vue";
-const url = 'http://localhost:'
-const port = '9000/'
-//const url = 'http://reports.vimedia.ru/'
 
 export default {
   data() {
@@ -45,7 +47,8 @@ export default {
     }
   },
   components: {SubFacilityRow},
-  props: ['facility', 'editFacility','facilities', 'role', 'deleteSubFacility', 'subFacility'], // получаем переменную facility
+  props: ['facility', 'editFacility','facilities', 'role', 'deleteSubFacility', 'subFacility',
+    'url', 'port'], // получаем переменную facility
   computed: {
   },
   created: function () {
@@ -56,7 +59,7 @@ export default {
       this.editFacility(this.facility);
     },
     del: function () {
-      this.axios.delete(url+ port + `api/facility/${this.facility.id}`).then(result => {
+      this.axios.delete(`api/facility/${this.facility.id}`).then(result => {
            if (result.status === 200) {
              this.facilities.splice(this.facilities.indexOf(this.facility), 1) // удаления объекта из коллекции
            }

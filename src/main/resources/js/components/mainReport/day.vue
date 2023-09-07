@@ -1,14 +1,17 @@
 <template>
-  <v-sheet style=" width: 200px; height: 550px;" align="center" color="#393a34" >
+  <v-sheet style=" width: 200px;" align="center" color="#393a34" >
     <br>
-    <v-row align="center" justify="center" style="min-height: 450px" align-content="end">
-      <users-by-day :reports="reports" :day="day.day"></users-by-day>
-    </v-row>
+    {{dayName(day.day.getDay())}}
+    <br>
+    <br>
     <v-row align="center" align-content="center" justify="center">
       <day-number :day="day.day"></day-number>
     </v-row>
     <v-row align="center" align-content="center" justify="center" >
       <money-per-day :reports="reports" :day="day.day"></money-per-day>
+    </v-row>
+    <v-row align="center" justify="center" style="" align-content="end">
+      <users-by-day :reports="reports" :day="day.day"></users-by-day>
     </v-row>
     <br>
   </v-sheet>
@@ -22,9 +25,6 @@
 import UsersByDay from "./usersByDay.vue";
 import DayNumber from "./dayNumber.vue";
 import MoneyPerDay from "./moneyPerDay.vue";
-const url = 'http://localhost:'
-const port = '9000/'
-//const url = 'http://reports.vimedia.ru/'
 
 // Функция для определения индекса элементов коллекции
 function getIndex(list, id) {
@@ -49,6 +49,24 @@ export default {
     reportsByDay: function () {
       // this.reports.
     },
+    dayName: function (day) {
+      switch (day) {
+        case 0 : return  'Понедельник'
+          break;
+        case 1 : return  'Вторник'
+          break;
+        case 2 : return  'Среда'
+          break;
+        case 3 : return 'Четверг'
+          break;
+        case 4 : return  'Пятница'
+          break;
+        case 5 : return  'Суббота'
+          break;
+        case 6 : return  'Воскресенье'
+          break;
+      }
+    }
 
   },
 

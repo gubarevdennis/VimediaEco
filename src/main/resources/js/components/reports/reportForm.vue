@@ -74,9 +74,10 @@
 // Функция для определения id объекта по имени
 import ReportSelect from "./reportSelect.vue";
 
-const url = 'http://localhost:'
-const port = '9000/'
-//const url = 'http://reports.vimedia.ru/'
+// const url = 'http://localhost:'
+// const port = '9000/'
+// const url = 'http://reports.vimedia.ru/'
+// const port = ''
 
 function getIdByName(facilities, name) {
   for (let i = 0; i < facilities.length; i++) {
@@ -108,7 +109,8 @@ function getIndex(list, id) {
 }
 export default {
   components: {ReportSelect},
-  props: ['reports', 'reportAttr', 'facilities', 'subFacilities', 'editReportStatus', 'addFacilityFromForm'], // чтобы рабоать с данной переменной и передавать ее выше в корень
+  props: ['reports', 'reportAttr', 'facilities', 'subFacilities',
+    'editReportStatus', 'addFacilityFromForm', 'url', 'port'], // чтобы рабоать с данной переменной и передавать ее выше в корень
   // функция нужна для того чтобы у каждого компонента было свое уникальное хранилище
   data() {
     return {
@@ -136,7 +138,7 @@ export default {
   },
   // указываем связь данного компонента с полученными от сервара данными
   created: function () {
-    this.axios.get(url+ port + "api/facility").then(result => {
+    this.axios.get("api/facility").then(result => {
           // Вставляем объекты только вслучае если их не было до этого в массиве на фронтенде
           return result.data.forEach(facility => {
             if (this.facilities.find((f) => f.id === facility.id) === undefined)
@@ -180,7 +182,6 @@ export default {
         // Готовим массив отчетов для последующей отправки
         this.facilityNames.forEach(f => {
               this.sumHoursPerDay = this.sumHoursPerDay + this.workingTimes[f.formId - 1].name
-              console.log(this.sumHoursPerDay)
 
               this.reportsForSend.push(
                   {
@@ -204,7 +205,7 @@ export default {
               // Если все поля заполнены, то делаем запрос - нет ошибка
               if (r.facility && r.hoursOfWorking && r.typeOfWork && (this.sumHoursPerDay >= 8 ? true : this.editReportStatus)) {
                 // если нет id создаем новую позицию
-                this.axios.post(url+ port + 'api/report', r).then(data => {
+                this.axios.post( 'api/report', r).then(data => {
                   this.reportSendConfirmField = true // выводим сообщение об успешной отправке
                   if (this.id) {
                     let index = getIndexForPost(this.reports, data.data.id) // получеам индекс коллекции

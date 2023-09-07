@@ -1,7 +1,6 @@
 <template>
   <v-sheet>
     <v-row>
-
       <v-col>
         <br>
         <v-select
@@ -33,7 +32,7 @@
             @update:modelValue="selectWork"
             :item-value="workNameSelected"
             label="Вид работ"
-            :items="['Все работы', 'Монтаж','ПНР','Проект','Менеджмент']"
+            :items="['Все работы','Проект','Менеджмент','Монтаж','Сборка','ПНР','Сервис','Отпуск','Больничный']"
         >
         </v-select>
       </v-col>
@@ -45,12 +44,7 @@
 <script>
 import Month from "./month.vue";
 
-const url = 'http://localhost:'
-const port = '9000/'
-//const url = 'http://reports.vimedia.ru/'
-
 export default {
-  name: "mainReport",
   components: {Month},
   data() {
     return {
@@ -70,9 +64,10 @@ export default {
       sortedReports: []
     }
   },
-  created: function () {
+  mounted: function () {
+    console.log('Запустил mounted')
     // Запрашиваем отчеты
-    this.axios.get(url+ port + "api/report").then(result => {
+    this.axios.get( "api/report").then(result => {
           result
               .data
               .forEach(r => {
@@ -81,21 +76,28 @@ export default {
           this.sortedReports = this.reports // без сортировки
         }
     )
+    console.log('Прогрузил report')
     // Запрашиваем объекты
-    this.axios.get(url+ port + "api/facility").then(result => {
+    this.axios.get("api/facility").then(result => {
           result
               .data
               .forEach(f => {
-                this.facilities.push(f) // все отчеты
+                this.facilities.push({
+                  id: f.id,
+                  name: f.name,
+                  subFacilities: f.subFacilities
+                }) // все отчеты
                 this.facilityNames.push(f.name) // все отчеты
 
               })
           this.facilityNames.unshift('Все объекты')
         }
     )
+    console.log('Прогрузил facility')
   },
   methods: {
     selectFacility: function (facilityNameSelected) {
+      console.log('Запустил selectFacility')
       this.byFacility = true
       this.facilityNameSelected = facilityNameSelected
 
@@ -103,6 +105,7 @@ export default {
       this.selectVariantsSubFacilities()
     },
     sortByFacility: function (reports) {
+      console.log('Запустил sortByFacility')
       // Если выбраны все объекты
       if (this.facilityNameSelected === 'Все объекты') {
         // Выключаем фильтр по подобъекта когда выбраны Все объекты
@@ -116,12 +119,14 @@ export default {
 
     },
     selectSubFacility: function (subFacilityNameSelected) {
+      console.log('Запустил selectSubFacility')
       this.bySubFacility = true
       this.subFacilityNameSelected = subFacilityNameSelected
 
       this.resultFilter()
     },
     sortBySubFacility: function (reports) {
+      console.log('Запустил sortBySubFacility')
       // Если выбраны все подобъекты
       if (this.bySubFacility && this.subFacilityNameSelected === 'Все подобъекты') {
         return this.sortedReportsBySubFacility = reports
@@ -133,12 +138,14 @@ export default {
                 && ((r.subFacility ? r.subFacility.name : '') === this.subFacilityNameSelected)))}
     },
     selectWork: function (workNameSelected) {
+      console.log('Запустил selectWork')
       this.byWork = true
       this.workNameSelected = workNameSelected
 
       this.resultFilter()
     },
     sortByWork: function (reports) {
+      console.log('Запустил sortByWork')
       // Если выбраны все работы
       if (this.workNameSelected === 'Все работы') {
         return this.sortedReportsByWork = reports}
@@ -148,20 +155,21 @@ export default {
 
     },
     resultFilter: function () {
-
-      if (this.byFacility && !this.byWork) this.sortedReports = this.sortByFacility(this.reports)
+      console.log('Запустил resultFilter')
+      if (this.byFacility && !this.byWork && !this.bySubFacility) this.sortedReports = this.sortByFacility(this.reports)
 
       if (this.byWork && !this.byFacility) this.sortedReports = this.sortByWork(this.reports)
 
       if (this.byFacility && this.bySubFacility && !this.byWork) this.sortedReports = this.sortBySubFacility(this.reports)
 
-      if (this.byFacility && this.byWork)
+      if (this.byFacility && this.byWork && !this.bySubFacility)
         this.sortedReports = this.sortByWork(this.sortByFacility(this.reports))
 
-      if (this.byFacility && this.bySubFacility && this.byWork)
+      if (this.byFacility && this.byWork  && this.bySubFacility)
         this.sortedReports = this.sortBySubFacility(this.sortByWork(this.sortByFacility(this.reports)))
     },
     selectVariantsSubFacilities: function () {
+      console.log('Запустил selectVariantsSubFacilities')
       this.subFacilities = []
       if (this.facilities.find(f => f.name === this.facilityNameSelected))
         this.facilities.find(f => f.name === this.facilityNameSelected)
