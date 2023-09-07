@@ -51,19 +51,19 @@ export default {
     },
     dayName: function (day) {
       switch (day) {
-        case 0 : return  'Понедельник'
+        case 1 : return  'Понедельник'
           break;
-        case 1 : return  'Вторник'
+        case 2 : return  'Вторник'
           break;
-        case 2 : return  'Среда'
+        case 3 : return  'Среда'
           break;
-        case 3 : return 'Четверг'
+        case 4 : return 'Четверг'
           break;
-        case 4 : return  'Пятница'
+        case 5 : return  'Пятница'
           break;
-        case 5 : return  'Суббота'
+        case 6 : return  'Суббота'
           break;
-        case 6 : return  'Воскресенье'
+        case 0 : return  'Воскресенье'
           break;
       }
     }

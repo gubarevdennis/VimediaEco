@@ -16,9 +16,9 @@
       <v-list density="compact" nav>
         <v-btn block to="/cabinet" @click="changeAppBoardNameCabinet">Мой кабинет</v-btn>
         <v-btn block to="/reports" @click="changeAppBoardNameReports">Мои отчеты</v-btn>
+        <v-btn block to="/byUser" @click="changeAppBoardNameByUser">Календарь</v-btn>
         <v-btn block to="/facilities" @click="changeAppBoardNameFacilities">Мои объекты</v-btn>
         <v-btn block v-if="this.role === 'admin' || this.role === 'Директор' || this.role === 'HR'" to="/users" @click="changeAppBoardNameUsers">Мои коллеги</v-btn>
-        <v-btn block to="/byUser" @click="changeAppBoardNameByUser">Календарь</v-btn>
         <v-btn block v-if=" this.role === 'Директор'" to="/mainReport" @click="changeAppBoardNameByUser">Основной отчет</v-btn>
       </v-list>
 

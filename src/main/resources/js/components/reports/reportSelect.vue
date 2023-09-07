@@ -113,8 +113,11 @@ export default {
       this.clickSel1(facilityName)
       this.facilityName = facilityName
 
-      if (this.facilities.find(f => f.name === facilityName).subFacilities[0]) {this.subAttrVisible = true} else {this.subAttrVisible = false} // показ и скрытия поля для выбор подъобъекта
-       this.facilities.find(f => f.name === facilityName).subFacilities.forEach(s => this.filteredSubFacilityNames.push(s.name)) // фильтрация подъобъектов
+      console.log(this.facilities.find(f => f.name === facilityName))
+      if (this.facilities.find(f => f.name === facilityName).subFacilities[0]) {
+        this.subAttrVisible = true
+        this.facilities.find(f => f.name === facilityName).subFacilities.forEach(s => this.filteredSubFacilityNames.push(s.name)) // фильтрация подъобъектов
+      } else {this.subAttrVisible = false} // показ и скрытия поля для выбор подъобъекта
 
     },
     clicked2: function(workingTime) {

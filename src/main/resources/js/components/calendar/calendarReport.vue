@@ -16,7 +16,7 @@
     <br>
 
     <v-select
-        v-if="this.role === 'admin' || this.role === 'Директор' || this.role === 'HR'"
+        v-if="this.directorOff"
         variant="outlined"
         @update:modelValue="selected"
         label="Укажите сотрудника..."
@@ -41,7 +41,7 @@
         </v-col>
         <v-row>
           <v-col v-for="filteredSum in calcSumHoursByMonthAndUser(facility.id)">
-            <v-card v-if="filteredSum.hoursOfWorking !== null " align="center">
+            <v-card v-if="this.directorOff" align="center">
               {{ filteredSum.hoursOfWorking }} ч
             </v-card>
           </v-col>
@@ -150,7 +150,7 @@ function removeDuplicates(arr) {
 
 export default {
   components: {CalendarPage},
-  props: ['facilities', 'profile', 'role', 'profileId', 'url', 'port'],
+  props: ['facilities', 'profile', 'role', 'profileId'],
   data() {
     return {
       facilities: [],
@@ -167,7 +167,8 @@ export default {
       userName: '-',
       sumHoursByMonthAndUser: [],
       sumHoursByMonth: [],
-      sum: []
+      sum: [],
+      directorOff: false
     }
   },
   computed: {
@@ -419,7 +420,7 @@ export default {
     //Сортировка по времени наработки и типу работы
     sortWorkHoursByWorkTypes: function (typeOfWork) {
       {
-        if (this.role === 'admin' || this.role === 'Директор' || this.role === 'HR') {
+        if (this.directorOff) {
           this.axios.get("api/user").then(result =>
               result
                   .data
@@ -447,7 +448,7 @@ export default {
         this.sumHoursByMonth = []
         this.sumHoursByMonthAndUser = []
 
-        if (this.role === 'admin' || this.role === 'Директор' || this.role === 'HR') {
+        if (this.directorOff) {
           this.axios.get( "api/user").then(result =>
               result
                   .data

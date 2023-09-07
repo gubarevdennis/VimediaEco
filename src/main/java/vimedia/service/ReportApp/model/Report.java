@@ -32,7 +32,7 @@ public class Report {
 
     @JsonView(Views.IdName.class)
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties({"reports", "subFacilities"})
+    @JsonIgnoreProperties("reports") //"subFacilities"
     private Facility facility;
 
     @JsonView(Views.IdName.class)
