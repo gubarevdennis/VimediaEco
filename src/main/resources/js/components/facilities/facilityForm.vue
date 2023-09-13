@@ -6,17 +6,17 @@
         v-model="nameFac">
     </v-text-field>
 
-      <v-text-field v-if="editFacilityStatus ? editFacilityStatus : subAttrVisible "
-          placeholder="Введите название подобъекта..."
-          variant="solo-filled"
-          v-model="nameSubFac">
-      </v-text-field>
+    <v-text-field v-if="editFacilityStatus ? editFacilityStatus : subAttrVisible "
+                  placeholder="Введите название подобъекта..."
+                  variant="solo-filled"
+                  v-model="nameSubFac">
+    </v-text-field>
 
     <br>
     <br>
 
     <v-row align="center" justify="center">
-    <v-color-picker v-model="colorNumber" show-swatches></v-color-picker>
+      <v-color-picker v-model="colorNumber" show-swatches></v-color-picker>
     </v-row>
 
     <!--// v-model для того чтобы с input пробросить в data в поле text -->
@@ -26,7 +26,8 @@
     <v-row align="center" justify="center">
       <v-btn @click="save">
         <div v-if="!(editFacilityStatus ? editFacilityStatus : subAttrVisible)">Добавить объект</div>
-        <div v-if="(editFacilityStatus ? editFacilityStatus : subAttrVisible)">Добавить подъобъект</div>
+        <div v-if="(editFacilityStatus && nameSubFac ? editFacilityStatus : subAttrVisible)">Добавить подъобъект</div>
+        <div v-if="(!nameSubFac && (editFacilityStatus ? editFacilityStatus : subAttrVisible))">Изменить объект</div>
       </v-btn>
     </v-row>
 
@@ -79,33 +80,40 @@ export default {
 
       this.editFacilityStatusFunc(false)
 
-      var facility = {
-        name: this.nameFac,
-        color: this.colorNumber
-      };
+      var facility = this.colorNumber === '' ?
+          {
+            name: this.nameFac,
+          } :
+          {
+            name: this.nameFac,
+            color: this.colorNumber
+          };
 
-      var subFacility = {name: this.nameSubFac, color: this.colorNumber, facility: {name : this.nameFac}};
+      var subFacility = {name: this.nameSubFac, color: this.colorNumber, facility: {name: this.nameFac}};
 
-      if (this.id) {
-        // Добавляем id в facility
-        facility = {id: this.id, name: this.nameFac, color: this.colorNumber};
+      if (this.nameSubFac === '') {
+        if (this.id) {
+          // Добавляем id в facility
+          facility = {id: this.id, name: this.nameFac, color: this.colorNumber};
 
-        // если есть id в data, тогда обноволяем информацию
-        this.axios.post( 'api/facility', facility).then(res => {
-                     let index = getIndex(this.facilities, res.data.id) // получеам индекс коллекции
-                     this.facilities.splice(index, 1, res.data);
-                     this.nameFac = '';
-                     this.id = '';
-        })
-      } else {
-        // если нет id создаем новую позицию
-        this.axios.post('api/facility', facility).then(data => {
-              this.facilities.push(data.data)
-              this.nameFac = ''
-              this.id = '';
-            })
+          // если есть id в data, тогда обноволяем информацию
+          this.axios.post('api/facility', facility).then(res => {
+            let index = getIndex(this.facilities, res.data.id) // получеам индекс коллекции
+            this.facilities.splice(index, 1, res.data);
+            this.nameFac = '';
+            this.id = '';
+          })
+        } else {
+          // если нет id создаем новую позицию
+          this.axios.post('api/facility', facility).then(data => {
+            this.facilities.push(data.data)
+            this.nameFac = '';
+            this.id = '';
+          })
+        }
       }
 
+      if (this.nameSubFac !== '') {
         // Логика добавления подобъекта
         this.axios.post('api/subFacility', subFacility).then(data => {
           this.subFacilityNames.push(data.data.name)
@@ -115,10 +123,11 @@ export default {
           this.nameSubFac = ''
           this.idSub = '';
         })
+      }
     },
-  clickedSubFac: function (){
-    return (this.subAttrVisible === true) ?  this.subAttrVisible = false : this.subAttrVisible = true
-  }
+    clickedSubFac: function (){
+      return (this.subAttrVisible === true) ?  this.subAttrVisible = false : this.subAttrVisible = true
+    }
   },
 
 
@@ -127,6 +136,7 @@ export default {
     facilityAttr: function (newVal, oldVal) {
       this.nameFac = newVal.name;
       this.id = newVal.id;
+      this.colorNumber = newVal.color
     },
     subFacilityAttr: function (newVal, oldVal) {
       this.nameSubFac = newVal.name;

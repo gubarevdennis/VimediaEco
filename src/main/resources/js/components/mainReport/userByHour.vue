@@ -1,12 +1,26 @@
 <template>
-  <v-card
-      class="ma-2"
-      label
-      rounded="lg"
-      v-bind:color="setColorByWork(report.typeOfWork)"
-  >
-    {{report.user.name}}
-  </v-card>
+  <v-col align-content="center" justify="center" style="max-height: 50px">
+    <v-sheet
+
+        align="start"
+        rounded="lg"
+        style="background-color: dimgray"
+        width="180px"
+    >
+      <v-sheet
+          align="center"
+          label
+          rounded="lg"
+          v-bind:color="setColorByWork(report.typeOfWork)"
+          v-bind:width="report.hoursOfWorking * 22.5"
+      >
+        <v-row align="center" justify="center" style="background-color: rgba(0,0,0,0); width: 200px">
+          {{report.user.name}}
+        </v-row>
+      </v-sheet>
+    </v-sheet>
+
+  </v-col>
 </template>
 
 <script>

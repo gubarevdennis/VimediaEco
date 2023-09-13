@@ -29,6 +29,17 @@
         <br>
         <v-select
             variant="outlined"
+            @update:modelValue="selectUser"
+            :item-value="userNameSelected"
+            label="Сотрудник"
+            :items="users"
+        >
+        </v-select>
+      </v-col>
+      <v-col>
+        <br>
+        <v-select
+            variant="outlined"
             @update:modelValue="selectWork"
             :item-value="workNameSelected"
             label="Вид работ"
@@ -61,7 +72,11 @@ export default {
       sortedReportsByFacility: [],
       sortedReportsBySubFacility: [],
       sortedReportsByWork: [],
-      sortedReports: []
+      sortedReports: [],
+      users: [],
+      userNameSelected: '',
+      byUser: false,
+      sortedReportsByUser: []
     }
   },
   mounted: function () {
@@ -94,6 +109,17 @@ export default {
         }
     )
     console.log('Прогрузил facility')
+    // Запрашиваем пользователей
+    this.axios.get( "api/user").then(result => {
+          result
+              .data
+              .forEach(u => {
+                this.users.push(u.name) // все пользователи
+              })
+      this.users.unshift('Все сотрудники')
+        }
+    )
+    console.log('Прогрузил user')
   },
   methods: {
     selectFacility: function (facilityNameSelected) {
@@ -137,6 +163,23 @@ export default {
             .filter(r => ((r.facility.name === this.facilityNameSelected)
                 && ((r.subFacility ? r.subFacility.name : '') === this.subFacilityNameSelected)))}
     },
+    selectUser: function (userNameSelected) {
+      console.log('Запустил selectUser')
+      this.byUser = true
+      this.userNameSelected = userNameSelected
+
+      this.resultFilter()
+    },
+    sortByUser: function (reports) {
+      console.log('Запустил sortByUser')
+      // Если выбраны все работы
+      if (this.userNameSelected === 'Все сотрудники') {
+        return this.sortedReportsByUser = reports}
+
+      if (this.byUser) {
+        return this.sortedReportsByUser = reports.filter(r => r.user.name === this.userNameSelected)}
+
+    },
     selectWork: function (workNameSelected) {
       console.log('Запустил selectWork')
       this.byWork = true
@@ -156,17 +199,18 @@ export default {
     },
     resultFilter: function () {
       console.log('Запустил resultFilter')
-      if (this.byFacility && !this.byWork && !this.bySubFacility) this.sortedReports = this.sortByFacility(this.reports)
+      var sorted = this.reports
 
-      if (this.byWork && !this.byFacility) this.sortedReports = this.sortByWork(this.reports)
+      if (this.byFacility) sorted = this.sortByFacility(this.reports)
 
-      if (this.byFacility && this.bySubFacility && !this.byWork) this.sortedReports = this.sortBySubFacility(this.reports)
+      if (this.byUser) sorted = this.sortByUser(sorted)
 
-      if (this.byFacility && this.byWork && !this.bySubFacility)
-        this.sortedReports = this.sortByWork(this.sortByFacility(this.reports))
+      if (this.byWork) sorted = this.sortByWork(sorted)
 
-      if (this.byFacility && this.byWork  && this.bySubFacility)
-        this.sortedReports = this.sortBySubFacility(this.sortByWork(this.sortByFacility(this.reports)))
+      if (this.byFacility && this.bySubFacility) sorted = this.sortBySubFacility(sorted)
+
+      this.sortedReports = sorted
+
     },
     selectVariantsSubFacilities: function () {
       console.log('Запустил selectVariantsSubFacilities')

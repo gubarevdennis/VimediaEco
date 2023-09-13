@@ -1,12 +1,12 @@
 <template >
   <VCalendar  ref="calendar" expanded
-             :columns="columns"
-             :attributes="attributes"
-             :initial-page-position="2"
+              :columns="columns"
+              :attributes="attributes"
+              :initial-page-position="2"
   >
   </VCalendar>
-  <v-card>
-  </v-card>
+  <br>
+  <br>
 </template>
 
 <script>
@@ -25,10 +25,10 @@ export default {
     }
   },
   methods: {
-      clicked() {
-        alert('click!')
-      }
+    clicked() {
+      alert('click!')
     }
+  }
 
 }
 

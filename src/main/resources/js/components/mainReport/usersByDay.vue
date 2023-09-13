@@ -1,6 +1,6 @@
 <template>
-  <v-row justify="center">
-    <v-col align="center" cols="auto">
+  <v-row justify="center" >
+    <v-col align="center" cols="auto" >
         <user-by-hour v-for="report in filteredByDayReports(day)" :report="report" v-bind:key="report.id"></user-by-hour>
     </v-col>
   </v-row>
