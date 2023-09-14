@@ -24,20 +24,47 @@
       </v-col>
     </v-row>
     <br>
+
+    <br>
     <v-divider></v-divider>
     <br>
-    <v-card-title style="font-size: 20px" align="center">
+    <br>
+    <v-card-title style="font-size: 28px; color: #EBB652" align="center">
       Список отчетов
     </v-card-title>
     <br>
+    <v-divider></v-divider>
 
-      <v-select
-          variant="outlined"
-          @update:modelValue="clicked"
-          label="Выберите день для просмотра"
-          :items="['Сегодня','Вчера','Позавчера','Три дня назад','Четыре дня назад','Пять дней назад','Шесть дней назад']"
-          :item-value="offsetText"
-      ></v-select>
+    <v-select
+        v-if="!datePickerShow"
+        variant="outlined"
+        @update:modelValue="clicked"
+        label="Выберите день для просмотра"
+        :items="['Сегодня','Вчера','Позавчера','Три дня назад','Четыре дня назад','Пять дней назад','Шесть дней назад']"
+        :item-value="offsetText"
+    ></v-select>
+
+    <br>
+
+    <v-row align="center" justify="center">
+      <v-btn rounded="lg" variant="outlined" style="font-size: 20px" height="30"  align="center" @click="datePickerShowFunc">
+        <v-text v-if="datePickerShow" style=" font-size: 15px;" >
+          Скрыть календарь
+        </v-text>
+        <v-text v-if="!datePickerShow" style=" font-size: 15px;" >
+          Выбрать на календаре
+        </v-text>
+      </v-btn>
+    </v-row>
+    <br>
+    <br>
+    <v-row align="center" justify="center">
+      <VDatePicker         v-if="datePickerShow"
+                           @update:modelValue="datePickClickFunc"
+                           v-model="datePick" mode="date" />
+    </v-row>
+    <br>
+    <br>
 
     <v-card  v-for="facility in facilities" :key="facility.id" color="#DCDCDC">
       <v-card v-for="report in sortedReportsByFacility(facility)" class=" ma-3 pa-2" >
@@ -77,7 +104,9 @@ export default {
       facilities: [],
       subFacilities: [],
       reports: [],
-      editReportStatus: false
+      editReportStatus: false,
+      datePickerShow: false,
+      datePick: ''
     }
   },
   computed: {
@@ -143,6 +172,12 @@ export default {
         date.setDate(date.getDate() + this.offsetAttr)
       }
 
+      if(this.datePick && this.datePickerShow) {
+        date.setFullYear(this.datePick.getFullYear())
+        date.setMonth(this.datePick.getMonth())
+        date.setDate(this.datePick.getDate())
+      }
+
       // Форматируем текущую дату (добавляем нули, гду нужно и когда нужно)
       var dateForSort = (date.getDate() < 10 ? '0' + date.getDate() : date.getDate())
           +'-'+(date.getMonth()+1 < 10 ? '0' + (date.getMonth()+1) : (date.getMonth()+1))+'-'+date.getFullYear()
@@ -183,6 +218,13 @@ export default {
       return (date.getDate() < 10 ? '0' + date.getDate() : date.getDate())
           + '-' + (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1)) + '-' + date.getFullYear()
     },
+    datePickerShowFunc: function () {
+      var old =this.datePickerShow;
+      this.datePickerShow = !old;
+    },
+    datePickClickFunc: function () {
+
+    }
   },
   watch: {
     reportAttr: function (newVal, oldVal) {

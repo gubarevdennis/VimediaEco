@@ -2,19 +2,19 @@
   <v-container align="center">
 
     <v-row >
-        <report-select v-for="form in reportForms" v-bind:key="form" @click="clickOnSelect(form)"
-                       :reports="reports" :reportAttr="reportAttr" :facilities="facilities"
-                       :subFacilityName="subFacilityName"
-                       :workingType="workingType"
-                       :workingTime="workingTime"
-                       :facilityId="facilityId"
-                       :clickSel1="clickSel1"
-                       :clickSel2="clickSel2"
-                       :clickSel3="clickSel3"
-                       :clickSelSubFac="clickSelSubFac"
+      <report-select v-for="form in reportForms" v-bind:key="form" @click="clickOnSelect(form)"
+                     :reports="reports" :reportAttr="reportAttr" :facilities="facilities"
+                     :subFacilityName="subFacilityName"
+                     :workingType="workingType"
+                     :workingTime="workingTime"
+                     :facilityId="facilityId"
+                     :clickSel1="clickSel1"
+                     :clickSel2="clickSel2"
+                     :clickSel3="clickSel3"
+                     :clickSelSubFac="clickSelSubFac"
 
 
-        ></report-select>
+      ></report-select>
     </v-row>
     <v-btn width="180" align="center" @click="addReportForm">
       +
@@ -25,25 +25,44 @@
 
 
     <v-select
+        v-if="!datePickerShow"
         variant="outlined"
         @update:modelValue="clicked"
         label="Сегодня"
         :items="['Сегодня','Вчера','Позавчера','Три дня назад','Четыре дня назад','Пять дней назад','Шесть дней назад']"
         :item-value="offsetText"
-    ></v-select>
+    >
+    </v-select>
+
+
+    <v-btn rounded="lg" variant="outlined"  style="font-size: 20px" height="30"  align="center" @click="datePickerShowFunc">
+      <v-text v-if="datePickerShow" style=" font-size: 15px;" >
+        Скрыть календарь
+      </v-text>
+      <v-text v-if="!datePickerShow" style=" font-size: 15px;" >
+        Выбрать на календаре
+      </v-text>
+    </v-btn>
+
+    <br>
+    <br>
+    <VDatePicker         v-if="datePickerShow"
+                         v-model="datePick" mode="date" />
+
 
     <v-row justify="center">
-      <v-banner-text v-if="errorFields" style="color: red; text-align: center" >
+      <v-text v-if="errorFields" style="color: red; text-align: center" >
         Отчет не отправлен. Укажите все необходимые поля для отправки отчета!
         <br>
-        Рабочий день в компании Vimedia составляет не менее 8 часов...
-      </v-banner-text>
+        Отчетный день в компании Vimedia Group составляет 8 часов
+      </v-text>
     </v-row>
-
+    <br>
+    <br>
     <v-row justify="center" justify-sm="center">
-      <v-banner-text v-if="reportSendConfirmField" style="color: green; font-size: 18px;" >
+      <v-text v-if="reportSendConfirmField" style="color: green; font-size: 18px;" >
         Отчет отправлен. Спасибо за работу!
-      </v-banner-text>
+      </v-text>
     </v-row>
 
 
@@ -58,10 +77,12 @@
       </v-text-field>
     </v-row>
 
+    <br>
+    <br>
 
     <v-row justify="center" >
       <!--// v-model для того чтобы с input пробросить в data в поле text -->
-      <v-btn color="#EBB652" style="font-size: 20px" height="50" width="250" @click="save">
+      <v-btn color="#EBB652"  style="font-size: 20px" height="50" width="260" @click="save">
         Отправить отчет
       </v-btn>
     </v-row>
@@ -134,6 +155,8 @@ export default {
       subFacilityName: '',
       subFacilityNames: [],
       reportSendConfirmField: false,
+      datePick: '',
+      datePickerShow: false
     }
   },
   // указываем связь данного компонента с полученными от сервара данными
@@ -175,6 +198,12 @@ export default {
           date.setDate(date.getDate() + this.offsetAttr)
         }
 
+        if(this.datePick && this.datePickerShow) {
+          date.setFullYear(this.datePick.getFullYear())
+          date.setMonth(this.datePick.getMonth())
+          date.setDate(this.datePick.getDate())
+        }
+
         // Форматируем текущую дату (добавляем нули, гду нужно и когда нужно)
         this.reportDay = (date.getDate() < 10 ? '0' + date.getDate() : date.getDate())
             + '-' + (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1)) + '-' + date.getFullYear();
@@ -203,10 +232,13 @@ export default {
               console.log(r)
 
               // Если все поля заполнены, то делаем запрос - нет ошибка
-              if (r.facility && r.hoursOfWorking && r.typeOfWork && (this.sumHoursPerDay >= 8 ? true : this.editReportStatus)) {
+              if (r.facility && r.hoursOfWorking && r.typeOfWork
+                  && ((this.sumHoursPerDay === 8) ? true : this.editReportStatus)) {
                 // если нет id создаем новую позицию
                 this.axios.post( 'api/report', r).then(data => {
-                  this.reportSendConfirmField = true // выводим сообщение об успешной отправке
+                  if (data.data === '') {this.errorFields = true} else {
+                    this.reportSendConfirmField = true // выводим сообщение об успешной отправке
+                  }
                   if (this.id) {
                     let index = getIndexForPost(this.reports, data.data.id) // получеам индекс коллекции
                     this.reports.splice(index, 1, data.data);
@@ -360,6 +392,10 @@ export default {
           this.offsetAttr = 0;
 
       }
+    },
+    datePickerShowFunc: function () {
+      var old =this.datePickerShow;
+      this.datePickerShow = !old;
     }
   },
 

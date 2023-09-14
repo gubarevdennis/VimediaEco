@@ -8,14 +8,14 @@
       {{hoursByDay(day) + ' ч'}}
     </v-card-title>
     <v-card-title align="center" style="font-size: 14px; color: #EBB652">
-      {{moneyByDay(day) + ' руб'}}
+    {{moneyByDay(day) + ' руб'}}
     </v-card-title>
   </v-sheet>
 </template>
 
 <script>
 export default {
-  props: ['day', 'reports', 'url', 'port'],
+  props: ['day', 'reports', 'url', 'port', 'role'],
   data() {
     return {
       hours: 0,

@@ -5,6 +5,13 @@
         variant="solo-filled"
         v-model="name">
     </v-text-field>
+
+    <v-text-field
+        placeholder="Введите стоимость часа в рублях..."
+        variant="solo-filled"
+        v-model="salary">
+    </v-text-field>
+
     <v-text-field
         placeholder="Введите пароль..."
         variant="solo-filled"
@@ -56,6 +63,7 @@ export default {
       name: '',
       role: '',
       password: '',
+      salary: ''
     }
   },
   methods: {
@@ -64,6 +72,7 @@ export default {
       var user = {
         name: this.name,
         role: this.role,
+        salary: this.salary,
         password: this.password,
       };
 
@@ -73,48 +82,73 @@ export default {
           id: this.id,
           name: this.name,
           role: this.role,
+          salary: this.salary,
           password: this.password,
         };
 
-        // если есть id в data, тогда обноволяем информацию
-        this.axios.post('api/user', user).then(res => {
-          let index = getIndex(this.users, res.data.id) // получеам индекс коллекции
-
-          this.users.splice(index, 1, res.data);
-
-          // Очищаем поля
-          this.id = '';
-          this.name ='';
-          this.password = '';
-        })
-
-      } else {
-        // если нет id создаем новую позицию
-        this.axios.post('api/user', user).then(data => {
-          this.users.push(data.data)
-
-          // Очищаем поля
-          this.id = '';
-          this.name ='';
-          this.password = '';
-        })
+      if ((this.password === undefined) && (this.role)) {
+        // Добавляем id в report
+        user = {
+          id: this.id,
+          name: this.name,
+          salary: this.salary,
+        };
       }
-    },
-    clicked: function (role) {
-      this.role = role
+
+      if (this.password === undefined) {
+        // Добавляем id в report
+        user = {
+          id: this.id,
+          name: this.name,
+          role: this.role,
+          salary: this.salary,
+        };
+      }
+
+      console.log(user)
+
+      // если есть id в data, тогда обноволяем информацию
+      this.axios.post('api/user', user).then(res => {
+        let index = getIndex(this.users, res.data.id) // получеам индекс коллекции
+
+        this.users.splice(index, 1, res.data);
+
+        // Очищаем поля
+        this.id = '';
+        this.name ='';
+        this.salary = '';
+        this.password = '';
+      })
+
+    } else {
+      // если нет id создаем новую позицию
+      this.axios.post('api/user', user).then(data => {
+        this.users.push(data.data)
+
+        // Очищаем поля
+        this.id = '';
+        this.name ='';
+        this.salary = '';
+        this.password = '';
+      })
     }
   },
+  clicked: function (role) {
+    this.role = role
+  }
+},
 
 
 // функция следит на изменениями переменной
-  watch: {
-    userAttr: function (newVal, oldVal) {
-      this.id = newVal.id;
-      this.name = newVal.name;
-      this.role = newVal.role;
-      this.password = newVal.password;
-    }
+watch: {
+  userAttr: function (newVal, oldVal) {
+    this.id = newVal.id;
+    this.name = newVal.name;
+    this.role = newVal.role;
+    this.salary = newVal.salary;
+    this.password = newVal.password;
   }
+}
 }
 </script>
 

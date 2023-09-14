@@ -6,6 +6,7 @@ import calendarReport from "../components/calendar/calendarReport.vue";
 import loginPage from "../pages/loginPage.vue";
 import cabinet from "../components/personalCabinet/cabinet.vue";
 import mainReport from "../components/mainReport/mainReport.vue";
+import mainReportForDepDirectors from "../components/mainReportForDepDirectors/mainReportForDepDirectors.vue";
 
 
 const router = createRouter({
@@ -34,6 +35,9 @@ const router = createRouter({
     },
     {
       path: '/mainReport', component: mainReport
+    },
+    {
+      path: '/mainReportForDepDirectors', component: mainReportForDepDirectors
     }
   ],
   history: createWebHistory()

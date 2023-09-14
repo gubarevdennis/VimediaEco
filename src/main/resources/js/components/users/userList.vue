@@ -7,6 +7,8 @@
       <v-card v-for="user in sortedUsers" class="pa-2 ma-2">
         <user-row v-bind:key="user.id"
                       :user="user"
+                      :profile="profile"
+                      :role="role"
                       :editUser="editUser" :users="users" />
       </v-card>
     </v-col>

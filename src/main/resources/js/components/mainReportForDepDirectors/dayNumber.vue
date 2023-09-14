@@ -1,8 +1,8 @@
 <template>
 
   <v-card align="center"
-          class="ma-2"
-          label
+          class="wewewe"
+
   >
     <div style="font-size: 18px; vertical-align: center">
       {{day.getDate()}}
@@ -18,9 +18,9 @@ export default {
 </script>
 
 <style scoped>
-.ma-2{
+.wewewe{
   width: 180px;
-
+  height: 30px;
   background: #D9D9D9;
 }
 </style>

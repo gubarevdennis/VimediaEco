@@ -1,5 +1,5 @@
 <template>
-  <v-sheet v-if="this.role === 'Директор' || this.role === 'Диспетчер'">
+  <v-sheet>
     <v-row>
       <v-col>
         <br>
@@ -31,7 +31,7 @@
             variant="outlined"
             @update:modelValue="selectUser"
             :item-value="userNameSelected"
-            label="Сотрудник"
+            label="Сотрудник отдела"
             :items="users"
         >
         </v-select>
@@ -49,11 +49,25 @@
       </v-col>
     </v-row>
   </v-sheet>
-  <month :updateAllReports="updateAllReports" :reports="sortedReports" ></month>
+  <month :role="role" :updateAllReports="updateAllReports" :reports="sortedReports" ></month>
 </template>
 
 <script>
 import Month from "./month.vue";
+
+function departmentNameFromDepDirectorReturn(role) {
+  if (role === "Руководитель сборочного цеха") {
+    return ["Сборщик"]
+  } else if (role === "Руководитель проектного отдела") {
+    return ["Проектировщик"]
+  } else if (role === "Руководитель отдела ведения проектов") {
+    return ["Руководитель проектов", "Монтажник", "Программист", "Прораб", "Проектировщик"]
+  } else if (role === "Руководитель проектов") {
+    return ["Монтажник", "Программист", "Прораб", "Проектировщик"]
+    // } else if (role === "Прораб") {
+    //   return ["Монтажник"]
+  }
+}
 
 export default {
   components: {Month},
@@ -82,45 +96,76 @@ export default {
   },
   mounted: function () {
     console.log('Запустил mounted')
-    // Запрашиваем отчеты
-    this.axios.get( "api/report").then(result => {
-          result
-              .data
-              .forEach(r => {
-                this.reports.push(r) // все отчеты
-              })
-          this.sortedReports = this.reports // без сортировки
-        }
-    )
-    console.log('Прогрузил report')
-    // Запрашиваем объекты
-    this.axios.get("api/facility").then(result => {
-          result
-              .data
-              .forEach(f => {
-                this.facilities.push({
-                  id: f.id,
-                  name: f.name,
-                  subFacilities: f.subFacilities
-                }) // все отчеты
-                this.facilityNames.push(f.name) // все отчеты
 
-              })
-          this.facilityNames.unshift('Все объекты')
-        }
-    )
-    console.log('Прогрузил facility')
     // Запрашиваем пользователей
     this.axios.get( "api/user").then(result => {
           result
               .data
               .forEach(u => {
-                this.users.push(u.name) // все пользователи
+                if ((u.role === departmentNameFromDepDirectorReturn(this.role)[0])
+                    || (u.role === departmentNameFromDepDirectorReturn(this.role)[1])
+                    || (u.role === departmentNameFromDepDirectorReturn(this.role)[2])
+                    || (u.role === departmentNameFromDepDirectorReturn(this.role)[3])
+                    || (u.role === departmentNameFromDepDirectorReturn(this.role)[4])) {
+                  this.users.push(u.name) // все пользователи
+                }
               })
-      this.users.unshift('Все сотрудники')
+          this.users.unshift('Все сотрудники')
         }
     )
     console.log('Прогрузил user')
+
+    // Запрашиваем отчеты
+    this.axios.get( "api/report").then(result => {
+          result
+              .data
+              .forEach(r => {
+
+                if ((r.user.role === departmentNameFromDepDirectorReturn(this.role)[0])
+                    || (r.user.role === departmentNameFromDepDirectorReturn(this.role)[1])
+                    || (r.user.role === departmentNameFromDepDirectorReturn(this.role)[2])
+                    || (r.user.role === departmentNameFromDepDirectorReturn(this.role)[3])
+                    || (r.user.role === departmentNameFromDepDirectorReturn(this.role)[4])) {
+                  this.reports.push(r) // все отчеты
+                }
+
+                if (!(this.facilities.find(f => (f.name === r.facility.name)))
+                     && ((this.role === 'Руководитель проектов') ? (r.user.name === this.profile) : true)) {
+                  this.facilities.push({
+                    id: r.facility.id,
+                    name: r.facility.name,
+                    subFacilities: r.facility.subFacilities
+                  }) // все по которым отчитывался руководитель
+                  this.facilityNames.push(r.facility.name) // все по которым отчитывался руководитель
+                }
+              })
+
+          if (this.role === 'Руководитель проектов') {
+            this.reports = this.reports.filter(r => (this.facilities.find(f => (r.facility.name === f.name)))) // сортировка по объектам менеджеров
+          }
+          this.sortedReports = this.reports
+          this.facilityNames.unshift('Все объекты')
+
+        }
+    )
+    console.log('Прогрузил report')
+    // Запрашиваем объекты
+    // this.axios.get("api/facility").then(result => {
+    //       result
+    //           .data
+    //           .forEach(f => {
+    //             this.facilities.push({
+    //               id: f.id,
+    //               name: f.name,
+    //               subFacilities: f.subFacilities
+    //             }) // все отчеты
+    //             this.facilityNames.push(f.name) // все отчеты
+    //
+    //           })
+    //       this.facilityNames.unshift('Все объекты')
+    //     }
+    // )
+    //console.log('Прогрузил facility')
   },
   methods: {
     selectFacility: function (facilityNameSelected) {
@@ -223,15 +268,35 @@ export default {
     },
     updateAllReports: function (month) {
       this.reports = []
+      this.facilityNames = []
+      this.facilities = []
       console.log('Запустил mounted')
-      // Запрашиваем отчеты
-      this.axios.get( `api/report/month/${month}`).then(result => {
+      this.axios.get( "api/report").then(result => {
             result
                 .data
                 .forEach(r => {
-                  this.reports.push(r) // все отчеты
+
+                  if ((r.user.role === departmentNameFromDepDirectorReturn(this.role)[0])
+                      || (r.user.role === departmentNameFromDepDirectorReturn(this.role)[1])
+                      || (r.user.role === departmentNameFromDepDirectorReturn(this.role)[2])
+                      || (r.user.role === departmentNameFromDepDirectorReturn(this.role)[3])
+                      || (r.user.role === departmentNameFromDepDirectorReturn(this.role)[4])) {
+                    this.reports.push(r) // все отчеты
+                  }
+
+                  if (!(this.facilities.find(f => (f.name === r.facility.name)))
+                  && ((this.role === 'Руководитель проектов') ? (r.user.name === this.profile) : true)) {
+                    this.facilities.push({
+                      id: r.facility.id,
+                      name: r.facility.name,
+                      subFacilities: r.facility.subFacilities
+                    }) // все по которым отчитывался руководитель
+                    this.facilityNames.push(r.facility.name) // все по которым отчитывался руководитель
+                  }
                 })
-            this.sortedReports = this.reports // без сортировки
+            this.reports = this.reports.filter(r => (this.facilities.find(f => (r.facility.name === f.name)))) // без сортировки
+            this.sortedReports = this.reports
+            this.facilityNames.unshift('Все объекты')
             this.resultFilter()
           }
       )
@@ -239,7 +304,6 @@ export default {
     }
   }
 }
-
 
 </script>
 

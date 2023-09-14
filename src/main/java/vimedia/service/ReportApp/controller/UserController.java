@@ -47,7 +47,9 @@ public class UserController {
     @PostMapping
     @JsonView(Views.IdName.class)
     public User create(@RequestBody User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        if (user.getPassword() != null) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
         return userRepo.save(user);
     }
 
@@ -58,7 +60,9 @@ public class UserController {
 
         BeanUtils.copyProperties(user,userFromDB,"id"); // заменяет поля кроме id
 
-        userFromDB.setPassword(passwordEncoder.encode(user.getPassword()));
+        if (user.getPassword() != null) {
+            userFromDB.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
 
         return userRepo.save(userFromDB);
     }

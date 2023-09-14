@@ -12,7 +12,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "usr")
-@ToString(of = {"id","role"})
+@ToString(of = {"id","role","salary"})
 @EqualsAndHashCode(of = {"id"})
 public class User {
     @Id
@@ -33,6 +33,9 @@ public class User {
 
     @JsonView(Views.IdName.class)
     private String role;
+
+    @JsonView(Views.IdName.class)
+    private Long salary;
 
     public void addReport(Report report){
         this.getReports().add(report);
@@ -80,5 +83,13 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Long getSalary() {
+        return salary;
+    }
+
+    public void setSalary(Long salary) {
+        this.salary = salary;
     }
 }

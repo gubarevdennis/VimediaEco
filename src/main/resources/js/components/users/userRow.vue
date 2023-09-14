@@ -2,8 +2,11 @@
   <v-sheet>
     <v-row>
       <v-col >
-        <v-card-title primary-title>
+        <v-card-title style="color: #D88E32" primary-title>
           {{user.name}} - {{user.role}}
+          <div v-if="this.role === 'Директор'" style="font-size: 15px; color: #0B0B0B">
+            Стоимость часа: {{user.salary}} р.
+          </div>
         </v-card-title>
       </v-col>
       <v-spacer></v-spacer>
@@ -19,7 +22,7 @@
 
 
 export default {
-  props: ['user', 'editUser','users'], // получаем переменную user
+  props: ['user', 'editUser','users', 'profile', 'role'], // получаем переменную user
   methods: {
     edit: function () {
       this.editUser(this.user);

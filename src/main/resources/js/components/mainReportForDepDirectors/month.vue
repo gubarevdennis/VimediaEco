@@ -23,7 +23,7 @@
              align="center" v-for="w in [1,2,3,4,5]" v-bind:key="w">
         <v-sheet color="#393a34">
           <br>
-          <week :reports="reports" :daysPerWeek="daysPerWeek" :w="w"></week>
+          <week :role="role" :reports="reports" :daysPerWeek="daysPerWeek" :w="w"></week>
         </v-sheet>
 
       </v-row>
