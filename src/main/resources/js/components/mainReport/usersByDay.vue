@@ -21,7 +21,15 @@ export default {
       return this.reports.filter(r => (new Date(
           r.reportDay.substr(6, 4),
           r.reportDay.substr(3, 2) - 1,
-          r.reportDay.substr(0, 2))).toString() === day.toString())
+          r.reportDay.substr(0, 2))).toString() === day.toString()).sort((a, b) => {
+        if (a.user.name < b.user.name) {
+          return -1;
+        }
+        if (a.user.name > b.user.name) {
+          return 1;
+        }
+        return 0;
+      });
     }
   }
 }

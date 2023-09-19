@@ -233,7 +233,7 @@ export default {
 
               // Если все поля заполнены, то делаем запрос - нет ошибка
               if (r.facility && r.hoursOfWorking && r.typeOfWork
-                  && ((this.sumHoursPerDay === 8) ? true : this.editReportStatus)) {
+                  && ((this.sumHoursPerDay <= 8) ? true : this.editReportStatus)) {
                 // если нет id создаем новую позицию
                 this.axios.post( 'api/report', r).then(data => {
                   if (data.data === '') {this.errorFields = true} else {

@@ -89,7 +89,7 @@ public class ReportController {
 
         System.out.println(this.hours);
 
-        if (this.hours >= 8) return null;
+        if (this.hours + report.getHoursOfWorking() > 8) return null;
 
         return reportRepo.save(report);
     }

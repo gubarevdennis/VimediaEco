@@ -24,12 +24,14 @@ public class User {
     @Column(unique=true)
     private String name;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     @JsonView(Views.Id.class)
 
     private List<Report> reports;
 
     private String password;
+
+    private String telegramId;
 
     @JsonView(Views.IdName.class)
     private String role;
@@ -91,5 +93,13 @@ public class User {
 
     public void setSalary(Long salary) {
         this.salary = salary;
+    }
+
+    public String getTelegramId() {
+        return telegramId;
+    }
+
+    public void setTelegramId(String telegramId) {
+        this.telegramId = telegramId;
     }
 }
