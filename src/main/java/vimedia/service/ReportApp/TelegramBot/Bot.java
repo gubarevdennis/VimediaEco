@@ -163,11 +163,13 @@ public class Bot extends TelegramLongPollingBot {
 
                 if (reportOlder.isEmpty()) {
                     response = response + "Коллега, доброе утро! Напоминаю, что ты не заполнил отчет за позавчера! Это было "+
-                            formattedString + ". Пожалуйста, сделай это сегодня. Спасибо! http://reports.vimedia.ru/";}
+                            formattedString + ". Пожалуйста, сделай это сегодня. Спасибо! http://reports.vimedia.ru/";
+                }
 
                 if (reportOlder.isEmpty() && report.isEmpty()) {
                     response = "Безалаберность, бро! Напоминаю, что ты не заполнил отчет два раза подряд! Последний "+
-                            formattedString + ". Пожалуйста, сделай это сегодня. Спасибо! http://reports.vimedia.ru/";}
+                            formattedString + ". Пожалуйста, сделай это сегодня. Спасибо! http://reports.vimedia.ru/";
+                }
 
                 String telegramId = u.getTelegramId();
 
