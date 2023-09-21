@@ -14,7 +14,6 @@
           rounded="lg"
           v-bind:color="setColorByWork(report.typeOfWork)"
           v-bind:width="report.hoursOfWorking * 22.5"
-
       >
         <v-row align="center" justify="center"
                style="background-color: rgba(0,0,0,0); width: 200px;  font-size: 15px; vertical-align: center">
@@ -49,7 +48,6 @@
         </v-row>
       </v-sheet>
     </v-sheet>
-
   </v-col>
 </template>
 

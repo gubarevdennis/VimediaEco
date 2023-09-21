@@ -1,5 +1,6 @@
 package vimedia.service.ReportApp.controller;
 
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -41,7 +42,7 @@ public class MainController {
     }
 
     @GetMapping("/login")
-    public String loginPage(Model model) {
+    public String loginPage(Model model, HttpSession session) {
         List<User> users = userRepo.findAll().stream().sorted(new Comparator<User>() {
             @Override
             public int compare(User o1, User o2) {
@@ -49,6 +50,7 @@ public class MainController {
             }
         }).collect(Collectors.toList());
         model.addAttribute("users", users);
+        model.addAttribute("sessionId", session.getId());
         return "login";
     }
 

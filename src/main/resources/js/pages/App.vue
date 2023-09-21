@@ -31,7 +31,7 @@
     </v-navigation-drawer>
 
 
-    <v-app-bar
+    <v-app-bar class="d-print-none"
         color="#0B0B0B"
         prominent
     >
