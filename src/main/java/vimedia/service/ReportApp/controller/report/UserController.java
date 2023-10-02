@@ -1,14 +1,13 @@
-package vimedia.service.ReportApp.controller;
+package vimedia.service.ReportApp.controller.report;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import vimedia.service.ReportApp.model.Facility;
-import vimedia.service.ReportApp.model.User;
-import vimedia.service.ReportApp.model.Views;
-import vimedia.service.ReportApp.repo.UserRepo;
+import vimedia.service.ReportApp.model.report.User;
+import vimedia.service.ReportApp.model.report.Views;
+import vimedia.service.ReportApp.repo.report.UserRepo;
 
 import java.util.Comparator;
 import java.util.List;
@@ -47,22 +46,23 @@ public class UserController {
     @PostMapping
     @JsonView(Views.IdName.class)
     public User create(@RequestBody User user) {
-        if (user.getPassword() != null) {
+        if (user.getPassword() != null && !user.getPassword().equals("") && !user.getPassword().equals(" ")) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
         return userRepo.save(user);
     }
 
-    @PutMapping("{id}")
+    @PostMapping("{id}")
     @JsonView(Views.IdName.class)
     public User update(@PathVariable("id") User userFromDB, // из базы данных
                          @RequestBody User user) { // от пользователя
 
         BeanUtils.copyProperties(user,userFromDB,"id"); // заменяет поля кроме id
 
-        if (user.getPassword() != null) {
-            userFromDB.setPassword(passwordEncoder.encode(user.getPassword()));
+        if (user.getPassword() == null || user.getPassword().equals("") || user.getPassword().equals(" ")) {
+            return userRepo.save(userFromDB);
         }
+        userFromDB.setPassword(passwordEncoder.encode(user.getPassword()));
 
         return userRepo.save(userFromDB);
     }

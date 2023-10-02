@@ -1,4 +1,4 @@
-package vimedia.service.ReportApp.controller;
+package vimedia.service.ReportApp.controller.report;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.BeanUtils;
@@ -6,13 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
-import vimedia.service.ReportApp.model.Report;
-import vimedia.service.ReportApp.model.SubFacility;
-import vimedia.service.ReportApp.model.User;
-import vimedia.service.ReportApp.model.Views;
-import vimedia.service.ReportApp.repo.ReportRepo;
-import vimedia.service.ReportApp.repo.SubFacilityRepo;
-import vimedia.service.ReportApp.repo.UserRepo;
+import vimedia.service.ReportApp.model.report.Report;
+import vimedia.service.ReportApp.model.report.User;
+import vimedia.service.ReportApp.model.report.Views;
+import vimedia.service.ReportApp.repo.report.ReportRepo;
+import vimedia.service.ReportApp.repo.report.SubFacilityRepo;
+import vimedia.service.ReportApp.repo.report.UserRepo;
 import vimedia.service.ReportApp.service.MyUserDetails;
 
 import java.time.LocalDate;
@@ -102,7 +101,8 @@ public class ReportController {
         BeanUtils.copyProperties(report,reportFromDB,"id"); // заменяет поля кроме id
 
         // Находим пользователя
-        User user = userRepo.findByName(myUserDetails.getUsername()).orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден!"));
+        User user = userRepo.findByName(myUserDetails.getUsername()).orElseThrow(
+                () -> new UsernameNotFoundException("Пользователь не найден!"));
 
         // Вставляем его id в пользователя для отчета
         user.setId(user.getId());

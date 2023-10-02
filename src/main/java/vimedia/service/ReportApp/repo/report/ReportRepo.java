@@ -1,14 +1,12 @@
-package vimedia.service.ReportApp.repo;
+package vimedia.service.ReportApp.repo.report;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import vimedia.service.ReportApp.model.Facility;
-import vimedia.service.ReportApp.model.Report;
-import vimedia.service.ReportApp.model.User;
+import vimedia.service.ReportApp.model.report.Report;
+import vimedia.service.ReportApp.model.report.User;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 public interface ReportRepo extends JpaRepository<Report,Integer> {
 

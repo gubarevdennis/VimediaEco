@@ -1,11 +1,10 @@
-package vimedia.service.ReportApp.model;
+package vimedia.service.ReportApp.model.report;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import vimedia.service.ReportApp.model.tools.Tool;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,13 +13,14 @@ import java.util.List;
 @Table
 @ToString(of = {"id","name"})
 @EqualsAndHashCode(of = {"id"})
-public class SubFacility {
+public class Facility {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonView(Views.Id.class)
 
     private int id;
     @JsonView(Views.IdName.class)
+    @Column(unique=true)
     private String name;
 
     @JsonView(Views.IdName.class)
@@ -31,17 +31,24 @@ public class SubFacility {
     @JsonView(Views.FuLlFacility.class)
     private LocalDateTime creationDate;
 
-    @ManyToOne
-    @JsonIgnoreProperties("subFacilities")
-    private Facility facility;
-
-    @OneToMany(mappedBy = "subFacility")
-    @JsonIgnoreProperties("subFacility")
+    @OneToMany(mappedBy = "facility")
+//    @JsonView(Views.IdName.class)
+    @JsonIgnoreProperties("facility")
     private List<Report> reports;
+
+    @OneToMany(mappedBy = "facility", cascade = CascadeType.ALL)
+    @JsonView(Views.IdName.class)
+    @JsonIgnoreProperties("facility")
+    private List<SubFacility> subFacilities;
+
+    @OneToMany(mappedBy = "facility")
+//    @JsonView(Views.IdName.class)
+    @JsonIgnoreProperties("facility")
+    private List<Tool> tools;
 
     public void addReport(Report report){
         this.reports.add(report);
-        report.setSubFacility(this);
+        report.setFacility(this);
     }
     public void removeReport(Report report){
         this.reports.remove(report);
@@ -52,6 +59,30 @@ public class SubFacility {
 
     public void setReports(List<Report> reports) {
         this.reports = reports;
+    }
+
+    public void addSubFacility(SubFacility subFacility){
+        this.subFacilities.add(subFacility);
+        subFacility.setFacility(this);
+    }
+    public void removeSubFacility(SubFacility subFacility){
+        this.subFacilities.remove(subFacility);
+    }
+
+    public void addTool(Tool tool){
+        this.tools.add(tool);
+        tool.setFacility(this);
+    }
+    public void removeTool(Tool tool){
+        this.tools.remove(tool);
+    }
+
+    public List<SubFacility> getSubFacilities() {
+        return subFacilities;
+    }
+
+    public void setSubFacilities(List<SubFacility> subFacilities) {
+        this.subFacilities = subFacilities;
     }
 
     public LocalDateTime getCreationDate() {
@@ -86,11 +117,11 @@ public class SubFacility {
         this.color = color;
     }
 
-    public Facility getFacility() {
-        return facility;
+    public List<Tool> getTools() {
+        return tools;
     }
 
-    public void setFacility(Facility facility) {
-        this.facility = facility;
+    public void setTools(List<Tool> tools) {
+        this.tools = tools;
     }
 }

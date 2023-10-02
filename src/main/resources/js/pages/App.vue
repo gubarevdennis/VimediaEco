@@ -21,6 +21,7 @@
         <v-btn block v-if="this.role === 'admin' || this.role === 'Директор' || this.role === 'HR'" to="/users" @click="changeAppBoardNameUsers">Мои коллеги</v-btn>
         <v-btn block v-if=" this.role === 'Директор' || this.role === 'Диспетчер'" to="/mainReport" @click="changeAppBoardNameByUser">Основной отчет</v-btn>
         <v-btn block v-if=" this.role.split(' ')[0] === 'Руководитель' /*|| this.role === 'Прораб'*/" to="/mainReportForDepDirectors" @click="changeAppBoardNameByUser">Отчет по отделу</v-btn>
+        <v-btn block v-if="this.role === 'admin' || this.role === 'Директор' || this.role === 'Кладовщик'" to="/mainTableTools" @click="changeAppBoardTools">Инструменты</v-btn>
       </v-list>
 
       <v-list-item
@@ -39,9 +40,10 @@
 
       <v-toolbar-title style="color: #F9F9F9">{{appBoardName}}</v-toolbar-title>
 
-      <v-btn style="color: #F9F9F9" href="http://reports.vimedia.ru/logout" variant="text" icon="mdi-logout"></v-btn>
+      <v-btn style="color: #F9F9F9" href="http://localhost:9000/logout" variant="text" icon="mdi-logout"></v-btn>
 
     </v-app-bar>
+
     <v-main style="background: #0B0B0B">
       <router-view :profile="profile" :role="role" :profileId="profileId" :reports="reports" :facilities="facilities" :users="users" ></router-view>
     </v-main>
@@ -84,6 +86,9 @@ export default {
     },
     changeAppBoardNameCabinet() {
       this.appBoardName="Личный кабинет Vimedia"
+    },
+    changeAppBoardTools() {
+      this.appBoardName="Инструменты"
     }
 
   },

@@ -53,12 +53,9 @@ public class WebSecurityConfig {
                         .requestMatchers( "/api/**").permitAll()
                         .anyRequest().authenticated()
                 )
-//                .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
                 .sessionManagement((session) -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
-                       // .invalidSessionUrl("/logout")
-                        .maximumSessions(150)
-                        .maxSessionsPreventsLogin(false)
+                                .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+                        // .invalidSessionUrl("/logout")
                 )
                 .formLogin(formLogin -> formLogin
                         .loginPage("/login")

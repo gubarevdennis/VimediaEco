@@ -1,4 +1,4 @@
-package vimedia.service.ReportApp.controller;
+package vimedia.service.ReportApp.controller.report;
 
 
 import com.fasterxml.jackson.annotation.JsonView;
@@ -6,12 +6,11 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
-import vimedia.service.ReportApp.exceptions.NotFoundExc;
-import vimedia.service.ReportApp.model.Facility;
-import vimedia.service.ReportApp.model.SubFacility;
-import vimedia.service.ReportApp.model.Views;
-import vimedia.service.ReportApp.repo.FacilityRepo;
-import vimedia.service.ReportApp.repo.SubFacilityRepo;
+import vimedia.service.ReportApp.model.report.Facility;
+import vimedia.service.ReportApp.model.report.SubFacility;
+import vimedia.service.ReportApp.model.report.Views;
+import vimedia.service.ReportApp.repo.report.FacilityRepo;
+import vimedia.service.ReportApp.repo.report.SubFacilityRepo;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;

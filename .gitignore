@@ -36,3 +36,4 @@ build/
 /node_modules/
 /src/main/resources/static/js/
 /src/main/frontend/
+src/main/resources/storage

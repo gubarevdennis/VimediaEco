@@ -1,12 +1,13 @@
-package vimedia.service.ReportApp.model;
+package vimedia.service.ReportApp.model.report;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import vimedia.service.ReportApp.model.tools.Event;
+import vimedia.service.ReportApp.model.tools.Tool;
 
 import java.util.List;
 
@@ -26,7 +27,6 @@ public class User {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     @JsonView(Views.Id.class)
-
     private List<Report> reports;
 
     private String password;
@@ -39,12 +39,36 @@ public class User {
     @JsonView(Views.IdName.class)
     private Long salary;
 
+    @OneToMany(mappedBy = "user")
+    @JsonIgnoreProperties("user")
+    private List<Tool> tools;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnoreProperties("user")
+    private List<Event> events;
+
     public void addReport(Report report){
         this.getReports().add(report);
         report.setUser(this);
     }
     public void removeReport(Report report){
         this.getReports().remove(report);
+    }
+
+    public void addTool(Tool tool){
+        this.tools.add(tool);
+        tool.setUser(this);
+    }
+    public void removeTool(Tool tool){
+        this.tools.remove(tool);
+    }
+
+    public void addEvent(Event event){
+        this.events.add(event);
+        event.setUser(this);
+    }
+    public void removeEvent(Event event){
+        this.events.remove(event);
     }
 
     public List<Report> getReports() {
@@ -101,5 +125,13 @@ public class User {
 
     public void setTelegramId(String telegramId) {
         this.telegramId = telegramId;
+    }
+
+    public List<Tool> getTools() {
+        return tools;
+    }
+
+    public void setTools(List<Tool> tools) {
+        this.tools = tools;
     }
 }

@@ -1,4 +1,4 @@
-package vimedia.service.ReportApp.model;
+package vimedia.service.ReportApp.model.report;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

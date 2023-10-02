@@ -65,7 +65,6 @@
       </v-text>
     </v-row>
 
-
     <br>
     <br>
 
@@ -249,6 +248,7 @@ export default {
 
                   // Очищаем поля
                   this.reportForms = [1]
+                  this.subFacilityName = {}
                   this.text = ''
                   this.id = '';
                 })
@@ -408,7 +408,10 @@ export default {
 // функция следит на изменениями переменной
   watch: {
     reportAttr: function (newVal, oldVal) {
-
+      this.facilityName = newVal.facilityName;
+      this.workingType = newVal.workingType;
+      this.workingTime = newVal.workingTime;
+      this.subFacilityName = newVal.subFacilityName;
       this.text = newVal.text;
       this.id = newVal.id;
     },

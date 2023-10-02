@@ -108,7 +108,7 @@ export default {
       console.log(user)
 
       // если есть id в data, тогда обноволяем информацию
-      this.axios.post('api/user', user).then(res => {
+      this.axios.post('api/user/' + this.id, user).then(res => {
         let index = getIndex(this.users, res.data.id) // получеам индекс коллекции
 
         this.users.splice(index, 1, res.data);

@@ -46,7 +46,7 @@ export default {
 
 
       filteredByDayReports.forEach(r => calcMoney += r.hoursOfWorking > 8 ? 8 : r.hoursOfWorking * r.user.salary )
-      return this.money = calcMoney
+      return this.money =  Math.round(calcMoney/8) // попросил Антон
     },
   }
 }

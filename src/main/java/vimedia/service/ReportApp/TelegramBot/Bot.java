@@ -1,8 +1,6 @@
 package vimedia.service.ReportApp.TelegramBot;
 
-import jakarta.persistence.FetchType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -11,15 +9,11 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import vimedia.service.ReportApp.model.Report;
-import vimedia.service.ReportApp.model.User;
-import vimedia.service.ReportApp.repo.UserRepo;
+import vimedia.service.ReportApp.model.report.Report;
+import vimedia.service.ReportApp.model.report.User;
+import vimedia.service.ReportApp.repo.report.UserRepo;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -50,7 +44,6 @@ public class Bot extends TelegramLongPollingBot {
         telegramBotsApi.registerBot(this);
         this.startTimer();
     }
-
 
     @Override
     public String getBotUsername() {
@@ -109,14 +102,19 @@ public class Bot extends TelegramLongPollingBot {
                     "Набирай свою фамилию и имя, точно как в приложении";
         }
         else if(userRepo.findByName(textMsg).isPresent() && userRepo.findByTelegramId(chatId).isEmpty()) {
+            // Работа с кодировкой (на всякий случай)
 //            String textEncoded = new String(textMsg.getBytes(StandardCharsets.UTF_8), "windows-1251");
 //            System.out.println(textEncoded);
+
+            // Достаем пользователя из БД
             User user = userRepo.findByName(textMsg).get();
 
-            if(user.getTelegramId() == null || user.getTelegramId().equals("")) {
+            // Задание нового чат id для пользователя
+//            if(user.getTelegramId() == null || user.getTelegramId().equals("")) {
                 user.setTelegramId(chatId);
-            }
+//            }
 
+            // Сохранение пользователя в БД
             userRepo.save(user);
 
             response = "Я тебя узнал бро, " + textMsg +
@@ -140,13 +138,17 @@ public class Bot extends TelegramLongPollingBot {
             SendMessage outMess = new SendMessage();
 
             List<Report> reports = u.getReports();
+
+            // Если у пользователя есть чат id
             if (u.getTelegramId() != null) {
 
+                // Поиск отчета за вчерашний день
                 Optional<Report> report = reports
                         .stream()
                         .filter(r -> r.getReportDay().equals(LocalDate.now().minusDays(1)))
                         .findAny();
 
+                // Поиск отчета за позавчерашний день
                 Optional<Report> reportOlder = reports
                         .stream()
                         .filter(r -> r.getReportDay().equals(LocalDate.now().minusDays(2)))
@@ -157,7 +159,10 @@ public class Bot extends TelegramLongPollingBot {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM uuuu");
                 String formattedString = localDate.format(formatter);
 
-                //Добавляем в наше сообщение id чата а также наш ответ
+                // Текущий день
+                Date nowDate = new Date();
+
+                // Добавляем в наше сообщение id чата, а также наш ответ
                 String response = "Коллега, доброе утро! Напоминаю тебе, что ты не заполнил отчет за вчерашний день! Это было "+
                         formattedString + ". Пожалуйста, сделай это сегодня. Спасибо! http://reports.vimedia.ru/";
 
@@ -166,19 +171,32 @@ public class Bot extends TelegramLongPollingBot {
                             formattedString + ". Пожалуйста, сделай это сегодня. Спасибо! http://reports.vimedia.ru/";
                 }
 
-                if (reportOlder.isEmpty() && report.isEmpty()) {
+                if (reportOlder.isEmpty() && report.isEmpty() && nowDate.getDay() != 1) {
                     response = "Безалаберность, бро! Напоминаю, что ты не заполнил отчет два раза подряд! Последний "+
                             formattedString + ". Пожалуйста, сделай это сегодня. Спасибо! http://reports.vimedia.ru/";
                 }
 
-                String telegramId = u.getTelegramId();
+                String telegramId = u.getTelegramId(); // берем id чата конкретного пользователя
 
-                outMess.setChatId(telegramId);
+                outMess.setChatId(telegramId); // вставляем в отправляемое сообщение id чата
 
-                outMess.setText(response);
+                outMess.setText(response); // вставляем в отправляемое сообщение текст сообщения
+
+
+                // Отправка в чат
                 try {
-                    //Отправка в чат
-                    if (report.isEmpty() && !telegramId.equals(""))
+                    // Отправляем сообщение в случае наличия id чата и факта незаполненного отчета за вчера или позавчера
+                    if (
+                            // разсылаем сообщения в случае наличия не заполненных отчетов
+                            report.isEmpty() || reportOlder.isEmpty()
+                            // не разсылаем сообщения если нет чата
+                            && !telegramId.equals("")
+                            // не разсылаем сообщения за отчеты воскресенье
+                            && nowDate.getDay() != 0
+                            // не разсылаем сообщения за отчеты в субботу, если ты не монтажник или не прораб
+                            && (nowDate.getDay() != 6
+                                || u.getRole().equals("Монтажник") || u.getRole().equals("Прораб"))
+                    )
                         execute(outMess);
                 } catch (TelegramApiException e) {
                     e.printStackTrace();
@@ -189,6 +207,7 @@ public class Bot extends TelegramLongPollingBot {
 
     // Таймер на отправку уведомлений каждый день
     public void startTimer(){
+
         Date nowDate = new Date();
         Calendar c = Calendar.getInstance();
         c.setTime(nowDate);
@@ -196,7 +215,6 @@ public class Bot extends TelegramLongPollingBot {
         nowDate = c.getTime();
 
         Date date = new Date(nowDate.getYear(),nowDate.getMonth(),nowDate.getDate(), 10, 0);
-
         // 1000 - время в мс, через которое будет запущена задача
         telegramTimer.schedule(telegramTimerTask, date, 86400000); //86400000
     }
@@ -205,6 +223,7 @@ public class Bot extends TelegramLongPollingBot {
 
         @Override
         public void run() {
+
             // Если не заполнил вчерашний отчет, то высылаем напоминание
             sendNotification();
         }
