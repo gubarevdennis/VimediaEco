@@ -2,22 +2,34 @@
   <v-container align="center">
 
     <v-row >
-      <report-select v-for="form in reportForms" v-bind:key="form" @click="clickOnSelect(form)"
-                     :reports="reports" :reportAttr="reportAttr" :facilities="facilities"
-                     :subFacilityName="subFacilityName"
-                     :workingType="workingType"
-                     :workingTime="workingTime"
-                     :facilityId="facilityId"
-                     :clickSel1="clickSel1"
-                     :clickSel2="clickSel2"
-                     :clickSel3="clickSel3"
-                     :clickSelSubFac="clickSelSubFac"
+      <report-select
+          :clearFormAttr="clearFormAttr"
+          :refreshFormAttr="refreshFormAttr"
 
+          v-for="form in reportForms" v-bind:key="form"
 
+          @click="clickOnSelect(form)"
+          :reports="reports"
+          :reportAttr="reportAttr"
+          :facilities="facilities"
+          :subFacilityName="subFacilityName"
+          :workingType="workingType"
+          :workingTime="workingTime"
+          :facilityId="facilityId"
+          :clickSel1="clickSel1"
+          :clickSel2="clickSel2"
+          :clickSel3="clickSel3"
+          :clickSelSubFac="clickSelSubFac"
+          :editSelect="editSelect"
+          :editFormFunction="editFormFunction"
       ></report-select>
     </v-row>
     <v-btn width="180" align="center" @click="addReportForm">
       +
+    </v-btn>
+
+    <v-btn v-if="deleteFormVisual" width="180" align="center" @click="deleteReportForm">
+      -
     </v-btn>
 
     <br>
@@ -108,6 +120,15 @@ function getIdByName(facilities, name) {
   return -1;
 }
 
+function getyName(facilities, name) {
+  for (let i = 0; i < facilities.length; i++) {
+    if (facilities[i].name === name) {
+      return facilities[i].id
+    }
+  }
+  return -1;
+}
+
 // Функция для определения индекса элементов коллекции
 function getIndexForPost(list, id) {
   for (let i = 0; i < list.length; i++) {
@@ -130,7 +151,7 @@ function getIndex(list, id) {
 export default {
   components: {ReportSelect},
   props: ['reports', 'reportAttr', 'facilities', 'subFacilities',
-    'editReportStatus', 'addFacilityFromForm', 'url', 'port'], // чтобы рабоать с данной переменной и передавать ее выше в корень
+    'editReportStatus', 'addFacilityFromForm', 'url', 'port', 'editSelect', 'report'], // чтобы рабоать с данной переменной и передавать ее выше в корень
   // функция нужна для того чтобы у каждого компонента было свое уникальное хранилище
   data() {
     return {
@@ -155,7 +176,9 @@ export default {
       subFacilityNames: [],
       reportSendConfirmField: false,
       datePick: '',
-      datePickerShow: false
+      datePickerShow: false,
+      clearFormAttr: false,
+      deleteFormVisual: false,
     }
   },
   // указываем связь данного компонента с полученными от сервара данными
@@ -170,14 +193,91 @@ export default {
     )
   },
   methods: {
+    editSelect: function () {
+
+    },
+    clearForm: function () {
+      console.log('clearFormAttr')
+      this.clearFormAttr = true;
+    },
+    refreshFormAttr: function () {
+      this.clearFormAttr = false
+    },
+    editFormFunction: function (report) {
+      if (this.editReportStatus) {
+
+        console.log('editFormFunction')
+        console.log(report)
+
+        if (report.hoursOfWorking) { this.workingTimes.push(
+            {
+              name: report.hoursOfWorking,
+              formId: 1
+            }
+        )
+
+          this.workingTime =
+              {
+                name: report.hoursOfWorking,
+                formId: 1
+              }
+        }
+        if (report.typeOfWork) { this.workingTypes.push(
+            {
+              name: report.typeOfWork,
+              formId: 1
+            }
+        )
+
+          this.workingType =
+              {
+                name: report.typeOfWork,
+                formId: 1
+              }
+        }
+        if (report.subFacility) { this.subFacilityNames.push(
+            {
+              name: report.subFacility.name,
+              formId: 1
+            })
+
+          this.subFacilityName =
+              {
+                name: report.subFacility.name,
+                formId: 1
+              }
+        }
+        if (report.facility) { this.facilityNames.push(
+            {
+              name: report.facility.name,
+              formId: 1
+            })
+
+          this.facilityName =
+              {
+                name: report.facility.name,
+                formId: 1
+              }
+        }
+
+
+        this.text = report.text;
+        this.id = report.id;
+
+        console.log('editFormFunction array')
+        console.log(this.facilityNames)
+
+      }
+    },
     save: function () {
       this.defaultFacilityName = ''
       // Обнуляем счетчик времени наработки в день
       this.sumHoursPerDay = 0
 
       // Проверка на null заполненных полей
-      if(this.facilityNames[0] === undefined || this.workingTypes[0] === undefined ||
-          this.workingTimes[0] === undefined)
+      if ( this.facilityNames[0] === undefined
+          || this.workingTypes[0] === undefined
+          || this.workingTimes[0] === undefined )
       {
         // Если null - выводим ошибку
         this.errorFields = true
@@ -193,11 +293,11 @@ export default {
         // Выводим текущую дату
         var date = new Date()
 
-        if(this.offsetAttr) {
+        if (this.offsetAttr) {
           date.setDate(date.getDate() + this.offsetAttr)
         }
 
-        if(this.datePick && this.datePickerShow) {
+        if (this.datePick && this.datePickerShow) {
           date.setFullYear(this.datePick.getFullYear())
           date.setMonth(this.datePick.getMonth())
           date.setDate(this.datePick.getDate())
@@ -215,7 +315,7 @@ export default {
                   {
                     id: this.id ? this.id : undefined,
                     facility: {id: getIdByName(this.facilities, f.name)},
-                    subFacility: {name: this.subFacilityName.name},
+                    subFacility: {name: this.subFacilityNames[f.formId - 1] ? this.subFacilityNames[f.formId - 1].name : ''},
                     typeOfWork: this.workingTypes[f.formId - 1].name,
                     text: this.text,
                     hoursOfWorking: this.workingTimes[f.formId - 1].name,
@@ -247,10 +347,19 @@ export default {
                   }
 
                   // Очищаем поля
-                  this.reportForms = [1]
-                  this.subFacilityName = {}
+                  this.clearForm() // очищение формы
+
+                  this.facilityNames = []
+                  this.subFacilityNames = []
+                  this.workingTypes = []
+                  this.workingTimes = []
+
+                  this.reportsForSend = []
+
                   this.text = ''
-                  this.id = '';
+                  this.id = ''
+
+
                 })
                 this.errorFields = false
               } else {
@@ -264,10 +373,12 @@ export default {
     clickOnSelect: function (form) {
       this.reportSendConfirmField = false // убираем сообщение при редактировании полей
       this.form = form
+      console.log('form')
+      console.log(form)
     },
 
     clickSel1: function(facilityName) {
-      if (this.facilityNames.find(f => (f.id === this.facilityName.formId)) !== undefined) {
+      if (this.facilityNames.find(f => (f.id === this.facilityName.formId)) !== undefined) { // если форма найдена, то просто заменяем имя
         this.facilityName = {
           name: facilityName
         }
@@ -278,7 +389,7 @@ export default {
         }
       }
 
-      if (this.facilityNames.find(f => (f.formId === this.facilityName.formId)) !== undefined) {
+      if (this.facilityNames.find(f => (f.formId === this.facilityName.formId)) !== undefined) { // если форма найдена, то просто заменяем имя
         // Заменяем элемент массива отчетов для отправки
         let index = getIndex(this.facilityNames, this.facilityName.formId) // получеам индекс коллекции
         console.log(index + " index")
@@ -288,7 +399,9 @@ export default {
       }
 
       // Массив имен объектов для отправки
+      console.log('facilityNames')
       console.log(this.facilityNames)
+
     },
     clickSel2: function(workingTime) {
 
@@ -313,6 +426,7 @@ export default {
       }
 
       // Массив имен объектов для отправки
+      console.log('workingTimes')
       console.log(this.workingTimes)
     },
     clickSel3: function(workingType) {
@@ -337,6 +451,7 @@ export default {
       }
 
       // Массив имен объектов для отправки
+      console.log('workingTypes')
       console.log(this.workingTypes)
     },
     clickSelSubFac: function (subFacilityName) {
@@ -363,6 +478,20 @@ export default {
     addReportForm: function (){
       this.countReportForms++
       this.reportForms.push(this.countReportForms)
+      this.deleteFormVisual = true
+    },
+    deleteReportForm: function () {
+      this.countReportForms--
+      this.reportForms.pop()
+      this.facilityNames.pop()
+      this.subFacilityNames.pop()
+      this.workingTypes.pop()
+      this.workingTimes.pop()
+      this.reportsForSend.pop()
+
+      if (this.reportForms[1] === undefined) {
+        this.deleteFormVisual = false
+      }
     },
     clicked: function(offsetText) {
       this.offsetText = offsetText
@@ -415,7 +544,6 @@ export default {
       this.text = newVal.text;
       this.id = newVal.id;
     },
-
   }
 }
 </script>

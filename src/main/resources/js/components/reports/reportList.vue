@@ -17,9 +17,14 @@
         no-gutters
     >
       <v-col align="start">
-        <report-form :reports="reports" :facilities="facilities" :reportAttr="report" :profileId="profileId"
-                     :editReportStatus="editReportStatus"
-
+        <report-form
+            :report="report"
+            :editSelect="editSelect"
+            :reports="reports"
+            :facilities="facilities"
+            :reportAttr="report"
+            :profileId="profileId"
+            :editReportStatus="editReportStatus"
         />
       </v-col>
     </v-row>
@@ -71,7 +76,7 @@
         <v-card-title v-text="facility.name"></v-card-title>
         <report-row v-bind:key="report.id"
                     :report="report"
-                    :editReport="editReport" :reports="reports"
+                    :editReport="editReport" :editReportSelect="editReportSelect" :reports="reports"
         />
       </v-card>
     </v-card>
@@ -160,6 +165,15 @@ export default {
       this.report = report
 
       console.log("Функция editReport " + report.text)
+    },
+    editReportSelect: function () {
+      this.editSelect(this.report)
+      console.log('editReportSelect')
+      console.log(this.report)
+    },
+    editSelect: function (report) {
+        console.log('editSelect')
+        console.log(report)
     },
     facilityStatus: function () {
 

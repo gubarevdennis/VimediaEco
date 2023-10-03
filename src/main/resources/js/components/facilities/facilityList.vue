@@ -20,7 +20,7 @@
     </v-col>
 
     <v-row
-        v-if="this.role === 'admin' || this.role === 'HR' || this.role === 'Директор'
+        v-if="this.role === 'admin' || this.role === 'HR' || this.role === 'Директор' || this.role === 'Диспетчер'
               || this.role === 'Менеджер' || this.role === 'Руководитель отдела ведения проектов' || this.role === 'Руководитель проектов'"
         align="start"
         no-gutters
@@ -74,7 +74,7 @@ export default {
     console.log(this.role)
 
     // Добавление объектов
-    if (this.role === 'admin' || this.role === 'Директор' || this.role === 'HR'
+    if (this.role === 'admin' || this.role === 'Директор' || this.role === 'HR' || this.role === 'Диспетчер'
         || this.role === 'Менеджер' || this.role === 'Руководитель отдела ведения проектов') {
       this.axios.get( "api/facility").then(result =>
           result

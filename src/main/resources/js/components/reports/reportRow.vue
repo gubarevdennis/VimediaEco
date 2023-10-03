@@ -32,10 +32,11 @@
 // const port = ''
 
 export default {
-  props: ['report', 'editReport','reports'], // получаем переменную facility
+  props: ['report', 'editReport','reports', 'editReportSelect'], // получаем переменную facility
   methods: {
     edit: function () {
       this.editReport(this.report);
+      this.editReportSelect(this.report);
     },
     del: function () {
       this.axios.delete(`api/report/${this.report.id}`).then(result => {

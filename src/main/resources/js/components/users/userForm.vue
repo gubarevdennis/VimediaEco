@@ -86,7 +86,7 @@ export default {
           password: this.password,
         };
 
-      if ((this.password === undefined) && (this.role)) {
+      if ((this.password === undefined || this.password === '' || this.password === ' ') && (this.role)) {
         // Добавляем id в report
         user = {
           id: this.id,
@@ -95,7 +95,7 @@ export default {
         };
       }
 
-      if (this.password === undefined) {
+      if (this.password === undefined || this.password === '' || this.password === ' ') {
         // Добавляем id в report
         user = {
           id: this.id,

@@ -111,7 +111,7 @@ public class Bot extends TelegramLongPollingBot {
 
             // Задание нового чат id для пользователя
 //            if(user.getTelegramId() == null || user.getTelegramId().equals("")) {
-                user.setTelegramId(chatId);
+            user.setTelegramId(chatId);
 //            }
 
             // Сохранение пользователя в БД
@@ -166,12 +166,12 @@ public class Bot extends TelegramLongPollingBot {
                 String response = "Коллега, доброе утро! Напоминаю тебе, что ты не заполнил отчет за вчерашний день! Это было "+
                         formattedString + ". Пожалуйста, сделай это сегодня. Спасибо! http://reports.vimedia.ru/";
 
-                if (reportOlder.isEmpty()) {
-                    response = response + "Коллега, доброе утро! Напоминаю, что ты не заполнил отчет за позавчера! Это было "+
-                            formattedString + ". Пожалуйста, сделай это сегодня. Спасибо! http://reports.vimedia.ru/";
-                }
+//                if (reportOlder.isEmpty() && nowDate.getDay() != 0) {
+//                    response = response + "Коллега, доброе утро! Напоминаю, что ты не заполнил отчет за позавчера! Это было "+
+//                            formattedString + ". Пожалуйста, сделай это сегодня. Спасибо! http://reports.vimedia.ru/";
+//                }
 
-                if (reportOlder.isEmpty() && report.isEmpty() && nowDate.getDay() != 1) {
+                if (reportOlder.isEmpty() && report.isEmpty() && nowDate.getDay() != 0) {
                     response = "Безалаберность, бро! Напоминаю, что ты не заполнил отчет два раза подряд! Последний "+
                             formattedString + ". Пожалуйста, сделай это сегодня. Спасибо! http://reports.vimedia.ru/";
                 }
@@ -187,17 +187,18 @@ public class Bot extends TelegramLongPollingBot {
                 try {
                     // Отправляем сообщение в случае наличия id чата и факта незаполненного отчета за вчера или позавчера
                     if (
-                            // разсылаем сообщения в случае наличия не заполненных отчетов
+                        // разсылаем сообщения в случае наличия не заполненных отчетов
                             report.isEmpty() || reportOlder.isEmpty()
-                            // не разсылаем сообщения если нет чата
-                            && !telegramId.equals("")
-                            // не разсылаем сообщения за отчеты воскресенье
-                            && nowDate.getDay() != 0
-                            // не разсылаем сообщения за отчеты в субботу, если ты не монтажник или не прораб
-                            && (nowDate.getDay() != 6
-                                || u.getRole().equals("Монтажник") || u.getRole().equals("Прораб"))
-                    )
+                                    // не разсылаем сообщения если нет чата
+                                    && !telegramId.equals("")
+                                    // не разсылаем сообщения за отчеты воскресенье
+                                    && nowDate.getDay() != 0
+                                    // не разсылаем сообщения за отчеты в субботу, если ты не монтажник или не прораб
+                                    && (nowDate.getDay() != 6
+                                    || u.getRole().equals("Монтажник") || u.getRole().equals("Прораб"))
+                    ) {
                         execute(outMess);
+                    }
                 } catch (TelegramApiException e) {
                     e.printStackTrace();
                 }

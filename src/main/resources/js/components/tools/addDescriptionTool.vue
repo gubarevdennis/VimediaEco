@@ -33,13 +33,12 @@
               <v-file-input
                   color="black"
                   center-affix="black"
-                  density="0"
                   hide-details="true"
                   type="file"
                   name="file"
                   accept="image/*"
-                  capture="user"
-                  prepend-icon="mdi-paperclip"
+                  capture="camera"
+                  prepend-icon="mdi-camera"
                   variant="solo-inverted"
               />
               <br>

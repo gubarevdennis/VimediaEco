@@ -11,7 +11,11 @@
         <!--  <v-btn v-if="this.role === 'admin' || this.role === 'HR' || this.role === 'Директор'
           || this.role === 'Менеджер' || this.role === 'Руководитель отдела ведения проектов' || this.role === 'Руководитель проектов'"  @click="edit" icon="mdi-file-edit">  </v-btn>
         -->
-        <v-btn v-if="this.role === 'admin' || this.role === 'HR' || this.role === 'Директор'" @click="del" icon="mdi-delete">  </v-btn>
+        <v-btn  v-if="this.role === 'admin'
+        || this.role === 'HR'
+        || this.role === 'Директор'
+        || this.role === 'Диспетчер' "
+                @click="del" icon="mdi-delete">  </v-btn>
       </v-col>
     </v-row>
   </v-sheet>
