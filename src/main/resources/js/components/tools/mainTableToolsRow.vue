@@ -31,9 +31,9 @@
                   density="0"
                   v-if="(this.imageEditButton)"
                   v-bind:src=" 'upload/files/' + (tool ? tool.image : '')"
-                  cover
                   class="text-white"
                   height="150px"
+
               />
             </v-sheet>
           </v-sheet>
@@ -100,7 +100,7 @@
         <v-sheet  style="background-color: #7d7f7d" width="350px">
           <v-row justify="center" align="center">
             <v-btn v-if="((this.role === 'Кладовщик') || (this.role === 'Директор'))" align="center" @click="overlay = !overlay">
-              Редактировать
+              Подробнее
             </v-btn>
             &nbsp
             &nbsp

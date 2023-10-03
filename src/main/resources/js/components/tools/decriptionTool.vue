@@ -15,7 +15,6 @@
                   density="0"
                   v-if="(this.imageEditButton)"
                   v-bind:src=" 'upload/files/' + (tool ? tool.image : '')"
-                  cover
                   class="text-white"
                   height="350px"
               />

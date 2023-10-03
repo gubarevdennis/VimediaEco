@@ -58,11 +58,11 @@ public class UserController {
                          @RequestBody User user) { // от пользователя
 
         if (user.getPassword() == null || user.getPassword().equals("") || user.getPassword().equals(" ")) {
-            BeanUtils.copyProperties(user,userFromDB,"id", "password");
+            BeanUtils.copyProperties(user,userFromDB,"id", "password", "telegramId");
             return userRepo.save(userFromDB);
         }
 
-        BeanUtils.copyProperties(user,userFromDB,"id"); // заменяет поля кроме id
+        BeanUtils.copyProperties(user,userFromDB,"id", "telegramId"); // заменяет поля кроме id , telegramId
 
         userFromDB.setPassword(passwordEncoder.encode(user.getPassword()));
 

@@ -93,21 +93,31 @@ public class ReportController {
         return reportRepo.save(report);
     }
 
-    @PutMapping("{id}")
+    @PostMapping("{id}")
+    @JsonView(Views.IdName.class)
     public Report update(@PathVariable("id") Report reportFromDB, // из базы данных
                            @RequestBody Report report,
                          @AuthenticationPrincipal MyUserDetails myUserDetails) { // от пользователя
 
-        BeanUtils.copyProperties(report,reportFromDB,"id"); // заменяет поля кроме id
+        // Добавляем подобъект
+        if (report.getSubFacility() != null) {
+            report.setSubFacility(subFacilityRepo.findByName(report.getSubFacility().getName()).orElse(null));
+        }
+
+        List<User> users = new ArrayList<>();
 
         // Находим пользователя
-        User user = userRepo.findByName(myUserDetails.getUsername()).orElseThrow(
-                () -> new UsernameNotFoundException("Пользователь не найден!"));
+        User user = userRepo.findByName(myUserDetails.getUsername()).orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден!"));
 
         // Вставляем его id в пользователя для отчета
         user.setId(user.getId());
 
+        users.add(user);
         report.setUser(user);
+
+        Report reportFromDBBeforeCopy = reportFromDB;
+
+        BeanUtils.copyProperties(report,reportFromDB,"id", "reportDay"); // заменяет поля кроме id
 
         // Проверка что в один день было отправлено отчетов больше 8 часов в сумме
         List<Report> reportsForHoursChek = reportRepo.findReportsByReportDayAndUser(report.getReportDay(), user);
@@ -117,7 +127,12 @@ public class ReportController {
 
         reportsForHoursChek.forEach(r -> countingHours(r.getHoursOfWorking()));
 
-        if (this.hours >= 8) return null;
+        System.out.println("report.getHoursOfWorking() " + report.getHoursOfWorking());
+        System.out.println("reportFromDB.getHoursOfWorking() " + reportFromDB.getHoursOfWorking());
+        System.out.println("this.hours " + this.hours);
+        System.out.println("Result hours " + (this.hours - report.getHoursOfWorking() + reportFromDB.getHoursOfWorking()));
+
+        if (this.hours + report.getHoursOfWorking() - reportFromDBBeforeCopy.getHoursOfWorking() > 8) return null;
 
         return reportRepo.save(reportFromDB);
     }

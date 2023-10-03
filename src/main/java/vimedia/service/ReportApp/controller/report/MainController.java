@@ -148,10 +148,10 @@ public class MainController {
         float imageQuality = 0.5f;
 
         // Create the buffered image
-        BufferedImage bufferedImageBeforeResizing = ImageIO.read(inputStream);
-
+      //  BufferedImage bufferedImageBeforeResizing = ImageIO.read(inputStream); // если нужен resize
+        BufferedImage bufferedImage = ImageIO.read(inputStream);
         // Create the buffered image
-        BufferedImage bufferedImage = resizeImage(bufferedImageBeforeResizing, 800, 600);
+      //  BufferedImage bufferedImage = resizeImage(bufferedImageBeforeResizing, 800, 600); // если нужен resize
 
         // Get image writers
         Iterator<ImageWriter> imageWriters = ImageIO.getImageWritersByFormatName("jpg"); // Input your Format Name here

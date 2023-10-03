@@ -260,7 +260,7 @@ export default {
               }
         }
 
-
+        this.text = report.text;
         this.text = report.text;
         this.id = report.id;
 
@@ -314,7 +314,7 @@ export default {
               this.reportsForSend.push(
                   {
                     id: this.id ? this.id : undefined,
-                    facility: {id: getIdByName(this.facilities, f.name)},
+                    facility: {id: getIdByName(this.facilities, f.name), name: f.name},
                     subFacility: {name: this.subFacilityNames[f.formId - 1] ? this.subFacilityNames[f.formId - 1].name : ''},
                     typeOfWork: this.workingTypes[f.formId - 1].name,
                     text: this.text,
@@ -333,38 +333,66 @@ export default {
               // Если все поля заполнены, то делаем запрос - нет ошибка
               if (r.facility && r.hoursOfWorking && r.typeOfWork
                   && ((this.sumHoursPerDay <= 8) ? true : this.editReportStatus)) {
-                // если нет id создаем новую позицию
-                this.axios.post( 'api/report', r).then(data => {
-                  if (data.data === '') {this.errorFields = true} else {
-                    this.reportSendConfirmField = true // выводим сообщение об успешной отправке
-                  }
-                  if (this.id) {
-                    let index = getIndexForPost(this.reports, data.data.id) // получеам индекс коллекции
-                    this.reports.splice(index, 1, data.data);
-                    console.log('index -> ' + index)
-                  } else {
-                    this.reports.push(data.data)
-                  }
 
-                  // Очищаем поля
-                  this.clearForm() // очищение формы
+                ///////// если есть id редактируем старую позицию /////////
+                if (r.id) {
+                  this.axios.post('api/report/' + r.id, r).then(data => {
+                    if (data.data === '') {
+                      this.errorFields = true
+                    } else {
+                      this.reportSendConfirmField = true // выводим сообщение об успешной отправке
 
-                  this.facilityNames = []
-                  this.subFacilityNames = []
-                  this.workingTypes = []
-                  this.workingTimes = []
+                      let index = getIndexForPost(this.reports, data.data.id) // получеам индекс коллекции
+                      this.reports.splice(index, 1, data.data);
+                      console.log('index -> ' + index)
+                    }
 
-                  this.reportsForSend = []
+                    // Очищаем поля
+                    this.clearForm() // очищение формы
 
-                  this.text = ''
-                  this.id = ''
+                    this.facilityNames = []
+                    this.subFacilityNames = []
+                    this.workingTypes = []
+                    this.workingTimes = []
+
+                    this.reportsForSend = []
+
+                    this.text = ''
+                    this.id = ''
 
 
-                })
+                  })
+                } else {
+                  ////////// если нет id создаем новую позицию ////////
+                  this.axios.post('api/report', r).then(data => {
+                    if (data.data === '') {
+                      this.errorFields = true
+                    } else {
+                      this.reportSendConfirmField = true // выводим сообщение об успешной отправке
+                    }
+                      this.reports.push(data.data)
+
+                    // Очищаем поля
+                    this.clearForm() // очищение формы
+
+                    this.facilityNames = []
+                    this.subFacilityNames = []
+                    this.workingTypes = []
+                    this.workingTimes = []
+
+                    this.reportsForSend = []
+
+                    this.text = ''
+                    this.id = ''
+                  })
+                }
                 this.errorFields = false
-              } else {
+              }
+              else
+              {
                 this.errorFields = true
               }
+
             }
         )
 
