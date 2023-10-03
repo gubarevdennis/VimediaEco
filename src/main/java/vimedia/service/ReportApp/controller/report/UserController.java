@@ -57,11 +57,13 @@ public class UserController {
     public User update(@PathVariable("id") User userFromDB, // из базы данных
                          @RequestBody User user) { // от пользователя
 
-        BeanUtils.copyProperties(user,userFromDB,"id"); // заменяет поля кроме id
-
         if (user.getPassword() == null || user.getPassword().equals("") || user.getPassword().equals(" ")) {
+            BeanUtils.copyProperties(user,userFromDB,"id", "password");
             return userRepo.save(userFromDB);
         }
+
+        BeanUtils.copyProperties(user,userFromDB,"id"); // заменяет поля кроме id
+
         userFromDB.setPassword(passwordEncoder.encode(user.getPassword()));
 
         return userRepo.save(userFromDB);
