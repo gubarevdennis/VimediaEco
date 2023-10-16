@@ -51,6 +51,25 @@ public class ReportController {
         return reportRepo.getReportsByMonth(offsetMonth);
     }
 
+    @GetMapping("/user")
+    @JsonView(Views.IdName.class)
+    public List<Report> listByUser(@AuthenticationPrincipal MyUserDetails myUserDetails) {
+        User user = userRepo.findByName(myUserDetails.getUsername()).orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден!"));
+        return reportRepo.getReportsByUser(user);
+    }
+
+    @GetMapping("/month/user/{offsetMonth}")
+    @JsonView(Views.IdName.class)
+    public List<Report> listByMonthAndUser(@PathVariable("offsetMonth") Integer offsetMonth, @AuthenticationPrincipal MyUserDetails myUserDetails) {
+        User user = userRepo.findByName(myUserDetails.getUsername()).orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден!"));
+
+        int userId;
+        if (user != null) {
+            userId = Math.toIntExact(user.getId());
+            return reportRepo.getReportsByMonthAndUser(offsetMonth, userId);
+        } else return null;
+    }
+
     @PostMapping
     @JsonView(Views.IdName.class)
     public Report create(@RequestBody Report report, @AuthenticationPrincipal MyUserDetails myUserDetails) {
@@ -96,7 +115,7 @@ public class ReportController {
     @PostMapping("{id}")
     @JsonView(Views.IdName.class)
     public Report update(@PathVariable("id") Report reportFromDB, // из базы данных
-                           @RequestBody Report report,
+                         @RequestBody Report report,
                          @AuthenticationPrincipal MyUserDetails myUserDetails) { // от пользователя
 
         // Добавляем подобъект

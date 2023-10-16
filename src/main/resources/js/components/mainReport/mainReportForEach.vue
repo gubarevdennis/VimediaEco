@@ -29,17 +29,6 @@
         <br>
         <v-select
             variant="outlined"
-            @update:modelValue="selectUser"
-            :item-value="userNameSelected"
-            label="Сотрудник"
-            :items="users"
-        >
-        </v-select>
-      </v-col>
-      <v-col>
-        <br>
-        <v-select
-            variant="outlined"
             @update:modelValue="selectWork"
             :item-value="workNameSelected"
             label="Вид работ"
@@ -82,14 +71,16 @@ export default {
   },
   mounted: function () {
     console.log('Запустил mounted')
-    // Запрашиваем отчеты
-    this.axios.get( "api/report").then(result => {
+    console.log('Запустил mounted')
+// Запрашиваем отчеты
+    this.axios.get( "api/report/user").then(result => {
           result
               .data
               .forEach(r => {
                 this.reports.push(r) // все отчеты
               })
-          this.sortedReports = this.reports // без сортировки
+          this.sortedReports = this.reports;
+          console.log(this.reports)
         }
     )
     console.log('Прогрузил report')
@@ -110,17 +101,17 @@ export default {
         }
     )
     console.log('Прогрузил facility')
-    // Запрашиваем пользователей
-    this.axios.get( "api/user").then(result => {
-          result
-              .data
-              .forEach(u => {
-                this.users.push(u.name) // все пользователи
-              })
-      this.users.unshift('Все сотрудники')
-        }
-    )
-    console.log('Прогрузил user')
+    // // Запрашиваем пользователей
+    // this.axios.get( "api/user").then(result => {
+    //       result
+    //           .data
+    //           .forEach(u => {
+    //             this.users.push(u.name) // все пользователи
+    //           })
+    //       this.users.unshift('Все сотрудники')
+    //     }
+    // )
+    // console.log('Прогрузил user')
   },
   methods: {
     selectFacility: function (facilityNameSelected) {
@@ -164,23 +155,23 @@ export default {
             .filter(r => ((r.facility.name === this.facilityNameSelected)
                 && ((r.subFacility ? r.subFacility.name : '') === this.subFacilityNameSelected)))}
     },
-    selectUser: function (userNameSelected) {
-      console.log('Запустил selectUser')
-      this.byUser = true
-      this.userNameSelected = userNameSelected
-
-      this.resultFilter()
-    },
-    sortByUser: function (reports) {
-      console.log('Запустил sortByUser')
-      // Если выбраны все работы
-      if (this.userNameSelected === 'Все сотрудники') {
-        return this.sortedReportsByUser = reports}
-
-      if (this.byUser) {
-        return this.sortedReportsByUser = reports.filter(r => r.user.name === this.userNameSelected)}
-
-    },
+    // selectUser: function (userNameSelected) {
+    //   console.log('Запустил selectUser')
+    //   this.byUser = true
+    //   this.userNameSelected = userNameSelected
+    //
+    //   this.resultFilter()
+    //},
+    // sortByUser: function (reports) {
+    //   console.log('Запустил sortByUser')
+    //   // Если выбраны все работы
+    //   if (this.userNameSelected === 'Все сотрудники') {
+    //     return this.sortedReportsByUser = reports}
+    //
+    //   if (this.byUser) {
+    //      return this.sortedReportsByUser = reports.filter(r => r.user.name === this.userNameSelected)}
+    //
+    // },
     selectWork: function (workNameSelected) {
       console.log('Запустил selectWork')
       this.byWork = true
@@ -224,15 +215,13 @@ export default {
     updateAllReports: function (month) {
       this.reports = []
       console.log('Запустил mounted')
-      // Запрашиваем отчеты
-      this.axios.get( `api/report/month/${month}`).then(result => {
+      this.axios.get( `api/report/month/user/${month}`).then(result => {
             result
                 .data
                 .forEach(r => {
                   this.reports.push(r) // все отчеты
                 })
-            this.sortedReports = this.reports // без сортировки
-            this.resultFilter()
+            console.log(this.reports)
           }
       )
       console.log('Прогрузил report')
@@ -246,3 +235,5 @@ export default {
 <style scoped>
 
 </style>
+
+

@@ -1,6 +1,7 @@
 package vimedia.service.ReportApp.TelegramBot;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -8,10 +9,19 @@ import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import vimedia.service.ReportApp.model.report.Facility;
 import vimedia.service.ReportApp.model.report.Report;
 import vimedia.service.ReportApp.model.report.User;
+import vimedia.service.ReportApp.model.tools.Event;
+import vimedia.service.ReportApp.model.tools.Tool;
+import vimedia.service.ReportApp.repo.report.FacilityRepo;
 import vimedia.service.ReportApp.repo.report.UserRepo;
+import vimedia.service.ReportApp.repo.tools.EventRepo;
+import vimedia.service.ReportApp.repo.tools.ToolRepo;
 
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
@@ -22,10 +32,16 @@ import java.util.*;
 public class Bot extends TelegramLongPollingBot {
     //создаем две константы, присваиваем им значения токена и имя бота соответсвтенно
     //вместо звездочек подставляйте свои данные
-    private final String BOT_TOKEN = "6446999228:AAGWn1Hf99j_2-0i4jJ9CwRbTWH5_351Ao4";
-    private final String BOT_NAME = "VimediaCRMBot";
+//    private final String BOT_TOKEN = "6138833300:AAGB1uzcjMxY2qNNh1hzfu85bupEfl_YiKE"; // ViBroTest
+//    private final String BOT_NAME = "ViBroTest"; //   ViBroTestBot
+
+    private final String BOT_TOKEN = "6446999228:AAGWn1Hf99j_2-0i4jJ9CwRbTWH5_351Ao4"; // ViBro
+    private final String BOT_NAME = "VimediaCRMBot"; // ViBro
     private final Storage storage;
     private final UserRepo userRepo;
+    private final EventRepo eventRepo;
+    private final ToolRepo toolRepo;
+    private final FacilityRepo facilityRepo;
     private String chatId;
     private User user;
     private Timer telegramTimer;
@@ -34,15 +50,26 @@ public class Bot extends TelegramLongPollingBot {
 
     @Autowired
     public Bot(Storage storage, UserRepo userRepo,
-               TelegramBotsApi telegramBotsApi) throws TelegramApiException {
+               TelegramBotsApi telegramBotsApi, EventRepo eventRepo, ToolRepo toolRepo, FacilityRepo facilityRepo) throws TelegramApiException {
         this.storage = storage;
         this.userRepo = userRepo;
+        this.eventRepo = eventRepo;
+        this.toolRepo = toolRepo;
+        this.facilityRepo = facilityRepo;
 
         this.telegramTimer = new Timer();
         this.telegramTimerTask = new MyTimerTask();
 
         telegramBotsApi.registerBot(this);
         this.startTimer();
+    }
+
+    // Клавиатура
+    public ReplyKeyboard getToolsKeyboard() {
+        KeyboardRow row = new KeyboardRow();
+        row.add("Принять");
+        row.add("Отклонить");
+        return new ReplyKeyboardMarkup(List.of(row));
     }
 
     @Override
@@ -122,11 +149,68 @@ public class Bot extends TelegramLongPollingBot {
         }
         else if(textMsg.startsWith("отчет")) {
             response="Отчет отправлен! Спасибо за работу!";
+        }        else if (textMsg.startsWith("Принять") & (!isAlreadyAssigned(chatId, "Принять"))
+                & (assignTool(chatId, "Принять"))) {
+            response="Инструмент принят!";
+        }        else if (textMsg.startsWith("Отклонить") & (!isAlreadyAssigned(chatId, "Отклонить"))
+                & (assignTool(chatId, "Отклонить"))) {
+            response="Инструмент отклонен!";
         }
         else if (userRepo.findByTelegramId(chatId).isEmpty()) {
             response = "Извини, не признал, бро. Попробуй еще. Помни - точно как в приложении!";
         } else response = "Рад был помочь, бро!";
         return response;
+    }
+
+    public boolean assignTool(String chatId, String type) {
+        // Находим пользователя
+        User user = userRepo.findByTelegramId(chatId).orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден!"));
+
+        if (user != null) {
+            Event event = eventRepo.findLastByUser(Math.toIntExact(user.getId()));
+
+            if (event != null) {
+                Tool tool = toolRepo.findById(event.getTool().getId()).orElse(null);
+
+                if (tool != null) {
+                    Facility facility = facilityRepo.findByName(event.getToFacility()).orElse(null);
+
+                    if (type.equals("Принять")) {
+                        tool.setUser(user);
+                        tool.setFacility(facility);
+
+                        toolRepo.save(tool);
+
+                        event.setName("Передан");
+                        eventRepo.save(event);
+                    } else if (type.equals("Отклонить")) {
+                        event.setName("Отклонен");
+                        eventRepo.save(event);
+                    }
+                    return true; //tool.getUser().getTelegramId().equals(chatId);
+                } else return false;
+            } else return false;
+        } else
+            return false;
+    }
+
+    public boolean isAlreadyAssigned(String chatId, String type) {
+        // Находим пользователя
+        User user = userRepo.findByTelegramId(chatId).orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден!"));
+
+        if (user != null) {
+            Event event = eventRepo.findLastByUser(Math.toIntExact(user.getId()));
+
+            if (event != null) {
+                Tool tool = toolRepo.findById(event.getTool().getId()).orElse(null);
+
+                if (tool != null) {
+                    if (tool.getUser() != null) {
+                        return tool.getUser().getTelegramId().equals(chatId);
+                    } return false;
+                } else return false;
+            } else return  false;
+        } else return false;
     }
 
     @Transactional()
@@ -188,14 +272,14 @@ public class Bot extends TelegramLongPollingBot {
                     // Отправляем сообщение в случае наличия id чата и факта незаполненного отчета за вчера или позавчера
                     if (
                         // разсылаем сообщения в случае наличия не заполненных отчетов
-                            report.isEmpty() || reportOlder.isEmpty()
+                            (report.isEmpty())
                                     // не разсылаем сообщения если нет чата
                                     && !telegramId.equals("")
                                     // не разсылаем сообщения за отчеты воскресенье
-                                    && nowDate.getDay() != 0
+                                    && (!(nowDate.getDay() == 0))
                                     // не разсылаем сообщения за отчеты в субботу, если ты не монтажник или не прораб
-                                    && (nowDate.getDay() != 6
-                                    || u.getRole().equals("Монтажник") || u.getRole().equals("Прораб"))
+                                    && ((!(nowDate.getDay() == 6))
+                                    || (u.getRole().equals("Монтажник")) || (u.getRole().equals("Прораб")))
                     ) {
                         execute(outMess);
                     }

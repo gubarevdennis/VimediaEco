@@ -3,12 +3,25 @@ package vimedia.service.ReportApp.controller.tools;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
+import vimedia.service.ReportApp.TelegramBot.Bot;
 import vimedia.service.ReportApp.model.report.Facility;
+import vimedia.service.ReportApp.model.report.User;
 import vimedia.service.ReportApp.model.report.Views;
 import vimedia.service.ReportApp.model.tools.Event;
+import vimedia.service.ReportApp.model.tools.Tool;
 import vimedia.service.ReportApp.repo.report.FacilityRepo;
+import vimedia.service.ReportApp.repo.report.UserRepo;
 import vimedia.service.ReportApp.repo.tools.EventRepo;
+import vimedia.service.ReportApp.repo.tools.ToolRepo;
+import vimedia.service.ReportApp.service.MyUserDetails;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -19,10 +32,18 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/event")
 public class EventController {
     private final EventRepo eventRepo;
+    private final UserRepo userRepo;
+    private final ToolRepo toolRepo;
+    private final Bot bot;
+    private final FacilityRepo facilityRepo;
 
     @Autowired
-    public EventController(EventRepo eventRepo) {
+    public EventController(EventRepo eventRepo, UserRepo userRepo, ToolRepo toolRepo, Bot bot, FacilityRepo facilityRepo) {
         this.eventRepo = eventRepo;
+        this.userRepo = userRepo;
+        this.toolRepo = toolRepo;
+        this.bot = bot;
+        this.facilityRepo = facilityRepo;
     }
 
 
@@ -38,7 +59,93 @@ public class EventController {
         }).collect(Collectors.toList()); // сортировка
     }
 
+    // Получаем события по пользователю
+    @GetMapping("/user")
+    @JsonView(Views.IdName.class)
+    public List<Event> listOfEventByUserId(@AuthenticationPrincipal MyUserDetails myUserDetails) {
+
+        // Находим пользователя
+        User user = userRepo.findByName(myUserDetails.getUsername()).orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден!"));
+
+
+        return eventRepo.findByUser(user).stream().sorted(new Comparator<Event>() {
+            @Override
+            public int compare(Event o1, Event o2) {
+                return o1.getName().toUpperCase().compareTo(o2.getName().toUpperCase());
+            }
+        }).collect(Collectors.toList()); // сортировка
+    }
+
+    // Получаем события по пользователю
+    @GetMapping("/user/moved/{id}")
+    @JsonView(Views.IdName.class)
+    public Event listOfEventByUserIdAndToolIdMoved(@PathVariable("id") Tool tool,
+                                                   @AuthenticationPrincipal MyUserDetails myUserDetails) {
+
+        // Находим пользователя
+        User user = userRepo.findByName(myUserDetails.getUsername()).orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден!"));
+
+        Event event = eventRepo.findByTool(tool).stream().sorted(new Comparator<Event>() {
+            @Override
+            public int compare(Event o1, Event o2) {
+                return -o1.getId() + o2.getId();
+            }
+        }).filter(e -> e.getTool().equals(tool))
+                .filter(e -> (e.getName().equals("Передан")))
+                .findFirst().orElse(null); //
+
+        return event;
+    }
+
+    // Получаем события по пользователю и инструменту
+    @GetMapping("/user/{id}")
+    @JsonView(Views.IdName.class)
+    public List<Event> listOfEventByUserIdAndToolId(@PathVariable("id") Tool tool,
+                                                    @AuthenticationPrincipal MyUserDetails myUserDetails) {
+
+        // Находим пользователя
+        User user = userRepo.findByName(myUserDetails.getUsername()).orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден!"));
+
+        return eventRepo.findByUser(user).stream().sorted(new Comparator<Event>() {
+            @Override
+            public int compare(Event o1, Event o2) {
+                return - o1.getId() + o2.getId();
+            }
+        }).filter(e -> e.getTool().equals(tool)).collect(Collectors.toList()); // сортировка
+    }
+
+    // Получаем события по пользователю и инструменту
+    @GetMapping("/user/moving/{id}")
+    @JsonView(Views.IdName.class)
+    public List<Event> listOfEventByUserIdAndToolIdMoving(@PathVariable("id") Tool tool,
+                                                          @AuthenticationPrincipal MyUserDetails myUserDetails) {
+
+//        // Находим пользователя
+//        User user = userRepo
+//                .findByName(myUserDetails.getUsername())
+//                .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден!"));
+
+        List<Event> events = tool.getEvents().stream().sorted(new Comparator<Event>() {
+            @Override
+            public int compare(Event o1, Event o2) {
+                return - o1.getId() + o2.getId();
+            }
+        }).filter(e -> (e.getTool().equals(tool) && e.getName().equals("Направлен на передачу")))
+                .collect(Collectors.toList());
+
+//        List<Event> events = eventRepo.findByUser(user).stream().sorted(new Comparator<Event>() {
+//            @Override
+//            public int compare(Event o1, Event o2) {
+//                return - o1.getId() + o2.getId();
+//            }
+//        }).filter(e -> (e.getTool().equals(tool) && e.getName().equals("Направлен на передачу")))
+//                .collect(Collectors.toList()); // сортировка
+
+        return events;
+    }
+
     // Получаем одно событие
+    @Transactional
     @GetMapping("{id}")
     @JsonView(Views.IdName.class)
     public Event getOne(@PathVariable("id") Event event) {
@@ -48,22 +155,157 @@ public class EventController {
 
     // Создание события
     @PostMapping
-    public Event create(@RequestBody Event event) {
+    @JsonView(Views.IdName.class)
+    public Event create(@RequestBody Event event, @AuthenticationPrincipal MyUserDetails myUserDetails) {
         event.setEventTimeAndDate(LocalDateTime.now());
-        return eventRepo.save(event);
+
+        // Находим пользователя
+        User user = userRepo.findByName(myUserDetails.getUsername()).orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден!"));
+
+        // Вставляем его id в пользователя для отчета
+        user.setId(user.getId());
+
+        event.setUser(user);
+
+
+            // Находим инструмент c таким же ID если есть, ставим ему отправителя
+            toolRepo.findByUser(user).stream().filter(t ->
+                    t.getId() == event.getTool().getId()).findAny().ifPresent(tool -> tool.setUser(user));
+
+
+            // Проверяем есть ли с таким id уже направление на передачу
+            boolean alreadyDone = event.getName().equals("Направлен на передачу")
+                    && eventRepo.findLastByTool(event.getTool())
+                    .filter(e -> e.getName().equals("Направлен на передачу")).isPresent();
+
+            System.out.println("Уже есть такое перемещение " + alreadyDone);
+
+            // Чат бот телеграм передача инструмента
+            if (!alreadyDone) {
+                //Создаем объект класса SendMessage - наш будущий ответ пользователю
+                SendMessage outMess = new SendMessage();
+
+                // Находим пользователя для отправки
+                User toUser = userRepo.findByName(event.getToUser()).orElseThrow(
+                        () -> new UsernameNotFoundException("Пользователь для отправки не найден не найден!"));
+
+                String chatId = toUser.getTelegramId();
+
+                String response = "Вам направили инструмент " + event.getTool().getName() + " от " + user.getName()
+                        + " " + "http://reports.vimedia.ru/mainTableTools";
+
+                // Если есть артикул
+                if (event.getTool().getArticle() != null) {
+                    response = "Вам направили инструмент " + event.getTool().getName() + " " + event.getTool().getArticle()
+                            + " от " + user.getName() + " " + "http://reports.vimedia.ru/mainTableTools";
+                }
+
+                // Если есть объект откуда направили
+                if (event.getTool().getFacility() != null) {
+                    response = "Вам направили инструмент " + event.getTool().getName() + event.getTool().getArticle()
+                            + " от " + user.getName() + " из "
+                            + event.getTool().getFacility().getName() + " " + "http://reports.vimedia.ru/mainTableTools";
+                }
+
+                //Добавляем в наше сообщение id чата, а также наш ответ
+                if (chatId != null) {
+                    outMess.setChatId(chatId);
+                }
+                outMess.setText(response);
+
+//                // Клавиатура вылазит только в случае наличия направления на передачу
+//                if (event.getName().equals("Направлен на передачу")) {
+//                    outMess.setReplyMarkup(bot.getToolsKeyboard());
+//                }
+
+                //Отправка в чат
+                try {
+                    if(!chatId.equals(""))
+
+                        bot.execute(outMess);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            System.out.println(event);
+
+            // Только в том сучае если нет текущего перемещения
+            if (!alreadyDone) {
+                return eventRepo.save(event);
+            } else return null;
     }
 
-    // Создание события
+    // Редактирование события
     @PutMapping("{id}")
+    @JsonView(Views.IdName.class)
     public Event update(@PathVariable("id") Event eventFromDB, // из базы данных
-                           @RequestBody Event event) { // от пользователя
+                        @RequestBody Event event ) { // от пользователя
 
         BeanUtils.copyProperties(event,eventFromDB,"id"); // заменяет поля кроме id
 
         return eventRepo.save(eventFromDB);
     }
 
+    // Редактирование события  api/event/confirmtool/
+    @PutMapping("/confirmtool/{id}")
+    @JsonView(Views.IdName.class)
+    @Transactional
+    public Event confirm(@PathVariable("id") Tool tool, // из базы данных
+                         @RequestBody Event event, @AuthenticationPrincipal MyUserDetails myUserDetails) { // от пользователя
+
+        // Находим пользователя
+        User user = userRepo.findByName(myUserDetails.getUsername()).orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден!"));
+
+        if (user != null) {
+            // Вставляем его id в пользователя для отчета
+            user.setId(user.getId());
+
+            // Назначается
+            if (!event.getName().equals("Отклонен")) {
+                event.setUser(user);
+            }
+        }
+
+        Event eventFromDB = eventRepo.findLastByTool(tool).orElse(null);
+
+        if (eventFromDB != null) {
+            BeanUtils.copyProperties(event, eventFromDB, "id", "image",
+                    "fromFacility", "toFacility",
+                    "user", "tool", "toUser"); // заменяет поля кроме
+
+            // Чат бот телеграм передача инструмента
+            sendConfirmNotification(eventFromDB,  tool);
+
+            String toFacility = eventFromDB.getToFacility();
+
+            if (!toFacility.equals("")) {
+                // Указываем объект для перемещения в соответствующий инструмент
+                Facility facility = facilityRepo.findByName(eventFromDB.getToFacility()).orElse(null);
+
+                System.out.println("facility");
+                System.out.println(facility);
+
+//            if (facility != null) {
+//                if (tool != null) {
+//                    tool.setFacility(facility);
+//                    System.out.println("tool Facility --- > ");
+//                    System.out.println(tool.getFacility());
+//                    toolRepo.save(tool);
+//                    System.out.println(tool.getFacility());
+//                }
+//            }
+                if (facility != null) {
+                    return eventRepo.save(eventFromDB);
+                } else return null;
+            } else return null;
+        } else
+            return null;
+    }
+
     @DeleteMapping("{id}")
+    @JsonView(Views.IdName.class)
     public void delete(@PathVariable("id") Event event) {
         eventRepo.delete(event);
     }
@@ -92,5 +334,55 @@ public class EventController {
         }
         return typeOfWorkByWord;
     }
+
+    private void sendConfirmNotification(Event event, Tool tool) {
+        String type = event.getName();
+        String typeForMessage = "";
+
+        if (type.equals("Передан")) {
+            typeForMessage = "принят";
+        } else if ((type.equals("Отклонен"))) {
+            typeForMessage = "отклонен";
+        }
+
+        if (!typeForMessage.equals("")) {
+            //Создаем объект класса SendMessage - наш будущий ответ пользователю
+            SendMessage outMess = new SendMessage();
+
+            // Находим пользователя для отправки
+            User fromUser = userRepo.findByName(event.getUser().getName()).orElseThrow(
+                    () -> new UsernameNotFoundException("Пользователь для передачи не найден!"));
+
+            String chatId = fromUser.getTelegramId();
+
+            String response = "Инструмент " + tool.getName() + " " + typeForMessage + " " + " вашим коллегой " + event.getToUser();
+
+            // Если есть артикул
+            if (tool.getArticle() != null) {
+                response = "Инструмент " + tool.getName() +  " "  + tool.getArticle() + " " + typeForMessage +
+                        " вашим коллегой " + event.getToUser();
+            }
+
+            // Если есть объект откуда направили
+            if (tool.getFacility() != null) {
+                response = "Инструмент " + tool.getName() +  " "  + tool.getArticle() + " " + typeForMessage +
+                        " вашим коллегой " + event.getToUser() + ", из " + tool.getFacility().getName();
+            }
+
+            //Добавляем в наше сообщение id чата, а также наш ответ
+            outMess.setChatId(chatId);
+            outMess.setText(response);
+
+            //Отправка в чат
+            try {
+                if(!chatId.equals(""))
+                    bot.execute(outMess);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
 
 }

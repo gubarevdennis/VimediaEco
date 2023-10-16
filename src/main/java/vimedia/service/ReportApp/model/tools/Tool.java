@@ -1,6 +1,7 @@
 package vimedia.service.ReportApp.model.tools;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
@@ -74,24 +75,39 @@ public class Tool {
     @JsonView(Views.IdName.class)
     private String description;
 
-    @Column(updatable = false)
+//    @Column(updatable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yy")  //  HH:mm:ss
     @JsonView(Views.IdName.class)
     private LocalDate purchaseDate;
 
     @ManyToOne
-    @JsonIgnoreProperties("tools")
+    @JsonIgnoreProperties({"tools", "subFacilities"})
     @JsonView(Views.IdName.class)
     private Facility facility;
 
     @ManyToOne
-    @JsonIgnoreProperties({"tools", "reports", "password", "tools"})
+    @JsonView(Views.IdName.class)
+    @JsonIgnoreProperties({"tools", "reports", "password"})
     private User user;
 
     @ManyToOne
     @JsonIgnoreProperties("tools")
     @JsonView(Views.IdName.class)
     private ToolSet toolSet;
+
+    @OneToMany(mappedBy = "tool")
+    @JsonIgnore
+    @JsonView(Views.IdName.class)
+    private List<Event> events;
+
+    public void addTool(Event event){
+        this.events.add(event);
+        event.setTool(this);
+    }
+
+    public void removeTool(Event event){
+        this.events.remove(event);
+    }
 
     public int getId() {
         return id;
@@ -251,5 +267,13 @@ public class Tool {
 
     public void setComposition(String composition) {
         this.composition = composition;
+    }
+
+    public List<Event> getEvents() {
+        return events;
+    }
+
+    public void setEvents(List<Event> events) {
+        this.events = events;
     }
 }

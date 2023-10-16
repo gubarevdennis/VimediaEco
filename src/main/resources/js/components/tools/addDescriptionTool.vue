@@ -2,10 +2,9 @@
   <v-sheet
       rounded="lg"
       contained
-
       align="center"
   >
-    <v-row justify="center" align="center">
+    <v-row justify="center" align="center"       style="margin: 10px">
       <v-col v-if="showImageForm">
         <v-card-title>
           <div style="font-weight: bold;">
@@ -15,16 +14,16 @@
             {{tool ? tool.article : ''}}
           </div>
         </v-card-title>
-        <form  method="POST" enctype="multipart/form-data" action="/upload">
+        <form  method="POST" enctype="multipart/form-data" action="/upload" >
           <input name="toolId" type="hidden" v-bind:value="(tool ? tool.id : '')" />
-          <v-card color="grey" width="350px" >
+          <v-sheet width="300px" >
             <v-img
                 @click="imageEditFunc"
                 density="0"
                 v-if="(this.imageEditButton)"
                 v-bind:src=" 'upload/files/' + (tool ? tool.image : '')"
                 class="text-white"
-                height="350px"
+                height="100px"
             />
             <div v-if="(!(this.imageEditButton))">
               <br>
@@ -52,152 +51,154 @@
               <br>
               <br>
             </div>
-          </v-card>
+          </v-sheet>
         </form>
       </v-col >
-      <v-col  style="font-size: 40px">
-        <v-select
-            label="Комплектность"
-            variant="solo"
-            @update:modelValue="selectToolSet"
-            v-model="toolSetNameSelected"
-            :items="toolSetNames"
-            :item-value="toolSetNameSelected"
-        >
-        </v-select>
-        <v-card-text >
-          <v-row>
-            <div style="font-weight: bold;color: #0B0B0B"> Наименование: &nbsp</div>
-            <description-tool-row :editTool="editTool"  :profile="profile" :role="role" :tool="tool"
-                                  v-bind:rowInputText="tool ? tool.name : ''" v-bind:rowInputType="'name'"
-                                  :showConfirmBtnFuncParrent="showConfirmBtnFuncParrent">
+      <v-col  style="font-size: 20px" >
+        <div v-if="!(this.showImageForm)">
+          <v-select
+              label="Комплектность"
+              variant="solo"
+              @update:modelValue="selectToolSet"
+              v-model="toolSetNameSelected"
+              :items="toolSetNames"
+              :item-value="toolSetNameSelected"
+          >
+          </v-select>
+          <v-card-text class=" pa-3">
+            <v-row >
+              <div style="font-weight: bold;font-size: 14px;color: #0B0B0B"> Наименование: &nbsp</div>
+              <description-tool-row :editTool="editTool"  :profile="profile" :role="role" :tool="tool"
+                                    v-bind:rowInputText="tool ? tool.name : ''" v-bind:rowInputType="'name'"
+                                    :showConfirmBtnFuncParrent="showConfirmBtnFuncParrent">
 
-            </description-tool-row>
-          </v-row>
-        </v-card-text>
-        <v-card-text >
-          <v-row>
-            <div style="font-weight: bold;color: #0B0B0B"> Артикул: &nbsp</div>
-            <description-tool-row :editTool="editTool"  :profile="profile" :role="role" :tool="tool"
-                                  v-bind:rowInputText="tool ? tool.article : ''" v-bind:rowInputType="'article'"
-                                  :showConfirmBtnFuncParrent="showConfirmBtnFuncParrent">
+              </description-tool-row>
+            </v-row>
+          </v-card-text>
+          <v-card-text class=" pa-3">
+            <v-row>
+              <div style="font-weight: bold;font-size: 14px;color: #0B0B0B"> Артикул: &nbsp</div>
+              <description-tool-row :editTool="editTool"  :profile="profile" :role="role" :tool="tool"
+                                    v-bind:rowInputText="tool ? tool.article : ''" v-bind:rowInputType="'article'"
+                                    :showConfirmBtnFuncParrent="showConfirmBtnFuncParrent">
 
-            </description-tool-row>
-          </v-row>
-        </v-card-text>
-        <v-card-text >
-          <v-row>
-            <div style="font-weight: bold;color: #0B0B0B"> Колличество: &nbsp</div>
-            <description-tool-row :editTool="editTool"  :profile="profile" :role="role" :tool="tool"
-                                  v-bind:rowInputText="tool ? tool.quantity : ''" v-bind:rowInputType="'quantity'"
-                                  :showConfirmBtnFuncParrent="showConfirmBtnFuncParrent">
+              </description-tool-row>
+            </v-row>
+          </v-card-text>
+          <v-card-text class="pa-3">
+            <v-row>
+              <div style="font-weight: bold;font-size: 14px;color: #0B0B0B"> Колличество: &nbsp</div>
+              <description-tool-row :editTool="editTool"  :profile="profile" :role="role" :tool="tool"
+                                    v-bind:rowInputText="tool ? tool.quantity : ''" v-bind:rowInputType="'quantity'"
+                                    :showConfirmBtnFuncParrent="showConfirmBtnFuncParrent">
 
-            </description-tool-row>
-          </v-row>
-        </v-card-text>
-        <v-card-text >
-          <v-row>
-            <div style="font-weight: bold;color: #0B0B0B"> Серийный номер: &nbsp</div>
-            <description-tool-row :editTool="editTool"  :profile="profile" :role="role" :tool="tool"
-                                  v-bind:rowInputText="tool ? tool.serial : ''" v-bind:rowInputType="'serial'"
-                                  :showConfirmBtnFuncParrent="showConfirmBtnFuncParrent">
+              </description-tool-row>
+            </v-row>
+          </v-card-text>
+          <v-card-text class="pa-3">
+            <v-row>
+              <div style="font-weight: bold;font-size: 14px;color: #0B0B0B"> Серийный номер: &nbsp</div>
+              <description-tool-row :editTool="editTool"  :profile="profile" :role="role" :tool="tool"
+                                    v-bind:rowInputText="tool ? tool.serial : ''" v-bind:rowInputType="'serial'"
+                                    :showConfirmBtnFuncParrent="showConfirmBtnFuncParrent">
 
-            </description-tool-row>
-          </v-row>
-        </v-card-text>
-        <v-card-text >
-          <v-row>
-            <div style="font-weight: bold;color: #0B0B0B"> Производитель: &nbsp</div>
-            <description-tool-row :editTool="editTool"  :profile="profile" :role="role" :tool="tool"
-                                  v-bind:rowInputText="tool ? tool.vendor : ''" v-bind:rowInputType="'vendor'"
-                                  :showConfirmBtnFuncParrent="showConfirmBtnFuncParrent">
+              </description-tool-row>
+            </v-row>
+          </v-card-text>
+          <v-card-text class="pa-3">
+            <v-row>
+              <div style="font-weight: bold;font-size: 14px;color: #0B0B0B"> Производитель: &nbsp</div>
+              <description-tool-row :editTool="editTool"  :profile="profile" :role="role" :tool="tool"
+                                    v-bind:rowInputText="tool ? tool.vendor : ''" v-bind:rowInputType="'vendor'"
+                                    :showConfirmBtnFuncParrent="showConfirmBtnFuncParrent">
 
-            </description-tool-row>
-          </v-row>
-        </v-card-text>
-        <v-card-text>
-          <v-row>
-            <div style="font-weight: bold;color: #0B0B0B"> Стоимость: &nbsp</div>
-            <description-tool-row :editTool="editTool"  :profile="profile" :role="role" :tool="tool"
-                                  v-bind:rowInputText="tool ? tool.price : ''" v-bind:rowInputType="'price'"
-                                  :showConfirmBtnFuncParrent="showConfirmBtnFuncParrent">
+              </description-tool-row>
+            </v-row>
+          </v-card-text>
+          <v-card-text class="pa-3">
+            <v-row>
+              <div style="font-weight: bold;font-size: 14px;color: #0B0B0B"> Стоимость: &nbsp</div>
+              <description-tool-row :editTool="editTool"  :profile="profile" :role="role" :tool="tool"
+                                    v-bind:rowInputText="tool ? tool.price : ''" v-bind:rowInputType="'price'"
+                                    :showConfirmBtnFuncParrent="showConfirmBtnFuncParrent">
 
-            </description-tool-row>
-          </v-row>
-        </v-card-text>
-        <v-card-text>
-          <v-row>
-            <div style="font-weight: bold;color: #0B0B0B"> Поставщик: &nbsp</div>
-            <description-tool-row :editTool="editTool"  :profile="profile" :role="role" :tool="tool"
-                                  v-bind:rowInputText="tool ? tool.provider : ''" v-bind:rowInputType="'provider'"
-                                  :showConfirmBtnFuncParrent="showConfirmBtnFuncParrent">
+              </description-tool-row>
+            </v-row>
+          </v-card-text>
+          <v-card-text class="pa-3">
+            <v-row>
+              <div style="font-weight: bold;font-size: 14px;color: #0B0B0B"> Поставщик: &nbsp</div>
+              <description-tool-row :editTool="editTool"  :profile="profile" :role="role" :tool="tool"
+                                    v-bind:rowInputText="tool ? tool.provider : ''" v-bind:rowInputType="'provider'"
+                                    :showConfirmBtnFuncParrent="showConfirmBtnFuncParrent">
 
-            </description-tool-row>
-          </v-row>
-        </v-card-text>
-        <v-card-text>
-          <v-row>
-            <div style="font-weight: bold;color: #0B0B0B"> Информация о закупке: &nbsp</div>
-            <description-tool-row :editTool="editTool"  :profile="profile" :role="role" :tool="tool"
-                                  v-bind:rowInputText="tool ? tool.paymentInfo : ''" v-bind:rowInputType="'paymentInfo'"
-                                  :showConfirmBtnFuncParrent="showConfirmBtnFuncParrent">
+              </description-tool-row>
+            </v-row>
+          </v-card-text>
+          <v-card-text class="pa-3">
+            <v-row>
+              <div style="font-weight: bold;font-size: 14px;color: #0B0B0B"> Информация о закупке: &nbsp</div>
+              <description-tool-row :editTool="editTool"  :profile="profile" :role="role" :tool="tool"
+                                    v-bind:rowInputText="tool ? tool.paymentInfo : ''" v-bind:rowInputType="'paymentInfo'"
+                                    :showConfirmBtnFuncParrent="showConfirmBtnFuncParrent">
 
-            </description-tool-row>
-          </v-row>
-        </v-card-text>
-        <v-card-text>
-          <v-row>
-            <div style="font-weight: bold;color: #0B0B0B"> Дата покупки: &nbsp</div>
-            <description-tool-row :editTool="editTool"  :profile="profile" :role="role" :tool="tool"
-                                  v-bind:rowInputText="tool ? tool.purchaseDate : ''" v-bind:rowInputType="'purchaseDate'"
-                                  :showConfirmBtnFuncParrent="showConfirmBtnFuncParrent">
+              </description-tool-row>
+            </v-row>
+          </v-card-text>
+          <v-card-text class="pa-3">
+            <v-row>
+              <div style="font-weight: bold;font-size: 14px;color: #0B0B0B"> Дата покупки: &nbsp</div>
+              <description-tool-row :editTool="editTool"  :profile="profile" :role="role" :tool="tool"
+                                    v-bind:rowInputText="tool ? tool.purchaseDate : ''" v-bind:rowInputType="'purchaseDate'"
+                                    :showConfirmBtnFuncParrent="showConfirmBtnFuncParrent">
 
-            </description-tool-row>
-          </v-row>
-        </v-card-text>
-        <v-card-text>
-          <v-row>
-            <div style="font-weight: bold;color: #0B0B0B"> Период обслуживания: &nbsp</div>
-            <description-tool-row :editTool="editTool"  :profile="profile" :role="role" :tool="tool"
-                                  v-bind:rowInputText="tool ? tool.servicePeriod : ''" v-bind:rowInputType="'servicePeriod'"
-                                  :showConfirmBtnFuncParrent="showConfirmBtnFuncParrent">
-            </description-tool-row>
-          </v-row>
-        </v-card-text>
-        <v-card-text>
-          <v-row>
-            <div style="font-weight: bold;color: #0B0B0B"> Период инвентаризации: &nbsp</div>
-            <description-tool-row :editTool="editTool"  :profile="profile" :role="role" :tool="tool"
-                                  v-bind:rowInputText="tool ? tool.inventoryPeriod : ''" v-bind:rowInputType="'inventoryPeriod'"
-                                  :showConfirmBtnFuncParrent="showConfirmBtnFuncParrent">
+              </description-tool-row>
+            </v-row>
+          </v-card-text >
+          <v-card-text class="pa-3">
+            <v-row>
+              <div style="font-weight: bold;font-size: 14px;color: #0B0B0B"> Период обслуживания: &nbsp</div>
+              <description-tool-row :editTool="editTool"  :profile="profile" :role="role" :tool="tool"
+                                    v-bind:rowInputText="tool ? tool.servicePeriod : ''" v-bind:rowInputType="'servicePeriod'"
+                                    :showConfirmBtnFuncParrent="showConfirmBtnFuncParrent">
+              </description-tool-row>
+            </v-row>
+          </v-card-text>
+          <v-card-text class="pa-3">
+            <v-row>
+              <div style="font-weight: bold;font-size: 14px;color: #0B0B0B"> Период инвентаризации: &nbsp</div>
+              <description-tool-row :editTool="editTool"  :profile="profile" :role="role" :tool="tool"
+                                    v-bind:rowInputText="tool ? tool.inventoryPeriod : ''" v-bind:rowInputType="'inventoryPeriod'"
+                                    :showConfirmBtnFuncParrent="showConfirmBtnFuncParrent">
 
-            </description-tool-row>
-          </v-row>
-        </v-card-text>
-        <v-card-text>
-          <v-row>
-            <div style="font-weight: bold;color: #0B0B0B"> Состав: &nbsp</div>
-            <description-tool-row :editTool="editTool"  :profile="profile" :role="role" :tool="tool"
-                                  v-bind:rowInputText="tool ? tool.composition : ''" v-bind:rowInputType="'composition'"
-                                  :showConfirmBtnFuncParrent="showConfirmBtnFuncParrent"></description-tool-row>
-          </v-row>
-        </v-card-text>
-        <v-card-text>
-          <v-row>
-            <div style="font-weight: bold;color: #0B0B0B"> Описание: &nbsp</div>
-            <description-tool-row :editTool="editTool"  :profile="profile" :role="role" :tool="tool"
-                                  v-bind:rowInputText="tool ? tool.description : ''" v-bind:rowInputType="'description'"
-                                  :showConfirmBtnFuncParrent="showConfirmBtnFuncParrent"></description-tool-row>
-          </v-row>
-        </v-card-text>
-        <v-card-text>
-          <v-row>
-            <div style="font-weight: bold;color: #0B0B0B"> Комментарий: &nbsp</div>
-            <description-tool-row :editTool="editTool"  :profile="profile" :role="role" :tool="tool"
-                                  v-bind:rowInputText="tool ? tool.text : ''" v-bind:rowInputType="'text'"
-                                  :showConfirmBtnFuncParrent="showConfirmBtnFuncParrent"></description-tool-row>
-          </v-row>
-        </v-card-text>
+              </description-tool-row>
+            </v-row>
+          </v-card-text>
+          <v-card-text class="pa-3">
+            <v-row>
+              <div style="font-weight: bold;font-size: 14px;color: #0B0B0B"> Состав: &nbsp</div>
+              <description-tool-row :editTool="editTool"  :profile="profile" :role="role" :tool="tool"
+                                    v-bind:rowInputText="tool ? tool.composition : ''" v-bind:rowInputType="'composition'"
+                                    :showConfirmBtnFuncParrent="showConfirmBtnFuncParrent"></description-tool-row>
+            </v-row>
+          </v-card-text>
+          <v-card-text class="pa-3">
+            <v-row>
+              <div style="font-weight: bold;font-size: 14px;color: #0B0B0B"> Описание: &nbsp</div>
+              <description-tool-row :editTool="editTool"  :profile="profile" :role="role" :tool="tool"
+                                    v-bind:rowInputText="tool ? tool.description : ''" v-bind:rowInputType="'description'"
+                                    :showConfirmBtnFuncParrent="showConfirmBtnFuncParrent"></description-tool-row>
+            </v-row>
+          </v-card-text>
+          <v-card-text class="pa-3">
+            <v-row>
+              <div style="font-weight: bold;font-size: 14px;color: #0B0B0B"> Комментарий: &nbsp</div>
+              <description-tool-row :editTool="editTool"  :profile="profile" :role="role" :tool="tool"
+                                    v-bind:rowInputText="tool ? tool.text : ''" v-bind:rowInputType="'text'"
+                                    :showConfirmBtnFuncParrent="showConfirmBtnFuncParrent"></description-tool-row>
+            </v-row>
+          </v-card-text>
+        </div>
         <v-btn v-if="showConfirmBtn"  color="#EBB652"  @click="add" > Добавить </v-btn>
         <v-btn v-if="showConfirmBtn"   @click="hideConfirmBtnFunc" > Отмена </v-btn>
       </v-col>
@@ -305,17 +306,17 @@ export default {
     },
     add: function () {
       if (this.tool)
-      this.axios.post(`api/tool`, this.tool).then(result => {
-        if (result.status === 200) {
-          this.addTool(result.data)
-          this.showConfirmBtn=false
-          this.showImageForm = true;
-          this.tool = result.data
-        } else {
-          this.tool = {}
-          this.showConfirmBtn=false
-        }
-      })
+        this.axios.post(`api/tool`, this.tool).then(result => {
+          if (result.status === 200) {
+            this.addTool(result.data)
+            this.showConfirmBtn=false
+            this.showImageForm = true;
+            this.tool = result.data
+          } else {
+            this.tool = {}
+            this.showConfirmBtn=false
+          }
+        })
     }
   }
 }

@@ -163,7 +163,7 @@ export default {
         return this.workingTimeArray
       },
       workingTypes: function () {
-        this.workingTypeArray = ["Проект","Менеджмент","Монтаж","Сборка","ПНР","Сервис","Отпуск","Больничный"]
+        this.workingTypeArray = ["Проект","Менеджмент","Монтаж","Сборка","ПНР","Сервис","Отпуск","Больничный","Отгул"]
         return this.workingTypeArray
       },
     },

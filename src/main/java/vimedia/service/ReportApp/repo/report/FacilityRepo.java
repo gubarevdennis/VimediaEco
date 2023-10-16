@@ -4,6 +4,7 @@ package vimedia.service.ReportApp.repo.report;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import vimedia.service.ReportApp.model.report.Facility;
+import vimedia.service.ReportApp.model.tools.Tool;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,6 +12,8 @@ import java.util.Optional;
 public interface FacilityRepo extends JpaRepository<Facility, Integer> {
 
     Optional<Facility> findByName(String name);
+//
+//    Optional<Facility> findByTool(Tool tool);
 
     @Query(value = "SELECT SUM(HOURS_OF_WORKING) FROM REPORT LEFT JOIN FACILITY ON FACILITY.ID=REPORT.FACILITY_ID", nativeQuery = true)
     List<Integer> getSumOfHoursByFacilities();

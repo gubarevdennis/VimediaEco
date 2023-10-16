@@ -51,11 +51,11 @@ public class WebSecurityConfig {
                 .csrf().disable()
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers( "/api/**").permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()//.authenticated()
                 )
                 .sessionManagement((session) -> session
                                 .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
-                        // .invalidSessionUrl("/logout")
+                                .invalidSessionUrl("/logout")
                 )
                 .formLogin(formLogin -> formLogin
                         .loginPage("/login")

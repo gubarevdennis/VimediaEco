@@ -35,18 +35,28 @@ public class Event {
     private String fromFacility;
 
     @JsonView(Views.IdName.class)
-    @Column(unique=true)
     private String toFacility;
+
+    @JsonView(Views.IdName.class)
+    private String toUser;
+
+    @JsonView(Views.IdName.class)
+    private String comment;
 
     @Column(updatable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonView(Views.FuLlFacility.class)
+    @JsonView(Views.IdName.class)
     private LocalDateTime eventTimeAndDate;
 
     @ManyToOne
     @JsonIgnoreProperties({"events", "reports", "password", "tools"})
     @JsonView(Views.IdName.class)
     private User user;
+
+    @ManyToOne
+    @JsonIgnoreProperties({"facility", "user", "toolSet", "events"})
+    @JsonView(Views.IdName.class)
+    private Tool tool;
 
     public int getId() {
         return id;
@@ -102,5 +112,29 @@ public class Event {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public String getToUser() {
+        return toUser;
+    }
+
+    public void setToUser(String toUser) {
+        this.toUser = toUser;
+    }
+
+    public Tool getTool() {
+        return tool;
+    }
+
+    public void setTool(Tool tool) {
+        this.tool = tool;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 }

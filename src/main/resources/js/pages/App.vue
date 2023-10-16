@@ -15,13 +15,15 @@
 
       <v-list density="compact" nav>
         <v-btn block to="/cabinet" @click="changeAppBoardNameCabinet">Мой кабинет</v-btn>
-        <v-btn block to="/reports" @click="changeAppBoardNameReports">Мои отчеты</v-btn>
+        <v-btn block to="/reports" @click="changeAppBoardNameReports">Отправить отчет</v-btn>
+        <v-btn block to="/mainReportForEach" @click="changeAppBoardNameByEachUser">Мои отчеты</v-btn>
         <v-btn block to="/byUser" @click="changeAppBoardNameByUser">Календарь</v-btn>
         <v-btn block to="/facilities" @click="changeAppBoardNameFacilities">Мои объекты</v-btn>
         <v-btn block v-if="this.role === 'admin' || this.role === 'Директор' || this.role === 'HR'" to="/users" @click="changeAppBoardNameUsers">Мои коллеги</v-btn>
         <v-btn block v-if=" this.role === 'Директор' || this.role === 'Диспетчер'" to="/mainReport" @click="changeAppBoardNameByUser">Основной отчет</v-btn>
         <v-btn block v-if=" this.role.split(' ')[0] === 'Руководитель' /*|| this.role === 'Прораб'*/" to="/mainReportForDepDirectors" @click="changeAppBoardNameByUser">Отчет по отделу</v-btn>
-        <v-btn block v-if="this.role === 'admin' || this.role === 'Директор' || this.role === 'Кладовщик' || this.role === 'Диспетчер' " to="/mainTableTools" @click="changeAppBoardTools">Инструменты</v-btn>
+        <v-btn block to="/mainTableTools" @click="changeAppBoardTools">Инструменты</v-btn>
+        <v-btn block to="/events" @click="changeAppEvents">События</v-btn>
       </v-list>
 
       <v-list-item
@@ -73,7 +75,7 @@ export default {
   },
   methods: {
     changeAppBoardNameReports() {
-      this.appBoardName="Мои отчеты"
+      this.appBoardName="Отправить отчет"
     },
     changeAppBoardNameFacilities() {
       this.appBoardName="Мои объекты"
@@ -89,6 +91,12 @@ export default {
     },
     changeAppBoardTools() {
       this.appBoardName="Инструменты"
+    },
+    changeAppEvents() {
+      this.appBoardName="События"
+    },
+    changeAppBoardNameByEachUser() {
+      this.appBoardName="Все отчеты"
     }
 
   },

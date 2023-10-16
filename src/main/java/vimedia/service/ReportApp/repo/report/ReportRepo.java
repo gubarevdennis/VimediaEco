@@ -16,4 +16,12 @@ public interface ReportRepo extends JpaRepository<Report,Integer> {
             "REPORT.REPORT_DAY BETWEEN date( date_trunc('month', current_date))  + make_interval(0,?1) " +
             " and date( date_trunc('month', current_date)) + make_interval(0,?1 + 1)", nativeQuery = true)
     List<Report> getReportsByMonth(Integer offsetMonth);
+
+    List<Report> getReportsByUser(User user);
+
+
+    @Query(value = "SELECT * FROM REPORT WHERE REPORT.USER_ID = ?2 AND " +
+            "REPORT.REPORT_DAY BETWEEN date( date_trunc('month', current_date))  + make_interval(0,?1) " +
+            " and date( date_trunc('month', current_date)) + make_interval(0,?1 + 1)", nativeQuery = true)
+    List<Report> getReportsByMonthAndUser(Integer offsetMonth, Integer userId);
 }
