@@ -32,8 +32,8 @@ import java.util.*;
 public class Bot extends TelegramLongPollingBot {
     //создаем две константы, присваиваем им значения токена и имя бота соответсвтенно
     //вместо звездочек подставляйте свои данные
-//    private final String BOT_TOKEN = "6138833300:AAGB1uzcjMxY2qNNh1hzfu85bupEfl_YiKE"; // ViBroTest
-//    private final String BOT_NAME = "ViBroTest"; //   ViBroTestBot
+/*    private final String BOT_TOKEN = "6138833300:AAGB1uzcjMxY2qNNh1hzfu85bupEfl_YiKE"; // ViBroTest
+    private final String BOT_NAME = "ViBroTest"; //   ViBroTestBot*/
 
     private final String BOT_TOKEN = "6446999228:AAGWn1Hf99j_2-0i4jJ9CwRbTWH5_351Ao4"; // ViBro
     private final String BOT_NAME = "VimediaCRMBot"; // ViBro
@@ -65,12 +65,12 @@ public class Bot extends TelegramLongPollingBot {
     }
 
     // Клавиатура
-    public ReplyKeyboard getToolsKeyboard() {
-        KeyboardRow row = new KeyboardRow();
-        row.add("Принять");
-        row.add("Отклонить");
-        return new ReplyKeyboardMarkup(List.of(row));
-    }
+//    public ReplyKeyboard getToolsKeyboard() {
+//        KeyboardRow row = new KeyboardRow();
+//        row.add("Принять");
+//        row.add("Отклонить");
+//        return new ReplyKeyboardMarkup(List.of(row));
+//    }
 
     @Override
     public String getBotUsername() {
@@ -149,11 +149,11 @@ public class Bot extends TelegramLongPollingBot {
         }
         else if(textMsg.startsWith("отчет")) {
             response="Отчет отправлен! Спасибо за работу!";
-        }        else if (textMsg.startsWith("Принять") & (!isAlreadyAssigned(chatId, "Принять"))
-                & (assignTool(chatId, "Принять"))) {
+        }        else if (textMsg.startsWith("Принять") & (!isAlreadyAssigned(chatId))) {
+            assignTool(chatId, "Принять");
             response="Инструмент принят!";
-        }        else if (textMsg.startsWith("Отклонить") & (!isAlreadyAssigned(chatId, "Отклонить"))
-                & (assignTool(chatId, "Отклонить"))) {
+        }        else if (textMsg.startsWith("Отклонить") & (!isAlreadyAssigned(chatId))) {
+            assignTool(chatId, "Отклонить");
             response="Инструмент отклонен!";
         }
         else if (userRepo.findByTelegramId(chatId).isEmpty()) {
@@ -194,7 +194,7 @@ public class Bot extends TelegramLongPollingBot {
             return false;
     }
 
-    public boolean isAlreadyAssigned(String chatId, String type) {
+    public boolean isAlreadyAssigned(String chatId) {
         // Находим пользователя
         User user = userRepo.findByTelegramId(chatId).orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден!"));
 

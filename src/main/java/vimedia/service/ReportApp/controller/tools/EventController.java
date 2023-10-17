@@ -26,6 +26,7 @@ import vimedia.service.ReportApp.service.MyUserDetails;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -125,15 +126,7 @@ public class EventController {
 //                .findByName(myUserDetails.getUsername())
 //                .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден!"));
 
-        List<Event> events = tool.getEvents().stream().sorted(new Comparator<Event>() {
-            @Override
-            public int compare(Event o1, Event o2) {
-                return - o1.getId() + o2.getId();
-            }
-        }).filter(e -> (e.getTool().equals(tool) && e.getName().equals("Направлен на передачу")))
-                .collect(Collectors.toList());
-
-//        List<Event> events = eventRepo.findByUser(user).stream().sorted(new Comparator<Event>() {
+        //        List<Event> events = eventRepo.findByUser(user).stream().sorted(new Comparator<Event>() {
 //            @Override
 //            public int compare(Event o1, Event o2) {
 //                return - o1.getId() + o2.getId();
@@ -141,7 +134,13 @@ public class EventController {
 //        }).filter(e -> (e.getTool().equals(tool) && e.getName().equals("Направлен на передачу")))
 //                .collect(Collectors.toList()); // сортировка
 
-        return events;
+        return tool.getEvents().stream().sorted(new Comparator<Event>() {
+            @Override
+            public int compare(Event o1, Event o2) {
+                return - o1.getId() + o2.getId();
+            }
+        }).filter(e -> (e.getTool().equals(tool) && e.getName().equals("Направлен на передачу")))
+                .collect(Collectors.toList());
     }
 
     // Получаем одно событие
@@ -164,19 +163,34 @@ public class EventController {
 
         // Вставляем его id в пользователя для отчета
         user.setId(user.getId());
-
         event.setUser(user);
 
+        System.out.println("tool from event  " + event.getTool());
+        System.out.println("tool ID from event  " + event.getTool().getId());
 
-            // Находим инструмент c таким же ID если есть, ставим ему отправителя
-            toolRepo.findByUser(user).stream().filter(t ->
-                    t.getId() == event.getTool().getId()).findAny().ifPresent(tool -> tool.setUser(user));
+        int toolId = event.getTool().getId();
 
+        // Находим инструмент c таким же ID, если есть, ставим ему отправителя
+        Optional<Tool> tool = toolRepo.findById(toolId);
 
-            // Проверяем есть ли с таким id уже направление на передачу
-            boolean alreadyDone = event.getName().equals("Направлен на передачу")
-                    && eventRepo.findLastByTool(event.getTool())
-                    .filter(e -> e.getName().equals("Направлен на передачу")).isPresent();
+        System.out.println("toooool ->   " + toolRepo.findByUser(user).toString());
+
+        // Проверяем есть ли с таким id уже направление на передачу
+        Optional<Event> lastEvent = eventRepo.findLastByTool(event.getTool());
+
+        System.out.println("tool " + tool);
+
+        if (tool.isPresent()) {
+
+            tool.get().setUser(user);
+//            tool.get().setStatus("Направлен на передачу");
+
+            boolean alreadyDone = false; // Переменная обозначающая есть ли уже перемещение
+
+            if (lastEvent.isPresent()) {
+                alreadyDone = lastEvent.get().getTool().getId() == tool.get().getId();
+                System.out.println("Нашел направление на передачу " + lastEvent);
+            }
 
             System.out.println("Уже есть такое перемещение " + alreadyDone);
 
@@ -220,7 +234,7 @@ public class EventController {
 
                 //Отправка в чат
                 try {
-                    if(!chatId.equals(""))
+                    if (chatId != null && !chatId.equals(""))
 
                         bot.execute(outMess);
                 } catch (Exception e) {
@@ -235,6 +249,7 @@ public class EventController {
             if (!alreadyDone) {
                 return eventRepo.save(event);
             } else return null;
+        } else return null;
     }
 
     // Редактирование события
@@ -268,7 +283,8 @@ public class EventController {
             }
         }
 
-        Event eventFromDB = eventRepo.findLastByTool(tool).orElse(null);
+        // Находим последнее событие "Направлен на передачу"
+        Event eventFromDB = eventRepo.findLastMovingByTool(tool).orElse(null);
 
         if (eventFromDB != null) {
             BeanUtils.copyProperties(event, eventFromDB, "id", "image",
@@ -287,16 +303,9 @@ public class EventController {
                 System.out.println("facility");
                 System.out.println(facility);
 
-//            if (facility != null) {
-//                if (tool != null) {
-//                    tool.setFacility(facility);
-//                    System.out.println("tool Facility --- > ");
-//                    System.out.println(tool.getFacility());
-//                    toolRepo.save(tool);
-//                    System.out.println(tool.getFacility());
-//                }
-//            }
                 if (facility != null) {
+                    System.out.println("status --->  " + tool.getStatus());
+
                     return eventRepo.save(eventFromDB);
                 } else return null;
             } else return null;
@@ -370,12 +379,14 @@ public class EventController {
             }
 
             //Добавляем в наше сообщение id чата, а также наш ответ
-            outMess.setChatId(chatId);
-            outMess.setText(response);
+            if (chatId != null) {
+                outMess.setChatId(chatId);
+                outMess.setText(response);
+            }
 
             //Отправка в чат
             try {
-                if(!chatId.equals(""))
+                if (chatId != null && !chatId.equals(""))
                     bot.execute(outMess);
             } catch (Exception e) {
                 e.printStackTrace();

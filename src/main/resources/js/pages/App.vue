@@ -22,7 +22,8 @@
         <v-btn block v-if="this.role === 'admin' || this.role === 'Директор' || this.role === 'HR'" to="/users" @click="changeAppBoardNameUsers">Мои коллеги</v-btn>
         <v-btn block v-if=" this.role === 'Директор' || this.role === 'Диспетчер'" to="/mainReport" @click="changeAppBoardNameByUser">Основной отчет</v-btn>
         <v-btn block v-if=" this.role.split(' ')[0] === 'Руководитель' /*|| this.role === 'Прораб'*/" to="/mainReportForDepDirectors" @click="changeAppBoardNameByUser">Отчет по отделу</v-btn>
-        <v-btn block to="/mainTableTools" @click="changeAppBoardTools">Инструменты</v-btn>
+        <v-btn block to="/mainTableTools" @click="changeAppBoardTools">Мои инструменты</v-btn>
+        <v-btn block v-if=" this.role === 'Директор' || this.role === 'Кладовщик'" to="/mainTableToolsAll" @click="changeAppBoardTools">Все инструменты</v-btn>
         <v-btn block to="/events" @click="changeAppEvents">События</v-btn>
       </v-list>
 

@@ -141,6 +141,13 @@
             <br>
           </v-row>
           <br>
+          <v-col >
+            <v-sheet  align="center" style="background-color: #7d7f7d; color: red" width="300px">
+              <div v-if="moveStatus">
+                Направлен коллеге {{ (movingEvent[0]) ? movingEvent[0].toUser : ''}}
+              </div>
+            </v-sheet>
+          </v-col>
         </v-sheet>
       </v-col>
 
@@ -183,11 +190,13 @@ export default {
       facilities: [],
       showConfirmBtn: false,
       overlayToGiving: false,
-      event: ''
+      event: '',
+      moveStatus: false,
+      movingEvent: ''
     }
   },
   mounted: function() {
-    // Запрашиваем события которые на перемещение
+    // Запрашиваем события состоявшейся передачи
     this.axios.get( `api/event/user/moved/${this.tool.id}`).then(res => {
 
           this.event = res.data
@@ -196,6 +205,16 @@ export default {
     console.log("this.event")
     console.log(this.event)
 
+    // Запрашиваем события которые на перемещение
+    this.axios.get( `api/event/user/moving/${this.tool.id}`).then(res => {
+
+          this.movingEvent = res.data
+      console.log(res.data)
+          if (res.data[0]) this.moveStatus = true
+        }
+    )
+    console.log("this.event")
+    console.log(this.event)
 
     // Запрашиваем отчеты
     this.axios.get( "api/facility").then(res => {

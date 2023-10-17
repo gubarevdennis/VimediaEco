@@ -132,7 +132,7 @@
     <br>
     <v-row justify="center" justify-sm="center">
       <v-text v-if="toolSendConfirmField" style="color: green; font-size: 18px;" >
-        Интсрумент направлен на передачу!
+        Интструмент направлен на передачу!
         <br>
         <br>
       </v-text>

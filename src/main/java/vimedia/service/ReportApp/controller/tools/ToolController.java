@@ -52,7 +52,7 @@ public class ToolController {
         }).collect(Collectors.toList()); // сортировка
     }
 
-
+    // Инструменты конкретного человека
     @GetMapping("/tool/ofcurrentuser")
     @JsonView(Views.IdName.class)
     public List<Tool> listOfCurrentUser(@AuthenticationPrincipal MyUserDetails myUserDetails) {

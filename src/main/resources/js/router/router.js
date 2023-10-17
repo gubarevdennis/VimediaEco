@@ -10,6 +10,7 @@ import mainReportForDepDirectors from "../components/mainReport/mainReportForDep
 import mainTableTools from "../components/tools/mainTableTools.vue";
 import mainEventsTable from "../components/events/mainEventsTable.vue";
 import mainReportForEach from "../components/mainReport/mainReportForEach.vue";
+import mainTableToolsAll from "../components/tools/mainTableToolsAll.vue";
 
 
 const router = createRouter({
@@ -44,6 +45,9 @@ const router = createRouter({
     },
     {
       path: '/mainReportForDepDirectors', component: mainReportForDepDirectors
+    },
+    {
+      path: '/mainTableToolsAll', component: mainTableToolsAll
     },
     {
       path: '/mainTableTools', component: mainTableTools

@@ -51,17 +51,21 @@ public class WebSecurityConfig {
                 .csrf().disable()
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers( "/api/**").permitAll()
-                        .anyRequest().permitAll()//.authenticated()
+                        .anyRequest().authenticated()
                 )
                 .sessionManagement((session) -> session
-                                .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
-                                .invalidSessionUrl("/logout")
+                        .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+                        .invalidSessionUrl("/logout")
+                        .maximumSessions(1500)
+                        .maxSessionsPreventsLogin(false)
                 )
                 .formLogin(formLogin -> formLogin
                         .loginPage("/login")
                         .permitAll().defaultSuccessUrl("/reports"))
                 .logout(LogoutConfigurer::permitAll)
-                .logout(logout -> logout.deleteCookies("JSESSIONID").invalidateHttpSession(true));
+                .logout(logout -> logout.deleteCookies("JSESSIONID")
+                        .invalidateHttpSession(true)
+                );
         return http.build();
     }
 

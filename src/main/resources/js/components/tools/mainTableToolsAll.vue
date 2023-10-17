@@ -1,11 +1,5 @@
 <template>
-  <confirm-tool-table :users="users"
-                      :userNames="userNames"
-                      :role="role"
-                      :profile="profile"
-                      :toolSets="toolSets"
-                      :profileId="profileId"
-  ></confirm-tool-table>
+  <add-tool v-if="((this.role === 'Кладовщик') || (this.role === 'Директор'))" :addTool="addTool" :toolSets="toolSets" :editTool="editTool" :facilities="facilities" ></add-tool>
 
   <br>
   <div v-for="tool in sortedTools" v-bind:key="tool.id" align="center"  height="200px">
@@ -45,7 +39,7 @@ export default {
     console.log('Запустил mounted')
 
     // Запрашиваем отчеты
-      this.axios.get( "api/tool/ofcurrentuser").then(tools => {
+      this.axios.get( "api/tool").then(tools => {
             tools.data.forEach(t =>
                 this.tools.push(t))
             this.sortedTools = this.sortToolFunc(this.tools)
