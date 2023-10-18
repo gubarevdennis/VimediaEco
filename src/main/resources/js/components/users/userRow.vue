@@ -7,6 +7,16 @@
           <div v-if="this.role === 'Директор'" style="font-size: 15px; color: #0B0B0B">
             Стоимость часа: {{user.salary}} р.
           </div>
+          <div v-if="this.role === 'Директор' && user.telegramId" style="font-size: 15px; color: #0B0B0B">
+            <v-card color="green" width="150" align="center">
+                Телеграмм бот
+            </v-card>
+          </div>
+          <div v-if="this.role === 'Директор' && !user.telegramId" style="font-size: 15px; color: #0B0B0B">
+            <v-card color="red" width="150" align="center">
+                Телеграмм бот
+            </v-card>
+          </div>
         </v-card-title>
       </v-col>
       <v-spacer></v-spacer>

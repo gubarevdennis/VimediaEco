@@ -15,7 +15,7 @@
                   density="0"
                   v-bind:src=" 'upload/files/' + (tool ? tool.image : '')"
                   class="text-white"
-                  height="350px"
+                  height="300px"
               />
             </v-card>
           </form>
@@ -137,7 +137,7 @@
         <br>
       </v-text>
     </v-row>
-    <v-sheet class="text-subtitle-1" v-if="tool.article" align="center"  width="350px">
+    <v-sheet class="text-subtitle-1" v-if="tool.article" align="center"  width="300px">
       <v-row v-if="!toolSendConfirmField" justify="center" align="center">
         <v-select
             label="Кому ?"

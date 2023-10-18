@@ -31,6 +31,7 @@ public class User {
 
     private String password;
 
+    @JsonView(Views.Id.class)
     private String telegramId;
 
     @JsonView(Views.IdName.class)

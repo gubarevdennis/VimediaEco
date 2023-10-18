@@ -15,13 +15,12 @@
                       :subFacility="subFacility"
                       :role="role"
         />
-
       </v-card>
     </v-col>
 
     <v-row
-        v-if="this.role === 'admin' || this.role === 'HR' || this.role === 'Директор' || this.role === 'Диспетчер'
-              || this.role === 'Менеджер' || this.role === 'Руководитель отдела ведения проектов' || this.role === 'Руководитель проектов'"
+        v-if="this.role === 'admin' || this.role === 'Директор' || this.role === 'Диспетчер'
+              || this.role === 'Руководитель отдела ведения проектов'"
         align="start"
         no-gutters
     >
@@ -75,7 +74,7 @@ export default {
 
     // Добавление объектов
     if (this.role === 'admin' || this.role === 'Директор' || this.role === 'HR' || this.role === 'Диспетчер'
-        || this.role === 'Менеджер' || this.role === 'Руководитель отдела ведения проектов') {
+        || this.role === 'Руководитель отдела ведения проектов') {
       this.axios.get( "api/facility").then(result =>
           result
               .data

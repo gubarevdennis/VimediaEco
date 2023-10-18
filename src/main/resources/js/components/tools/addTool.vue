@@ -1,5 +1,4 @@
 <template xmlns="http://www.w3.org/1999/html">
-  <html xmlns:th="https://www.thymeleaf.org">
   <v-row justify="center">
     <v-overlay
 
@@ -24,7 +23,6 @@
   </v-row>
   <br>
   <br>
-  </html>
 </template>
 
 <script>

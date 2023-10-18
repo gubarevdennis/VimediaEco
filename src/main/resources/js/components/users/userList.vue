@@ -53,11 +53,13 @@ export default {
   // указываем связь данного компонента с полученными от сервара данными
   created: function () {
     // Вставляем пользователей только вслучае, если их не было до этого в массиве на фронтенде
-    this.axios.get("api/user").then(result =>
-        result.data.forEach(user => {
-          if (this.users.find((u) => u.id === user.id) === undefined)
-            return this.users.push(user)
-        }))
+    this.axios.get("api/user").then(result => {
+          result.data.forEach(user => {
+            if (this.users.find((u) => u.id === user.id) === undefined)
+              return this.users.push(user)
+          })
+        }
+    )
   },
   methods: {
     editUser: function (user) {

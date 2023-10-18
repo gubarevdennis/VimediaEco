@@ -9,14 +9,14 @@
         <v-col>
           <form method="POST" enctype="multipart/form-data" action="/upload">
             <input name="toolId" type="hidden" v-bind:value="(tool ? tool.id : '')" />
-            <v-sheet width="350px" >
+            <v-sheet width="300px" >
               <v-img
                   @click="imageEditFunc"
                   density="0"
                   v-if="(this.imageEditButton)"
                   v-bind:src=" 'upload/files/' + (tool ? tool.image : '')"
                   class="text-white"
-                  height="350px"
+                  height="300px"
               />
               <div v-if="(!(this.imageEditButton))">
                 <br>
