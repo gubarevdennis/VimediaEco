@@ -1,147 +1,150 @@
 <template xmlns="http://www.w3.org/1999/html">
-  <v-card v-bind:height="((overlay || overlayToGiving) ? 1500 : '')" width="300" color="#7d7f7d" rounded="lg"  class="ma-2" >
-    <v-overlay
-        contained
-        v-model="overlay"
-        class="align-center justify-center"
-        scroll-strategy="reposition"
-        align="center"
-    >
+  <v-sheet width="300" style="background-color: black">
+    <v-card fluid v-bind:height="((overlay || overlayToGiving) ? 1500 : 178)" width="300" color="#7d7f7d" rounded="lg"  >
+      <v-overlay
+          contained
+          v-model="overlay"
+          class="align-center justify-center"
+          scroll-strategy="reposition"
+          align="center"
+      >
 
-      <v-btn icon="mdi-close" @click="overlay = !overlay"></v-btn>
-      <br>
-      <br>
-      <decription-tool :closeDescriptionToolByDeleteConfirm="closeDescriptionToolByDeleteConfirm"
-                       :deleteTool="deleteTool"
-                       :toolSets="toolSets"
-                       :editTool="editTool"
-                       :profile="profile"
-                       :role="role"
-                       :tool="tool"></decription-tool>
-
-    </v-overlay>
-    <v-overlay
-        contained
-        v-model="overlayToGiving"
-        class="align-center justify-center"
-        scroll-strategy="reposition"
-        align="center"
-    >
-
-      <v-btn icon="mdi-close" @click="overlayToGiving = !overlayToGiving"></v-btn>
-      <br>
-      <br>
-      <giving-tool :closeDescriptionToolByDeleteConfirm="closeDescriptionToolByDeleteConfirm"
-                   :deleteTool="deleteTool"
-                   :facilityNames="facilityNames"
-                   :facilities="facilities"
-                   :toolSets="toolSets"
-                   :editTool="editTool"
-                   :profile="profile"
-                   :role="role"
-                   :userNames="userNames"
-                   :users="users"
-                   :tool="tool"></giving-tool>
-
-    </v-overlay>
-    <v-row justify="center" >
-      <v-col row  wrap  >
-        <v-row style="margin: 10px" >
-          <v-sheet rounded="lg" style="background-color: #7d7f7d" width="100px" height="120px">
-            <v-sheet rounded="lg" width="150px" height="150px">
-              <v-img
-                  density="0"
-                  v-if="(this.imageEditButton)"
-                  v-bind:src=" 'upload/files/' + (tool ? tool.image : '')"
-                  class="text-white"
-                  height="150px"
-              />
-            </v-sheet>
-          </v-sheet>
-        </v-row>
+        <v-btn icon="mdi-close" @click="overlay = !overlay"></v-btn>
         <br>
-      </v-col>
-      <v-col align-self="center">
-        <v-sheet  class=" pa-1" align="center" style="background-color: #7d7f7d; font-size: 15px; font-weight: bold" width="110px">
-          {{ tool.name }}
-        </v-sheet>
-        <v-sheet class=" pa-1" align="center" style="background-color: #7d7f7d" width="110px">
-          <div v-if="tool.article">
-            {{ tool.article }}
-          </div>
-        </v-sheet>
-        <v-sheet class=" pa-1" align="center" style="background-color: #7d7f7d" width="110px">
-          <div v-if="tool.serial">
-            {{ tool.serial }}
-          </div>
-        </v-sheet>
-        <v-sheet class=" pa-1" align="center" style="background-color: #7d7f7d" width="110px">
-          <div v-if="tool.vendor">
-            {{ tool.vendor }}
-          </div>
-        </v-sheet>
-        <v-sheet class=" pa-1" align="center"  style="background-color: #7d7f7d" width="110px">
-          <div v-if="tool.quantity">
-            {{ tool.quantity }} шт.
-          </div>
-        </v-sheet>
-        <v-sheet v-if="tool.article" align="center"  style="background-color: #7d7f7d" width="110px">
-          <v-row v-if="!moveStatus" justify="center" align="center" class=" pa-1">
-            <br>
-            с {{ event.eventTimeAndDate }}
-            <br>
-            от {{ event.user ? event.user.name : '' }}
-          </v-row>
-          <v-row justify="center" align="center">
-            <v-select
-                label="Объект"
-                variant="outlined"
-                @update:modelValue="selectFacility"
-                v-model="facilityNameSelected"
-                :items="facilityNames"
-                :item-value="facilityNameSelected"
-            >
-            </v-select>
-          </v-row>
-          <div>
-            <v-btn v-if="showConfirmBtn" color="green" size="small" @click="edit" > Переместить </v-btn>
-            <v-btn v-if="showConfirmBtn" color="red" size="small" @click="hideConfirmBtnFunc" > Отмена </v-btn>
-          </div>
-        </v-sheet>
-      </v-col>
-      <v-sheet style="background-color: #7d7f7d" width="300px">
-        <v-row justify="center" align="center">
-          <v-btn v-if="((this.role === 'Кладовщик') || (this.role === 'Директор'))" align="center" @click="overlay = !overlay">
-            Подробнее
-          </v-btn>
-          &nbsp
-          &nbsp
-          &nbsp
-          &nbsp
-          <v-btn color="#EBB652" align="center" @click="overlayToGiving = !overlayToGiving">
-            Передать
-          </v-btn>
-          <br>
-          <br>
-          <br>
-          <v-card color="green"  align="center" style="background-color: #7d7f7d;" width="300px">
-            <div v-if="tool ? (tool.user ? tool.user.name : '') : ''">
-              Прикреплен к: {{ tool ? (tool.user ? tool.user.name : '') : ''}}
-            </div>
-          </v-card>
-          <v-card color="red"  align="center" style="background-color: #7d7f7d;" width="300px">
-            <div v-if="moveStatus">
-              Направлен коллеге {{ (movingEvent[0]) ? movingEvent[0].toUser : ''}}
-            </div>
-            <br>
-          </v-card>
+        <br>
+        <decription-tool :closeDescriptionToolByDeleteConfirm="closeDescriptionToolByDeleteConfirm"
+                         :deleteTool="deleteTool"
+                         :toolSets="toolSets"
+                         :editTool="editTool"
+                         :profile="profile"
+                         :role="role"
+                         :tool="tool"></decription-tool>
+
+      </v-overlay>
+      <v-overlay
+          contained
+          v-model="overlayToGiving"
+          class="align-center justify-center"
+          scroll-strategy="reposition"
+          align="center"
+      >
+        <v-btn icon="mdi-close" @click="overlayToGiving = !overlayToGiving"></v-btn>
+        <br>
+        <br>
+        <giving-tool :closeDescriptionToolByDeleteConfirm="closeDescriptionToolByDeleteConfirm"
+                     :deleteTool="deleteTool"
+                     :facilityNames="facilityNames"
+                     :facilities="facilities"
+                     :toolSets="toolSets"
+                     :editTool="editTool"
+                     :profile="profile"
+                     :role="role"
+                     :userNames="userNames"
+                     :users="users"
+                     :tool="tool"></giving-tool>
+
+      </v-overlay>
+      <v-sheet width="300" color="#7d7f7d" >
+        <v-row align="center" justify="center">
+          <v-col align-self="start">
+            <v-sheet width="240" color="#7d7f7d" style="background-color: #7d7f7d;" >
+              <v-row >
+                <v-col row  wrap >
+                  <v-row style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px" >
+                    <v-sheet rounded="lg" style="background-color: #7d7f7d" width="100px" height="100px">
+                      <v-card rounded="lg" width="100px" height="100px" v-if="((this.role === 'Кладовщик') || (this.role === 'Директор'))" align="center" @click="overlay = !overlay">
+                        <v-img
+                            density="0"
+                            v-if="(this.imageEditButton)"
+                            v-bind:src=" 'upload/files/' + (tool ? tool.image : '')"
+                            class="text-white"
+                            height="80px"
+                        />
+                      </v-card>
+                    </v-sheet>
+                  </v-row>
+                </v-col>
+                <v-col>
+                  <v-sheet width="110" style="background-color: #7d7f7d;">
+                    <v-card-title  class=" pa-0" align="start" style="background-color: #7d7f7d; font-size: 15px;
+                    font-weight: bold" width="100px" >
+                      {{ tool.name }}
+                    </v-card-title>
+                    <v-sheet class=" pa-0" align="start" style="background-color: #7d7f7d; font-size: 14px;" width="110px" >
+                      <div v-if="tool.article">
+                        {{ tool.article }}
+                      </div>
+                    </v-sheet>
+                  </v-sheet>
+                  <v-sheet v-if="tool.article" align="center"  style="background-color: #7d7f7d;" width="110px;" >
+                    <!--          <v-row v-if="!moveStatus" justify="center" align="center" class=" pa-1">-->
+                    <!--            <br>-->
+                    <!--            с {{ event.eventTimeAndDate }}-->
+                    <!--            <br>-->
+                    <!--            от {{ event.user ? event.user.name : '' }}-->
+                    <!--          </v-row>-->
+                    <v-row justify="center" align="center" >
+                      <v-select
+                          style="margin-top: 20px; margin-left:10px; "
+                          outlined
+                          density="0"
+                          class="inline custom-select"
+                          label="Объект"
+                          variant="outlined"
+                          @update:modelValue="selectFacility"
+                          v-model="facilityNameSelected"
+                          :items="facilityNames"
+                          :item-value="facilityNameSelected"
+                      >
+                      </v-select>
+                    </v-row>
+                    <v-row justify="center" align="center">
+                      <div v-if="showConfirmBtn">
+                        <v-btn v-if="showConfirmBtn" width="80" color="green" size="small" @click="edit" >
+                          <div style="font-size: 8px">
+                            Переместить
+                          </div>
+                        </v-btn>
+                        <v-btn v-if="showConfirmBtn" width="20" color="red" size="small" @click="hideConfirmBtnFunc" >
+                          <div style="font-size: 8px">
+                            Отмена
+                          </div>
+                        </v-btn>
+                        <br>
+                        <br>
+                      </div>
+                    </v-row>
+                  </v-sheet>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-sheet style="background-color: #7d7f7d;" width="300px" >
+                  <v-row justify="center" align="center">
+                    <v-sheet color="#EBB652"  align="center" style="background-color: #EBB652;" width="300">
+                      <div v-if="tool ? (tool.user ? tool.user.name : '') : ''">
+                        Прикреплен к: {{ tool ? (tool.user ? tool.user.name : '') : ''}}
+                      </div>
+                    </v-sheet>
+                    <v-sheet color="red"  align="center" style="background-color: #7d7f7d;" width="300">
+                      <div v-if="moveStatus">
+                        Направлен коллеге {{ (movingEvent[0]) ? movingEvent[0].toUser : ''}}
+                      </div>
+                    </v-sheet>
+                  </v-row>
+                </v-sheet>
+              </v-row>
+            </v-sheet>
+          </v-col>
+          <v-col>
+              <v-card class="align-center justify-center d-flex flex-column"  align="center" height="178"  style="background-color: #EBB652;" color="green" @click="overlayToGiving = !overlayToGiving">
+                <v-icon  icon="mdi-send" >
+                </v-icon>
+              </v-card>
+          </v-col>
         </v-row>
-
       </v-sheet>
-
-
-    </v-row>
-  </v-card>
+    </v-card>
+  </v-sheet>
 </template>
 
 <script>

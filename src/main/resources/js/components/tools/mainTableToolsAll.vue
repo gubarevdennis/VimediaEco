@@ -1,7 +1,9 @@
 <template>
+
   <add-tool v-if="((this.role === 'Кладовщик') || (this.role === 'Директор'))" :addTool="addTool" :toolSets="toolSets" :editTool="editTool" :facilities="facilities" ></add-tool>
 
   <br>
+
   <div v-for="row in rows" v-bind:key="row" align="center"  height="200px">
     <main-table-tools-row :deleteTool="deleteTool"
                           :users="users"

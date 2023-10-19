@@ -1,8 +1,8 @@
 <template xmlns="http://www.w3.org/1999/html">
     <v-card color="black" rounded="lg"  class="ma-2" >
       <br>
-      <v-row justify="center">
-        <div v-for="tool in toolsForRow">
+      <v-row justify="center" align="center">
+        <div v-for="tool in toolsForRow" style="width: 320px; ">
           <main-table-tools-col :deleteTool="deleteTool"
                                 :users="users"
                                 :userNames="userNames"

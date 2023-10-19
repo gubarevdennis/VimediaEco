@@ -3,20 +3,21 @@
       rounded="lg"
       contained
       align="center"
+      width="300"
   >
     <v-col>
       <v-row justify="center" align="center">
         <v-col>
           <form method="POST" enctype="multipart/form-data" action="/upload">
             <input name="toolId" type="hidden" v-bind:value="(tool ? tool.id : '')" />
-            <v-sheet width="300px" >
+            <v-sheet width="260px" >
               <v-img
                   @click="imageEditFunc"
                   density="0"
                   v-if="(this.imageEditButton)"
                   v-bind:src=" 'upload/files/' + (tool ? tool.image : '')"
                   class="text-white"
-                  height="300px"
+                  height="260px"
               />
               <div v-if="(!(this.imageEditButton))">
                 <br>
@@ -46,16 +47,16 @@
               </div>
             </v-sheet>
           </form>
-          <v-card-title>
-            <div style="font-weight: bold;">
-              {{tool ? tool.name : ''}}
-            </div>
-            <div>
-              {{tool ? tool.article : ''}}
-            </div>
-          </v-card-title>
+          <v-sheet>
+              <div style="font-weight: bold;">
+                {{tool ? tool.name : ''}}
+              </div>
+              <div>
+                {{tool ? tool.article : ''}}
+              </div>
+          </v-sheet>
         </v-col >
-        <v-col  style="font-size: 40px">
+        <v-col  style="font-size: 40px" >
           <v-select
               label="Комплектность"
               variant="solo"
@@ -67,7 +68,7 @@
           </v-select>
           <v-btn v-if="showConfirmBtn" color="green" size="small" @click="edit" > Применить </v-btn>
           <v-btn v-if="showConfirmBtn" color="red" size="small" @click="hideConfirmBtnFunc" > Отмена </v-btn>
-          <v-card-text >
+          <v-card-text>
             <v-row>
               <div style="font-weight: bold;color: #0B0B0B"> Наименование: &nbsp</div>
               <description-tool-row :editTool="editTool"  :profile="profile" :role="role" :tool="tool"
@@ -81,7 +82,6 @@
               <div style="font-weight: bold;color: #0B0B0B"> Артикул: &nbsp</div>
               <description-tool-row :editTool="editTool"  :profile="profile" :role="role" :tool="tool"
                                     v-bind:rowInputText="tool ? tool.article : ''" v-bind:rowInputType="'article'">
-
               </description-tool-row>
             </v-row>
           </v-card-text>

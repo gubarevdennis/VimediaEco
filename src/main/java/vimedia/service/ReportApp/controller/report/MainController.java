@@ -131,7 +131,7 @@ public class MainController {
         redirectAttributes.addFlashAttribute("message",
                 "You successfully uploaded " + multipartFile.getOriginalFilename() + "!");
 
-        return "redirect:/mainTableTools";
+        return "redirect:/mainTableToolsAll";
     }
 
     @ExceptionHandler(StorageFileNotFoundException.class)

@@ -3,6 +3,7 @@
       rounded="lg"
       contained
       align="center"
+      width="300"
   >
     <br>
     <v-col>
@@ -10,29 +11,29 @@
         <v-col>
           <form method="POST" enctype="multipart/form-data" action="/upload">
             <input name="toolId" type="hidden" v-bind:value="(tool ? tool.id : '')" />
-            <v-card width="300px" >
+            <v-card width="260px" >
               <v-img
                   density="0"
                   v-bind:src=" 'upload/files/' + (tool ? tool.image : '')"
                   class="text-white"
-                  height="300px"
+                  height="260px"
               />
             </v-card>
           </form>
-          <v-card-title>
+          <v-sheet>
             <div style="font-weight: bold;">
               {{tool ? tool.name : ''}}
             </div>
             <div>
               {{tool ? tool.article : ''}}
             </div>
-          </v-card-title>
+          </v-sheet>
         </v-col >
         <v-col  style="font-size: 40px">
-          <v-card-text >
-            <v-row>
+          <v-card-text align="start">
+            <v-row align="start">
               <div style="font-weight: bold;color: #0B0B0B"> Наименование: &nbsp</div>
-              {{ tool.name }}
+              {{ tool ? tool.name : '' }}
             </v-row>
           </v-card-text>
           <v-card-text >
