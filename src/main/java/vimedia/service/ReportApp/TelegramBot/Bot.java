@@ -32,11 +32,11 @@ import java.util.*;
 public class Bot extends TelegramLongPollingBot {
     //создаем две константы, присваиваем им значения токена и имя бота соответсвтенно
     //вместо звездочек подставляйте свои данные
-    private final String BOT_TOKEN = "6138833300:AAGB1uzcjMxY2qNNh1hzfu85bupEfl_YiKE"; // ViBroTest
-    private final String BOT_NAME = "ViBroTest"; //   ViBroTestBot
+//    private final String BOT_TOKEN = "6138833300:AAGB1uzcjMxY2qNNh1hzfu85bupEfl_YiKE"; // ViBroTest
+//    private final String BOT_NAME = "ViBroTest"; //   ViBroTestBot
 
-//    private final String BOT_TOKEN = "6446999228:AAGWn1Hf99j_2-0i4jJ9CwRbTWH5_351Ao4"; // ViBro
-//    private final String BOT_NAME = "VimediaCRMBot"; // ViBro
+    private final String BOT_TOKEN = "6446999228:AAGWn1Hf99j_2-0i4jJ9CwRbTWH5_351Ao4"; // ViBro
+    private final String BOT_NAME = "VimediaCRMBot"; // ViBro
     private final Storage storage;
     private final UserRepo userRepo;
     private final EventRepo eventRepo;
@@ -255,7 +255,7 @@ public class Bot extends TelegramLongPollingBot {
 //                            formattedString + ". Пожалуйста, сделай это сегодня. Спасибо! http://reports.vimedia.ru/";
 //                }
 
-                if (reportOlder.isEmpty() && report.isEmpty() && nowDate.getDay() != 0) {
+                if (reportOlder.isEmpty() && report.isEmpty() && nowDate.getDay() != 1) {
                     response = "Безалаберность, бро! Напоминаю, что ты не заполнил отчет два раза подряд! Последний "+
                             formattedString + ". Пожалуйста, сделай это сегодня. Спасибо! http://reports.vimedia.ru/";
                 }
@@ -276,10 +276,11 @@ public class Bot extends TelegramLongPollingBot {
                                     // не разсылаем сообщения если нет чата
                                     && !telegramId.equals("")
                                     // не разсылаем сообщения за отчеты воскресенье
-                                    && (!(nowDate.getDay() == 0))
+                                    && (!(nowDate.getDay() == 1))
                                     // не разсылаем сообщения за отчеты в субботу, если ты не монтажник или не прораб
-                                    && ((!(nowDate.getDay() == 6))
-                                    || (u.getRole().equals("Монтажник")) || (u.getRole().equals("Прораб")))
+                                    && (!(nowDate.getDay() == 0)
+                                    )
+                                   // || (u.getRole().equals("Монтажник")) || (u.getRole().equals("Прораб")))
                     ) {
                         execute(outMess);
                     }

@@ -6,6 +6,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import vimedia.service.ReportApp.model.report.Facility;
 import vimedia.service.ReportApp.model.report.User;
@@ -122,6 +123,7 @@ public class ToolController {
 
     // Создание события
     @PutMapping("/tool/{id}")
+    @JsonView(Views.IdName.class)
     public Tool update(@PathVariable("id") Tool toolFromDB, // из базы данных
                        @RequestBody Tool tool) { // от пользователя
 

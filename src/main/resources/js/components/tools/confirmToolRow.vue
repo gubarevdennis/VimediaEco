@@ -6,8 +6,8 @@
         <br>
 
         <div align="center" >
-          <v-sheet rounded="lg" style="background-color: #7d7f7d" width="200px" height="150px">
-            <v-sheet rounded="lg" width="150px" height="150px">
+          <v-sheet rounded="lg" style="background-color: #7d7f7d" width="200px" height="250px">
+            <v-sheet rounded="lg" width="200px" height="200px">
               <v-img
                   density="0"
                   v-if="(this.imageEditButton)"
@@ -25,14 +25,6 @@
           <v-sheet v-if=" tool ? tool.name : '' " rounded="lg" style="background-color: #7d7f7d" width="300px">
             <v-card-title>
               {{ tool ? tool.name : ''}}
-            </v-card-title>
-          </v-sheet>
-        </div>
-      </v-col>
-      <v-col >
-        <div align="center" >
-          <v-sheet v-if=" tool ? tool.article : '' " rounded="lg" style="background-color: #7d7f7d" width="300px">
-            <v-card-title>
               {{ tool ? tool.article : '' }}
             </v-card-title>
           </v-sheet>
@@ -40,8 +32,8 @@
       </v-col>
       <v-col >
         <div align="center" >
-          <v-sheet v-if=" tool ? tool.serial : '' " rounded="lg" style="background-color: #7d7f7d" width="300px">
-            {{ tool ? tool.serial : '' }}
+          <v-sheet v-if=" tool ? tool.article : '' " rounded="lg" style="background-color: #7d7f7d" width="300px">
+
           </v-sheet>
         </div>
       </v-col>
@@ -52,19 +44,10 @@
           </v-sheet>
         </div>
       </v-col>
-      <v-col >
-        <div align="center" >
-          <v-sheet v-if=" tool ? tool.quantity : '' " rounded="lg" style="background-color: #7d7f7d" width="300px">
-            {{ tool ? tool.quantity : '' }}
-          </v-sheet>
-        </div>
-      </v-col>
       <v-col row  wrap align-center width="300px">
         <v-sheet  style="background-color: #7d7f7d" >
           <v-col justify="center" align="center">
-            <br>
-            <br>
-            <br>
+
             <div align="center">
               <v-card-title v-if="!showConfirmText">
                 <div>

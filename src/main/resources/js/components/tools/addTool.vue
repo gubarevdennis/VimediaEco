@@ -1,10 +1,8 @@
 <template xmlns="http://www.w3.org/1999/html">
   <v-row justify="center">
     <v-overlay
-
         scroll-strategy="reposition"
         class="align-center justify-center"
-
         v-model="overlay"
         align="end"
     >

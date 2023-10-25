@@ -1,9 +1,9 @@
 <template>
+  <html style="max-height: 80vh; max-width: 90vh">
   <v-sheet
       rounded="lg"
       contained
       align="center"
-      width="300"
   >
     <v-col>
       <v-row justify="center" align="center">
@@ -48,12 +48,12 @@
             </v-sheet>
           </form>
           <v-sheet>
-              <div style="font-weight: bold;">
-                {{tool ? tool.name : ''}}
-              </div>
-              <div>
-                {{tool ? tool.article : ''}}
-              </div>
+            <div style="font-weight: bold;">
+              {{tool ? tool.name : ''}}
+            </div>
+            <div>
+              {{tool ? tool.article : ''}}
+            </div>
           </v-sheet>
         </v-col >
         <v-col  style="font-size: 40px" >
@@ -73,7 +73,6 @@
               <div style="font-weight: bold;color: #0B0B0B"> Наименование: &nbsp</div>
               <description-tool-row :editTool="editTool"  :profile="profile" :role="role" :tool="tool"
                                     v-bind:rowInputText="tool ? tool.name : ''" v-bind:rowInputType="'name'">
-
               </description-tool-row>
             </v-row>
           </v-card-text>
@@ -90,7 +89,6 @@
               <div style="font-weight: bold;color: #0B0B0B"> Колличество: &nbsp</div>
               <description-tool-row :editTool="editTool"  :profile="profile" :role="role" :tool="tool"
                                     v-bind:rowInputText="tool ? tool.quantity : ''" v-bind:rowInputType="'quantity'">
-
               </description-tool-row>
             </v-row>
           </v-card-text>
@@ -207,6 +205,7 @@
       </v-row>
     </v-col>
   </v-sheet>
+  </html>
 </template>
 
 <script>

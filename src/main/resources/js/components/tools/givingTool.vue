@@ -1,9 +1,9 @@
 <template>
+  <html style="max-height: 80vh; max-width: 90vh">
   <v-sheet
       rounded="lg"
       contained
       align="center"
-      width="300"
   >
     <br>
     <v-col>
@@ -93,15 +93,13 @@
           <v-card-text>
             <v-row>
               <div style="font-weight: bold;color: #0B0B0B"> Состав: &nbsp</div>
-              <description-tool-row :editTool="editTool"  :profile="profile" :role="role" :tool="tool"
-                                    v-bind:rowInputText="tool ? tool.composition : ''" v-bind:rowInputType="'composition'" ></description-tool-row>
+              {{ tool.composition }}
             </v-row>
           </v-card-text>
           <v-card-text>
             <v-row>
               <div style="font-weight: bold;color: #0B0B0B"> Описание: &nbsp</div>
-              <description-tool-row :editTool="editTool"  :profile="profile" :role="role" :tool="tool"
-                                    v-bind:rowInputText="tool ? tool.description : ''" v-bind:rowInputType="'description'" ></description-tool-row>
+              {{ tool.description }}
             </v-row>
           </v-card-text>
           <v-card-text>
@@ -118,15 +116,15 @@
     <v-card-title>
       <br>
       <v-row v-if="!toolSendConfirmField" align="center" justify="center">
-        <div     style="font-weight: bold; font-size: 25px">
+        <v-card-title     style="font-weight: bold; font-size: 25px">
           Передать &nbsp
-        </div>
-        <div     style="font-weight: bold; color: red; font-size: 25px">
-          {{tool ? tool.name : ''}} {{tool ? tool.article : ''}} &nbsp
-        </div>
-        <div     style="font-weight: bold; font-size: 25px">
+        </v-card-title>
+        <v-card-text     style="font-weight: bold; color: red; font-size: 25px">
+          {{tool ? tool.name : ''}} <br> {{tool ? tool.article : ''}} &nbsp
+        </v-card-text>
+        <v-card-text      style="font-weight: bold; font-size: 25px">
           ?
-        </div>
+        </v-card-text >
       </v-row>
     </v-card-title>
     <br>
@@ -138,7 +136,7 @@
         <br>
       </v-text>
     </v-row>
-    <v-sheet class="text-subtitle-1" v-if="tool.article" align="center"  width="300px">
+    <v-sheet class="text-subtitle-1" v-if="tool.article" align="center" >
       <v-row v-if="!toolSendConfirmField" justify="center" align="center">
         <v-select
             label="Кому ?"
@@ -172,6 +170,7 @@
       <br>
     </v-sheet>
   </v-sheet>
+  </html>
 </template>
 
 <script>

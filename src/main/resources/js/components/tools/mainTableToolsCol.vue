@@ -1,49 +1,7 @@
 <template xmlns="http://www.w3.org/1999/html">
   <v-sheet width="300" style="background-color: black">
-    <v-card fluid v-bind:height="((overlay || overlayToGiving) ? 1500 : 178)" width="300" color="#7d7f7d" rounded="lg"  >
-      <v-overlay
-          contained
-          v-model="overlay"
-          class="align-center justify-center"
-          scroll-strategy="reposition"
-          align="center"
-      >
+    <v-card fluid v-bind:height="(178)" width="300" color="#7d7f7d" rounded="lg"  >
 
-        <v-btn icon="mdi-close" @click="overlay = !overlay"></v-btn>
-        <br>
-        <br>
-        <decription-tool :closeDescriptionToolByDeleteConfirm="closeDescriptionToolByDeleteConfirm"
-                         :deleteTool="deleteTool"
-                         :toolSets="toolSets"
-                         :editTool="editTool"
-                         :profile="profile"
-                         :role="role"
-                         :tool="tool"></decription-tool>
-
-      </v-overlay>
-      <v-overlay
-          contained
-          v-model="overlayToGiving"
-          class="align-center justify-center"
-          scroll-strategy="reposition"
-          align="center"
-      >
-        <v-btn icon="mdi-close" @click="overlayToGiving = !overlayToGiving"></v-btn>
-        <br>
-        <br>
-        <giving-tool :closeDescriptionToolByDeleteConfirm="closeDescriptionToolByDeleteConfirm"
-                     :deleteTool="deleteTool"
-                     :facilityNames="facilityNames"
-                     :facilities="facilities"
-                     :toolSets="toolSets"
-                     :editTool="editTool"
-                     :profile="profile"
-                     :role="role"
-                     :userNames="userNames"
-                     :users="users"
-                     :tool="tool"></giving-tool>
-
-      </v-overlay>
       <v-sheet width="300" color="#7d7f7d" >
         <v-row align="center" justify="center">
           <v-col align-self="start">
@@ -136,10 +94,10 @@
             </v-sheet>
           </v-col>
           <v-col>
-              <v-card class="align-center justify-center d-flex flex-column"  align="center" height="178"  style="background-color: #EBB652;" color="green" @click="overlayToGiving = !overlayToGiving">
-                <v-icon  icon="mdi-send" >
-                </v-icon>
-              </v-card>
+            <v-card class="align-center justify-center d-flex flex-column"  align="center" height="178"  style="background-color: #EBB652;" color="green" @click="overlayToGiving = !overlayToGiving">
+              <v-icon  icon="mdi-send" >
+              </v-icon>
+            </v-card>
           </v-col>
         </v-row>
       </v-sheet>
@@ -169,16 +127,16 @@ function toDeepRaw (data) {
 }
 
 export default {
-  components: {DecriptionTool,GivingTool},
-  props: ['profile', 'role', 'tool', 'editTool', 'toolSets', 'deleteTool', 'userNames' , 'users', 'profileId', 'toolsForRow'],
+  components: {DecriptionTool, GivingTool},
+  props: ['profile', 'role', 'tool', 'editTool', 'toolSets', 'deleteTool', 'userNames' , 'users',
+    'profileId', 'toolsForRow', 'overlayToGivingFunc', 'overlayFunc', 'toolFunc', 'facilityNames', 'facilities'],
   data() {
     return {
       imageEditButton: false,
       facilityNameSelected: '',
       overlay: false,
-      facilityNames: [],
+      // facilityNames: [],
       facilitiesArray: [],
-      facilities: [],
       showConfirmBtn: false,
       overlayToGiving: false,
       event: '',
@@ -206,16 +164,6 @@ export default {
     )
     console.log("this.event")
     console.log(this.event)
-
-    // Запрашиваем отчеты
-    this.axios.get( "api/facility").then(res => {
-          res.data.forEach(f => {
-                this.facilities.push(f)
-              }
-          )
-          this.facilities.forEach( f => this.facilityNames.push(f.name))
-        }
-    )
 
     this.imageEditButton = this.tool.image
     this.facilityNameSelected = this.toolFacilityNameIfPresent(this.tool)
@@ -271,6 +219,24 @@ export default {
     closeDescriptionToolByDeleteConfirm: function () {
       this.overlay = false;
     },
+    // overlayToGivingFuncInner: function () {
+    //   this.overlayToGivingFunc(this.overlay)
+    // },
+    // overlayFuncInner: function () {
+    //   this.overlayFunc(this.overlayToGiving)
+    // },
+
+  },
+  // функция следит на изменениями переменной
+  watch: {
+    overlay: function (newVal, oldVal) {
+      this.overlayFunc(newVal)
+      this.toolFunc(this.tool)
+    },
+    overlayToGiving: function (newVal, oldVal) {
+      this.overlayToGivingFunc(newVal)
+      this.toolFunc(this.tool)
+    }
   }
 }
 </script>
