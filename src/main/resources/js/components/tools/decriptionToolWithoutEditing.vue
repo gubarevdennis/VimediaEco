@@ -12,43 +12,16 @@
             <input name="toolId" type="hidden" v-bind:value="(tool ? tool.id : '')" />
             <v-sheet width="260px" >
               <v-img
-                  @click="imageEditFunc"
                   density="0"
                   v-if="(this.imageEditButton)"
                   v-bind:src=" 'upload/files/' + (tool ? tool.image : '')"
                   class="text-white"
                   height="260px"
               />
-              <div v-if="(!(this.imageEditButton))">
-                <br>
-                <br>
-                <v-file-input
-                    color="black"
-                    center-affix="black"
-                    hide-details="true"
-                    type="file"
-                    name="file"
-                    accept="image/*"
-                    capture="camera"
-                    prepend-icon="mdi-camera"
-                    variant="solo-inverted"
-                />
-                <br>
-                <v-row style="vertical-align: center" >
-                  <v-col align="end">
-                    <v-btn  color="red"  text="Отмена" v-if="(!(this.imageEditButton) && (tool ? tool.image : ''))" @click="imageEditFunc" />
-                  </v-col>
-                  <v-col align="start">
-                    <v-btn text="Загрузить" type="submit"/>
-                  </v-col>
-                </v-row>
-                <br>
-                <br>
-              </div>
             </v-sheet>
           </form>
-          <v-sheet>
-            <div style="font-weight: bold;">
+          <v-sheet style="width: 250px;">
+            <div style="font-weight: bold; ">
               {{tool ? tool.name : ''}}
             </div>
             <div>

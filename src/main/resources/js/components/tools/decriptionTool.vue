@@ -47,7 +47,7 @@
               </div>
             </v-sheet>
           </form>
-          <v-sheet>
+          <v-sheet style="width: 250px;">
             <div style="font-weight: bold;">
               {{tool ? tool.name : ''}}
             </div>

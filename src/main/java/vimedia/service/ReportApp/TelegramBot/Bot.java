@@ -32,11 +32,11 @@ import java.util.*;
 public class Bot extends TelegramLongPollingBot {
     //создаем две константы, присваиваем им значения токена и имя бота соответсвтенно
     //вместо звездочек подставляйте свои данные
-//    private final String BOT_TOKEN = "6138833300:AAGB1uzcjMxY2qNNh1hzfu85bupEfl_YiKE"; // ViBroTest
-//    private final String BOT_NAME = "ViBroTest"; //   ViBroTestBot
+    private final String BOT_TOKEN = "6138833300:AAGB1uzcjMxY2qNNh1hzfu85bupEfl_YiKE"; // ViBroTest
+    private final String BOT_NAME = "ViBroTest"; //   ViBroTestBot
 
-    private final String BOT_TOKEN = "6446999228:AAGWn1Hf99j_2-0i4jJ9CwRbTWH5_351Ao4"; // ViBro
-    private final String BOT_NAME = "VimediaCRMBot"; // ViBro
+//    private final String BOT_TOKEN = "6446999228:AAGWn1Hf99j_2-0i4jJ9CwRbTWH5_351Ao4"; // ViBro
+//    private final String BOT_NAME = "VimediaCRMBot"; // ViBro
     private final Storage storage;
     private final UserRepo userRepo;
     private final EventRepo eventRepo;

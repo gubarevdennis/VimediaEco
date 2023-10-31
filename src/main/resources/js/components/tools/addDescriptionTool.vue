@@ -1,4 +1,5 @@
 <template>
+  <html style="max-height: 80vh; max-width: 90vh">
   <v-sheet
       rounded="lg"
       contained
@@ -204,6 +205,7 @@
       </v-col>
     </v-row>
   </v-sheet>
+  </html>
 </template>
 
 <script>

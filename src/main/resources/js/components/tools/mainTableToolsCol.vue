@@ -1,6 +1,6 @@
 <template xmlns="http://www.w3.org/1999/html">
-  <v-sheet width="300" style="background-color: black">
-    <v-card fluid v-bind:height="(178)" width="300" color="#7d7f7d" rounded="lg"  >
+  <v-sheet align="center" width="300" style="background-color: black">
+    <v-card  fluid v-bind:height="(178)" width="300" color="#7d7f7d" rounded="lg"  >
 
       <v-sheet width="300" color="#7d7f7d" >
         <v-row align="center" justify="center">
@@ -10,13 +10,13 @@
                 <v-col row  wrap >
                   <v-row style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px" >
                     <v-sheet rounded="lg" style="background-color: #7d7f7d" width="100px" height="100px">
-                      <v-card rounded="lg" width="100px" height="100px" v-if="((this.role === 'Кладовщик') || (this.role === 'Директор'))" align="center" @click="overlay = !overlay">
+                      <v-card rounded="lg" width="100px" height="100px" align="center" @click="overlayFuncInner">
                         <v-img
                             density="0"
                             v-if="(this.imageEditButton)"
                             v-bind:src=" 'upload/files/' + (tool ? tool.image : '')"
                             class="text-white"
-                            height="80px"
+                            height="100px"
                         />
                       </v-card>
                     </v-sheet>
@@ -85,7 +85,7 @@
                     </v-sheet>
                     <v-sheet color="red"  align="center" style="background-color: #7d7f7d;" width="300">
                       <div v-if="moveStatus">
-                        Направлен коллеге {{ (movingEvent[0]) ? movingEvent[0].toUser : ''}}
+                        Направлен: {{ (movingEvent[0]) ? movingEvent[0].toUser : ''}}
                       </div>
                     </v-sheet>
                   </v-row>
@@ -94,7 +94,9 @@
             </v-sheet>
           </v-col>
           <v-col>
-            <v-card class="align-center justify-center d-flex flex-column"  align="center" height="178"  style="background-color: #EBB652;" color="green" @click="overlayToGiving = !overlayToGiving">
+            <v-card class="align-center justify-center d-flex flex-column"
+                    align="center" height="178"  style="background-color: #EBB652;"
+                    color="green" @click="overlayToGivingFuncInner">
               <v-icon  icon="mdi-send" >
               </v-icon>
             </v-card>
@@ -219,25 +221,19 @@ export default {
     closeDescriptionToolByDeleteConfirm: function () {
       this.overlay = false;
     },
-    // overlayToGivingFuncInner: function () {
-    //   this.overlayToGivingFunc(this.overlay)
-    // },
-    // overlayFuncInner: function () {
-    //   this.overlayFunc(this.overlayToGiving)
-    // },
 
-  },
-  // функция следит на изменениями переменной
-  watch: {
-    overlay: function (newVal, oldVal) {
-      this.overlayFunc(newVal)
+    overlayToGivingFuncInner: function () {
+      this.overlayToGiving = !this.overlayToGiving;
+      this.overlayToGivingFunc(this.overlayToGivingFunc)
       this.toolFunc(this.tool)
     },
-    overlayToGiving: function (newVal, oldVal) {
-      this.overlayToGivingFunc(newVal)
+    overlayFuncInner: function () {
+      this.overlay = !this.overlay;
+      this.overlayFunc(this.overlayToGivingFunc)
       this.toolFunc(this.tool)
-    }
-  }
+    },
+
+  },
 }
 </script>
 

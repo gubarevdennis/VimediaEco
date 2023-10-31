@@ -176,7 +176,7 @@ public class EventController {
         System.out.println("toooool ->   " + toolRepo.findByUser(user).toString());
 
         // Проверяем есть ли с таким id уже направление на передачу
-        Optional<Event> lastEvent = eventRepo.findLastByTool(event.getTool());
+        Optional<Event> lastEvent = eventRepo.findLastMovingByTool(event.getTool());
 
         System.out.println("tool " + tool);
 
@@ -189,10 +189,10 @@ public class EventController {
 
             if (lastEvent.isPresent()) {
                 alreadyDone = lastEvent.get().getTool().getId() == tool.get().getId();
-                System.out.println("Нашел направление на передачу " + lastEvent);
+                System.out.println("Request for sending already exist! -> " + lastEvent);
             }
 
-            System.out.println("Уже есть такое перемещение " + alreadyDone);
+            System.out.println("Relocation already exist! -> " + alreadyDone);
 
             // Чат бот телеграм передача инструмента
             if (!alreadyDone) {

@@ -10,7 +10,6 @@
           v-bind:title="profile"
       ></v-list-item>
 
-
       <v-divider></v-divider>
 
       <v-list density="compact" nav>
@@ -36,14 +35,14 @@
 
 
     <v-app-bar class="d-print-none"
-        color="#0B0B0B"
-        prominent
+               color="#0B0B0B"
+               prominent
     >
       <v-app-bar-nav-icon style="color: #F9F9F9" variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
 
       <v-toolbar-title style="color: #F9F9F9">{{appBoardName}}</v-toolbar-title>
 
-      <v-btn style="color: #F9F9F9" href="http://reports.vimedia.ru/logout" variant="text" icon="mdi-logout"></v-btn>
+      <v-btn style="color: #F9F9F9" href="http://localhost:9000/logout" variant="text" icon="mdi-logout"></v-btn>
     </v-app-bar>
 
     <v-main style="background: #0B0B0B">
@@ -107,14 +106,14 @@ export default {
           switch (this.$route.path) {
             case "/reports" :
               this.changeAppBoardNameReports()
-                  break;
+              break;
             case "/facilities" :
               this.changeAppBoardNameFacilities()
               break;
             case "/users" :
               this.changeAppBoardNameUsers()
               break;
-              default : {}
+            default : {}
           }
         }
     )

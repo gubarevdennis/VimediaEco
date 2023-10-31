@@ -3,7 +3,7 @@
     <v-row>
       <v-col>
         <br>
-        <v-select
+        <v-autocomplete
             label="Объект"
             variant="outlined"
             @update:modelValue="selectFacility"
@@ -11,7 +11,7 @@
             :item-value="facilityNameSelected"
         >
 
-        </v-select>
+        </v-autocomplete>
       </v-col>
       <v-col v-if="subFacilities[1]">
         <br>
@@ -27,14 +27,14 @@
       </v-col>
       <v-col>
         <br>
-        <v-select
+        <v-autocomplete
             variant="outlined"
             @update:modelValue="selectUser"
             :item-value="userNameSelected"
             label="Сотрудник отдела"
             :items="users"
         >
-        </v-select>
+        </v-autocomplete>
       </v-col>
       <v-col>
         <br>

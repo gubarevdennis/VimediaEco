@@ -20,8 +20,8 @@
               />
             </v-card>
           </form>
-          <v-sheet>
-            <div style="font-weight: bold;">
+          <v-sheet style="width: 250px;">
+            <div style="font-weight: bold; ">
               {{tool ? tool.name : ''}}
             </div>
             <div>
@@ -113,32 +113,32 @@
       </v-row>
     </v-col>
     <v-divider></v-divider>
-    <v-card-title>
-      <br>
-      <v-row v-if="!toolSendConfirmField" align="center" justify="center">
-        <v-card-title     style="font-weight: bold; font-size: 25px">
-          Передать &nbsp
-        </v-card-title>
-        <v-card-text     style="font-weight: bold; color: red; font-size: 25px">
-          {{tool ? tool.name : ''}} <br> {{tool ? tool.article : ''}} &nbsp
-        </v-card-text>
-        <v-card-text      style="font-weight: bold; font-size: 25px">
-          ?
-        </v-card-text >
-      </v-row>
-    </v-card-title>
+    <v-sheet class="text-subtitle-1" align="center" style="max-width: 280px">
+      <v-text align="center">
+        <br>
+        <v-row v-if="!toolSendConfirmField" justify="center" align="center" style="font-weight: bold; color: #0B0B0B">
+          Передать
+        </v-row>
+        <v-row v-if="!toolSendConfirmField" justify="center" align="center" style="font-weight: bold; color: red">
+          {{tool ? tool.name : ''}}
+        </v-row>
+        <v-row v-if="!toolSendConfirmField" justify="center" align="center" style="font-weight: bold; color: red">
+          {{tool ? tool.article : ''}}  ?
+        </v-row>
+      </v-text>
+    </v-sheet>
     <br>
     <br>
-    <v-row justify="center" justify-sm="center">
+    <v-row justify="center" justify-sm="center" >
       <v-text v-if="toolSendConfirmField" style="color: green; font-size: 18px;" >
         Интструмент направлен на передачу!
         <br>
         <br>
       </v-text>
     </v-row>
-    <v-sheet class="text-subtitle-1" v-if="tool.article" align="center" >
+    <v-sheet class="text-subtitle-1" v-if="tool.article" align="center" style="max-width: 280px">
       <v-row v-if="!toolSendConfirmField" justify="center" align="center">
-        <v-select
+        <v-autocomplete
             label="Кому ?"
             variant="outlined"
             @update:modelValue="selectUser"
@@ -146,7 +146,7 @@
             :items="userNames"
             :item-value="userNameSelected"
         >
-        </v-select>
+        </v-autocomplete>
       </v-row>
       <v-row v-if="!toolSendConfirmField" justify="center" align="center">
         <v-select
@@ -161,9 +161,6 @@
       </v-row>
       <div>
         <v-btn v-if="showConfirmBtn && !toolSendConfirmField" color="#EBB652" size="large" @click="sendEvent" > Передать </v-btn>
-        &nbsp
-        &nbsp
-        &nbsp
         &nbsp
         <v-btn v-if="showConfirmBtn && !toolSendConfirmField" color="red" size="large" @click="hideConfirmBtnFunc" > Отмена </v-btn>
       </div>

@@ -5,7 +5,7 @@
 
       <v-col         cols="10"
                      sm="3">
-        <v-select
+        <v-autocomplete
             variant="outlined"
             v-model="this.facilityName"
             @update:modelValue="clicked1"
@@ -13,7 +13,7 @@
             :items="facilityNames"
             :item-value="facilityName"
 
-        ></v-select>
+        ></v-autocomplete>
 
       </v-col>
 

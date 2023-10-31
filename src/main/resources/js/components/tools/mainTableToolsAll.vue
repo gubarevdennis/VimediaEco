@@ -1,15 +1,24 @@
 <template>
-
   <add-tool v-if="((this.role === 'Кладовщик') || (this.role === 'Директор'))" :addTool="addTool" :toolSets="toolSets" :editTool="editTool" :facilities="facilities" ></add-tool>
 
-  <br>
+  <filter-tool
+      :profile="profile"
+      :role="role"
+      :tools="tools"
+      :facilityNames="facilityNames"
+      :facilities="facilities"
+      :toolNames="toolNames"
+      :userNames="userNames"
+      :toolArticles="toolArticles"
+      :filterToolFunc="filterToolFunc"
+  >
+  </filter-tool>
 
   <div v-for="row in rows" v-bind:key="row" align="start" height="200px">
     <v-overlay
-
         v-model="overlay"
         class="align-center justify-center"
-        scroll-strategy="reposition"
+        scroll-strategy="block"
         align="center"
     >
 
@@ -28,10 +37,9 @@
     </v-overlay>
 
     <v-overlay
-
         v-model="overlayToGiving"
         class="align-center justify-center"
-        scroll-strategy="reposition"
+        scroll-strategy="block"
         align="center"
     >
       <v-btn icon="mdi-close" @click="overlayToGiving = !overlayToGiving"></v-btn>
@@ -49,8 +57,8 @@
                    :users="users"
                    :tool="tool"
       ></giving-tool>
-
     </v-overlay>
+
     <main-table-tools-row :deleteTool="deleteTool"
                           :facilityNames="facilityNames"
                           :users="users"
@@ -78,9 +86,10 @@ import ConfirmToolTable from "./confirmToolTable.vue";
 import { isProxy, toRaw } from 'vue'
 import GivingTool from "./givingTool.vue";
 import DecriptionTool from "./decriptionTool.vue";
+import FilterTool from "./filterTool.vue"
 
 export default {
-  components: {AddTool, MainTableToolsRow, ConfirmToolTable, GivingTool, DecriptionTool},
+  components: {AddTool, MainTableToolsRow, ConfirmToolTable, GivingTool, DecriptionTool, FilterTool},
   props: ['profile', 'role', 'profileId'],
   data() {
     return {
@@ -94,6 +103,8 @@ export default {
       sortedUsers: [],
       toolsForRow: [],
       facilityNames: [],
+      toolNames: [],
+      toolArticles: [],
       row: 1,
       rows: 1,
       overlay: false,
@@ -110,6 +121,8 @@ export default {
     this.axios.get( "api/tool").then(tools => {
           tools.data.forEach(t =>{
             this.tools.push(t)
+            this.toolNames.push(t.name)
+            this.toolArticles.push(t.article)
             if (toolCount <= 6) {
               this.toolsForRow.push({
                 row: rowCount,
@@ -125,6 +138,12 @@ export default {
           })
           this.sortedTools = this.sortToolFunc(this.tools)
           this.rows =  Math.ceil(this.tools.length/6);
+
+
+          this.toolNames.unshift('Все инструменты')
+
+          this.toolNames = removeDuplicates(this.toolNames) // убираем дубликаты
+          this.toolArticles.unshift('Все артикулы')
         }
     )
 
@@ -135,6 +154,7 @@ export default {
             this.userNames.push(t.name)
           })
           this.sortedUsers = this.sortUserFunc(this.users)
+          this.userNames.unshift('Все сотрудники')
         }
     )
 
@@ -152,6 +172,7 @@ export default {
               }
           )
           this.facilities.forEach( f => this.facilityNames.push(f.name))
+          this.facilityNames.unshift('Все объекты')
         }
     )
   },
@@ -214,10 +235,87 @@ export default {
     },
     toolFunc: function (tool) {
       this.tool = tool;
+
+
+
       // console.log("tool")
       // console.log(tool)
+    },
+    filterToolFunc: function (tools) {
+      this.sortedTools = tools;
+      this.toolsForRow = []
+
+      console.log('Запустил filterToolFunc')
+
+      var toolCount = 0;
+      var rowCount = 1;
+
+      this.sortedTools.forEach(t =>{
+        this.toolNames.push(t.name)
+        if (toolCount <= 6) {
+          this.toolsForRow.push({
+            row: rowCount,
+            tool: t,
+          })
+          toolCount++
+          if (toolCount >= 6) {
+            toolCount = 0
+            rowCount++
+          }
+          console.log(this.toolsForRow)
+        }
+      })
     }
   }}
+
+
+
+
+// Функция удаления дубликатов
+function removeDuplicates(arr) {
+
+  const result = [];
+  const duplicatesIndices = [];
+
+  // Перебираем каждый элемент в исходном массиве
+  arr.forEach((current, index) => {
+
+    if (duplicatesIndices.includes(index)) return;
+
+    result.push(current);
+
+    // Сравниваем каждый элемент в массиве после текущего
+    for (let comparisonIndex = index + 1; comparisonIndex < arr.length; comparisonIndex++) {
+
+      const comparison = arr[comparisonIndex];
+      const currentKeys = Object.keys(current);
+      const comparisonKeys = Object.keys(comparison);
+
+      // Проверяем длину массивов
+      if (currentKeys.length !== comparisonKeys.length) continue;
+
+      // Проверяем значение ключей
+      const currentKeysString = currentKeys.sort().join("").toLowerCase();
+      const comparisonKeysString = comparisonKeys.sort().join("").toLowerCase();
+      if (currentKeysString !== comparisonKeysString) continue;
+
+      // Проверяем индексы ключей
+      let valuesEqual = true;
+      for (let i = 0; i < currentKeys.length; i++) {
+        const key = currentKeys[i];
+        if ( current[key] !== comparison[key] ) {
+          valuesEqual = false;
+          break;
+        }
+      }
+      if (valuesEqual) duplicatesIndices.push(comparisonIndex);
+
+    } // Конец цикла
+  });
+  return result;
+}
+
+
 </script>
 
 <style scoped>

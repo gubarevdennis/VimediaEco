@@ -3,7 +3,7 @@
     <v-row>
       <v-col>
         <br>
-        <v-select
+        <v-autocomplete
             label="Объект"
             variant="outlined"
             @update:modelValue="selectFacility"
@@ -11,7 +11,7 @@
             :item-value="facilityNameSelected"
         >
 
-        </v-select>
+        </v-autocomplete>
       </v-col>
       <v-col v-if="subFacilities[1]">
         <br>
@@ -27,14 +27,14 @@
       </v-col>
       <v-col>
         <br>
-        <v-select
+        <v-autocomplete
             variant="outlined"
             @update:modelValue="selectUser"
             :item-value="userNameSelected"
             label="Сотрудник"
             :items="users"
         >
-        </v-select>
+        </v-autocomplete>
       </v-col>
       <v-col>
         <br>
@@ -82,8 +82,19 @@ export default {
   },
   mounted: function () {
     console.log('Запустил mounted')
+    // // Запрашиваем отчеты
+    // this.axios.get( "api/report").then(result => {
+    //       result
+    //           .data
+    //           .forEach(r => {
+    //             this.reports.push(r) // все отчеты
+    //           })
+    //       this.sortedReports = this.reports // без сортировки
+    //     }
+    // )
+
     // Запрашиваем отчеты
-    this.axios.get( "api/report").then(result => {
+    this.axios.get( `api/report/month/0`).then(result => {
           result
               .data
               .forEach(r => {
@@ -92,6 +103,7 @@ export default {
           this.sortedReports = this.reports // без сортировки
         }
     )
+
     console.log('Прогрузил report')
     // Запрашиваем объекты
     this.axios.get("api/facility").then(result => {

@@ -10,7 +10,7 @@
   <v-overlay
       v-model="overlay"
       class="align-center justify-center"
-      scroll-strategy="reposition"
+      scroll-strategy="block"
       align="center"
   >
 
@@ -31,7 +31,7 @@
   <v-overlay
       v-model="overlayToGiving"
       class="align-center justify-center"
-      scroll-strategy="reposition"
+      scroll-strategy="block"
       align="center"
   >
     <v-btn icon="mdi-close" @click="overlayToGiving = !overlayToGiving"></v-btn>
