@@ -13,51 +13,50 @@
       :filterToolFunc="filterToolFunc"
   >
   </filter-tool>
+  <v-overlay
+      v-model="overlay"
+      class="align-center justify-center"
+      scroll-strategy="block"
+      align="center"
+  >
 
+    <v-btn icon="mdi-close" @click="overlay = !overlay"></v-btn>
+    <br>
+    <br>
+    <decription-tool
+        :closeDescriptionToolByDeleteConfirm="closeDescriptionToolByDeleteConfirm"
+        :deleteTool="deleteTool"
+        :toolSets="toolSets"
+        :editTool="editTool"
+        :profile="profile"
+        :role="role"
+        :tool="tool"
+    ></decription-tool>
+  </v-overlay>
+
+  <v-overlay
+      v-model="overlayToGiving"
+      class="align-center justify-center"
+      scroll-strategy="block"
+      align="center"
+  >
+    <v-btn icon="mdi-close" @click="overlayToGiving = !overlayToGiving"></v-btn>
+    <br>
+    <br>
+    <giving-tool :closeDescriptionToolByDeleteConfirm="closeDescriptionToolByDeleteConfirm"
+                 :deleteTool="deleteTool"
+                 :facilityNames="facilityNames"
+                 :facilities="facilities"
+                 :toolSets="toolSets"
+                 :editTool="editTool"
+                 :profile="profile"
+                 :role="role"
+                 :userNames="userNames"
+                 :users="users"
+                 :tool="tool"
+    ></giving-tool>
+  </v-overlay>
   <div v-for="row in rows" v-bind:key="row" align="start" height="200px">
-    <v-overlay
-        v-model="overlay"
-        class="align-center justify-center"
-        scroll-strategy="block"
-        align="center"
-    >
-
-      <v-btn icon="mdi-close" @click="overlay = !overlay"></v-btn>
-      <br>
-      <br>
-      <decription-tool
-          :closeDescriptionToolByDeleteConfirm="closeDescriptionToolByDeleteConfirm"
-          :deleteTool="deleteTool"
-          :toolSets="toolSets"
-          :editTool="editTool"
-          :profile="profile"
-          :role="role"
-          :tool="tool"
-      ></decription-tool>
-    </v-overlay>
-
-    <v-overlay
-        v-model="overlayToGiving"
-        class="align-center justify-center"
-        scroll-strategy="block"
-        align="center"
-    >
-      <v-btn icon="mdi-close" @click="overlayToGiving = !overlayToGiving"></v-btn>
-      <br>
-      <br>
-      <giving-tool :closeDescriptionToolByDeleteConfirm="closeDescriptionToolByDeleteConfirm"
-                   :deleteTool="deleteTool"
-                   :facilityNames="facilityNames"
-                   :facilities="facilities"
-                   :toolSets="toolSets"
-                   :editTool="editTool"
-                   :profile="profile"
-                   :role="role"
-                   :userNames="userNames"
-                   :users="users"
-                   :tool="tool"
-      ></giving-tool>
-    </v-overlay>
 
     <main-table-tools-row :deleteTool="deleteTool"
                           :facilityNames="facilityNames"

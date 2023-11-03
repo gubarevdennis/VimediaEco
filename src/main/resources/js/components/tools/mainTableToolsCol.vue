@@ -1,7 +1,7 @@
 <template xmlns="http://www.w3.org/1999/html">
   <v-sheet align="center" width="300" style="background-color: black">
-    <v-card  fluid v-bind:height="(178)" width="300" color="#7d7f7d" rounded="lg"  >
 
+    <v-card  fluid v-bind:height="(178)" width="300" color="#7d7f7d" rounded="lg"  >
       <v-sheet width="300" color="#7d7f7d" >
         <v-row align="center" justify="center">
           <v-col align-self="start">
