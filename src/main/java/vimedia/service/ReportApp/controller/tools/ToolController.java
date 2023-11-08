@@ -4,6 +4,9 @@ package vimedia.service.ReportApp.controller.tools;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,9 +26,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-
-@RequestMapping("/api")
 @RestController
+@RequestMapping("/api")
 public class ToolController {
     private final ToolRepo toolRepo;
     private final EventRepo eventRepo;
@@ -40,17 +42,80 @@ public class ToolController {
         this.facilityRepo = facilityRepo;
     }
 
+//    // Получаем все интсрументы с пагинацией
+//    @GetMapping("/tool")
+//    @JsonView(Views.IdName.class)
+//    public List<Tool> listWithPagination(@RequestParam(value = "offset", defaultValue = "0")
+//                                                 Integer offset, @RequestParam(value = "limit", defaultValue = "48") Integer limit) {
+//
+//
+//        Page<Tool> tools = toolRepo.findAll(
+//                PageRequest.of(offset,limit)
+//        ); // сортировка
+//
+//        System.out.println();
+//
+//        return tools.get().collect(Collectors.toList());
+//    }
 
-    // Получаем все интсрументы
+    // Поиск по имени
     @GetMapping("/tool")
     @JsonView(Views.IdName.class)
-    public List<Tool> list() {
-        return toolRepo.findAll().stream().sorted(new Comparator<Tool>() {
-            @Override
-            public int compare(Tool o1, Tool o2) {
-                return o1.getName().toUpperCase().compareTo(o2.getName().toUpperCase());
-            }
-        }).collect(Collectors.toList()); // сортировка
+    public List<Tool> findByName(@RequestParam(value = "offset", defaultValue = "0", required = false) Integer offset,
+                                 @RequestParam(value = "limit",required = false) Integer limit,
+                                 @RequestParam(value = "name", defaultValue = "all", required = false) String name,
+                                 @RequestParam(value = "article", defaultValue = "all", required = false) String article,
+                                 @RequestParam(value = "facilityname", defaultValue = "all",required = false) String facilityName,
+                                 @RequestParam(value = "username",defaultValue = "all", required = false) String userName)
+    {
+        List<Tool> tools;
+
+        if (limit != null) {
+            tools = toolRepo.findAll(
+                    PageRequest.of(offset, limit, Sort.by("facility"))
+            ).stream().collect(Collectors.toList());
+        } // сортировка}
+        else {
+            tools = toolRepo.findAll();
+        }
+
+        System.out.println(tools);
+
+        tools = tools.stream()
+                .filter(t -> {
+                    if (t.getId() != 0 && !name.equals("all")) {
+                        System.out.println("id " + name);
+                        System.out.println("get id " + t.getId());
+                        return String.valueOf(t.getName()).equals(name);
+                    }
+                    else return name.equals("all");
+                })
+                .filter(t -> {
+                    if (t.getArticle() != null && !article.equals("all")) {
+                        System.out.println("article " + article);
+                        System.out.println("get article " + t.getArticle());
+                        return t.getArticle().equals(article);
+                    }
+                    else return article.equals("all");
+                })
+                .filter(t -> {
+                    if (t.getFacility() != null && !facilityName.equals("all")) {
+                        System.out.println("facilityId " + facilityName);
+                        System.out.println("t.getFacility().getId() " + t.getFacility().getId());
+                        return ("" + t.getFacility().getName()).equals(facilityName);
+                    }
+                    else return facilityName.equals("all");
+                })
+                .filter(t -> {
+                    if (t.getUser() != null && !userName.equals("all")) {
+                        System.out.println("userid " + userName);
+                        return ("" + t.getUser().getName()).equals(userName);
+                    }
+                    else return userName.equals("all");
+                })
+                .collect(Collectors.toList());
+
+        return tools;
     }
 
     // Инструменты конкретного человека

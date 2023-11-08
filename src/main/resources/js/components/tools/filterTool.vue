@@ -64,8 +64,8 @@
 <script>
 export default {
   name: "filterTool",
-  props: ['profile', 'role', 'tools', 'facilities', 'facilityNames', 'userNames' , 'toolNames' ,
-    'filterToolFunc', 'toolArticles'],
+  props: ['profile', 'role', 'facilities', 'facilityNames', 'userNames' , 'toolNames' ,
+    'filterToolFunc', 'toolArticles', 'toolsFromUnder', 'loadBlockFunc'],
   data() {
     return {
       facilityNameSelected: '',
@@ -83,11 +83,14 @@ export default {
       sortedToolsByUser: [],
       subFacilities: [],
       toolArticleSelected: '',
-      sortedToolsByArticle: []
+      sortedToolsByArticle: [],
+      tools: [],
+      toolsFirst: [],
+      paginationInfo: ''
     }
   },
   mounted() {
-
+    this.toolsFirst = this.toolsFromUnder
   },
   methods: {
     selectFacility: function (facilityNameSelected) {
@@ -100,6 +103,7 @@ export default {
     },
     sortByFacility: function (tools) {
       console.log('Запустил sortByFacility')
+
       // Если выбраны все объекты
       if (this.facilityNameSelected === 'Все объекты') {
         // Выключаем фильтр по подобъекта когда выбраны Все объекты
@@ -108,7 +112,18 @@ export default {
         return this.sortedToolsByFacility = tools
       }
 
-      if (this.byFacility) {
+      if (!(this.byArticle || this.byTool || this.byUser) && this.byFacility) {
+        this.tools = []
+        this.axios.get("api/tool" + '?facilityname=' + this.facilityNameSelected).then(tools => {
+          tools.data.forEach(t => {
+            this.tools.push(t)
+          })
+
+          if (this.byFacility) {
+            return this.sortedTools = this.tools
+          }
+        })
+      } else if (this.byFacility) {
         return this.sortedToolsByFacility = tools.filter(t =>
             t.facility ? (t.facility.name === this.facilityNameSelected) : false)}
 
@@ -130,7 +145,8 @@ export default {
       if (this.bySubFacility) {
         return this.sortedToolsBySubFacility = tools
             .filter(t => ((t.facility ? (t.facility.name === this.facilityNameSelected) : false)
-                && ((t.subFacility ? t.subFacility.name : '') === this.subFacilityNameSelected)))}
+                && ((t.subFacility ? t.subFacility.name : '') === this.subFacilityNameSelected)))
+      }
     },
     selectUser: function (userNameSelected) {
       console.log('Запустил selectUser')
@@ -143,10 +159,23 @@ export default {
       console.log('Запустил sortByUser')
       // Если выбраны все работы
       if (this.userNameSelected === 'Все сотрудники') {
+        this.byUser = false;
         return this.sortedToolsByUser = tools}
 
-      if (this.byUser) {
-        return this.sortedToolsByUser = tools.filter(t => t.user ? (t.user.name === this.userNameSelected) : false)}
+      if (!(this.byArticle || this.byTool || this.byFacility) && this.byUser) {
+        this.tools = []
+        this.axios.get( "api/tool" + '?username=' + this.userNameSelected).then(tools => {
+          tools.data.forEach(t => {
+            this.tools.push(t)
+          })
+
+          if (this.byUser) {
+            return this.sortedTools = this.tools
+          }
+        })
+      } else if (this.byUser) {
+        return this.sortedToolsByUser = tools.filter(t => t.user ? (t.user.name === this.userNameSelected) : false)
+      }
 
     },
     selectTool: function (toolNameSelected) {
@@ -158,14 +187,28 @@ export default {
     },
     sortByTool: function (tools) {
       console.log('Запустил sortByToolName')
+
       // Если выбраны все работы
       if (this.toolNameSelected === 'Все инструменты') {
+        this.byTool = false
         return this.sortedToolsByName = tools
       }
 
-      if (this.byTool) {
+      if (!(this.byArticle || this.byUser || this.byFacility) && this.byTool) {
+        this.tools = []
+        this.axios.get( "api/tool" + '?name=' + this.toolNameSelected).then(tools => {
+          tools.data.forEach(t => {
+            this.tools.push(t)
+          })
+
+          if (this.byTool) {
+            return this.sortedTools = this.tools
+          }
+        })
+      } else if (this.byTool) {
         return this.sortedToolsByName = tools.filter(t => t.name === this.toolNameSelected)
       }
+
     },
     selectArticle: function (toolArticleSelected) {
       console.log('Запустил selectArticle')
@@ -173,33 +216,62 @@ export default {
       this.toolArticleSelected = toolArticleSelected
 
       this.resultFilter()
+
     },
     sortByArticle: function (tools) {
       console.log('Запустил sortByArticle')
+
       // Если выбраны все работы
       if (this.toolArticleSelected === 'Все артикулы') {
+        this.byArticle = false
         return this.sortedToolsByArticle = tools
       }
 
-      if (this.byArticle) {
+      if (!(this.byTool || this.byUser || this.byFacility) && this.byArticle) {
+        this.tools = []
+        this.axios.get("api/tool" + '?article=' + this.toolArticleSelected).then(tools => {
+          tools.data.forEach(t => {
+            this.tools.push(t)
+          })
+
+          if (this.byArticle) {
+            return this.sortedTools = this.tools
+          }
+        })
+      } else if (this.byArticle) {
         return this.sortedToolsByArticle = tools.filter(t => t.article === this.toolArticleSelected)
       }
     },
     resultFilter: function () {
       console.log('Запустил resultFilter')
-      var sorted = this.tools
 
-      if (this.byFacility) sorted = this.sortByFacility(this.tools)
+      var sorted = this.toolsFromUnder
 
-      if (this.byUser) sorted = this.sortByUser(sorted)
-
-      if (this.byTool) sorted = this.sortByTool(sorted)
-
-      if (this.byArticle) sorted = this.sortByArticle(sorted)
-
-      if (this.byFacility && this.bySubFacility) sorted = this.sortBySubFacility(sorted)
+      if (this.byFacility) {
+        sorted = this.sortByFacility(sorted)
+      }
+      //
+      if (this.byUser) {
+        sorted = this.sortByUser(sorted)
+      }
+      //
+      if (this.byTool) {
+        sorted = this.sortByTool(sorted)
+      }
+      //
+      if (this.byArticle) {
+        sorted = this.sortByArticle(sorted)
+      }
+      //
+      if (this.byFacility && this.bySubFacility) {
+        sorted = this.sortBySubFacility(sorted)
+      }
 
       this.sortedTools = sorted
+
+      if ((this.byFacility) && (this.byUser) && (this.byTool) && (this.byArticle))
+        this.loadBlockFunc(false) // блокируем разворачивание страниц
+
 
     },
     selectVariantsSubFacilities: function () {
@@ -208,10 +280,10 @@ export default {
       if (this.facilities.find(f => f.name === this.facilityNameSelected))
         this.facilities.find(f => f.name === this.facilityNameSelected)
             .subFacilities.forEach(s => this.subFacilities.push(s.name))
-       this.subFacilities.unshift('Все подобъекты')
+      this.subFacilities.unshift('Все подобъекты')
     },
   },
-  // функция следит на изменениями переменной
+// функция следит на изменениями переменной
   watch: {
     sortedTools: function (newVal, oldVal) {
       this.filterToolFunc(newVal)

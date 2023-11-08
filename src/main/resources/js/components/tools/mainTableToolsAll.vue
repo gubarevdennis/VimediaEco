@@ -1,81 +1,95 @@
 <template>
-  <add-tool v-if="((this.role === 'Кладовщик') || (this.role === 'Директор'))" :addTool="addTool" :toolSets="toolSets" :editTool="editTool" :facilities="facilities" ></add-tool>
+  <v-sheet color="black">
+    <add-tool  v-if="((this.role === 'Кладовщик') || (this.role === 'Директор'))" :addTool="addTool" :toolSets="toolSets" :editTool="editTool" :facilities="facilities" ></add-tool>
 
-  <filter-tool
-      :profile="profile"
-      :role="role"
-      :tools="tools"
-      :facilityNames="facilityNames"
-      :facilities="facilities"
-      :toolNames="toolNames"
-      :userNames="userNames"
-      :toolArticles="toolArticles"
-      :filterToolFunc="filterToolFunc"
-  >
-  </filter-tool>
-  <v-overlay
-      v-model="overlay"
-      class="align-center justify-center"
-      scroll-strategy="block"
-      align="center"
-  >
-
-    <v-btn icon="mdi-close" @click="overlay = !overlay"></v-btn>
-    <br>
-    <br>
-    <decription-tool
-        :closeDescriptionToolByDeleteConfirm="closeDescriptionToolByDeleteConfirm"
-        :deleteTool="deleteTool"
-        :toolSets="toolSets"
-        :editTool="editTool"
+    <filter-tool
         :profile="profile"
         :role="role"
-        :tool="tool"
-    ></decription-tool>
-  </v-overlay>
+        :toolsFromUnder="tools"
+        :facilityNames="facilityNames"
+        :facilities="facilities"
+        :toolNames="toolNames"
+        :userNames="userNames"
+        :toolArticles="toolArticles"
+        :filterToolFunc="filterToolFunc"
+        :loadBlockFunc="loadBlockFunc"
+    >
+    </filter-tool>
+    <v-overlay
 
-  <v-overlay
-      v-model="overlayToGiving"
-      class="align-center justify-center"
-      scroll-strategy="block"
-      align="center"
-  >
-    <v-btn icon="mdi-close" @click="overlayToGiving = !overlayToGiving"></v-btn>
-    <br>
-    <br>
-    <giving-tool :closeDescriptionToolByDeleteConfirm="closeDescriptionToolByDeleteConfirm"
-                 :deleteTool="deleteTool"
-                 :facilityNames="facilityNames"
-                 :facilities="facilities"
-                 :toolSets="toolSets"
-                 :editTool="editTool"
-                 :profile="profile"
-                 :role="role"
-                 :userNames="userNames"
-                 :users="users"
-                 :tool="tool"
-    ></giving-tool>
-  </v-overlay>
-  <div v-for="row in rows" v-bind:key="row" align="start" height="200px">
+        v-model="overlay"
+        class="align-center justify-center"
+        scroll-strategy="block"
+        align="center"
+    >
 
-    <main-table-tools-row :deleteTool="deleteTool"
-                          :facilityNames="facilityNames"
-                          :users="users"
-                          :userNames="userNames"
-                          :role="role"
-                          :profile="profile"
-                          :profileId="profileId"
-                          :toolSets="toolSets"
-                          :editTool="editTool"
-                          :toolsForRow="toolsForRowFunc(row)"
-                          :row="row"
-                          :overlayFunc="overlayFunc"
-                          :overlayToGivingFunc="overlayToGivingFunc"
-                          :toolFunc="toolFunc"
-                          :facilities="facilities"
-    ></main-table-tools-row>
-    <br>
-  </div>
+      <v-btn icon="mdi-close" @click="overlay = !overlay"></v-btn>
+      <br>
+      <br>
+      <decription-tool
+          :closeDescriptionToolByDeleteConfirm="closeDescriptionToolByDeleteConfirm"
+          :deleteTool="deleteTool"
+          :toolSets="toolSets"
+          :editTool="editTool"
+          :profile="profile"
+          :role="role"
+          :tool="tool"
+      ></decription-tool>
+    </v-overlay>
+
+    <v-overlay
+        v-model="overlayToGiving"
+        class="align-center justify-center"
+        scroll-strategy="block"
+        align="center"
+    >
+
+      <v-btn icon="mdi-close" @click="overlayToGiving = !overlayToGiving"></v-btn>
+      <br>
+      <br>
+      <giving-tool :closeDescriptionToolByDeleteConfirm="closeDescriptionToolByDeleteConfirm"
+                   :deleteTool="deleteTool"
+                   :facilityNames="facilityNames"
+                   :facilities="facilities"
+                   :toolSets="toolSets"
+                   :editTool="editTool"
+                   :profile="profile"
+                   :role="role"
+                   :userNames="userNames"
+                   :users="users"
+                   :tool="tool"
+      ></giving-tool>
+    </v-overlay>
+    <v-infinite-scroll mode="manual" @load="load" >
+      <div v-for="row in rows" v-bind:key="row" align="start" height="200px">
+        <main-table-tools-row :deleteTool="deleteTool"
+                              :facilityNames="facilityNames"
+                              :users="users"
+                              :userNames="userNames"
+                              :role="role"
+                              :profile="profile"
+                              :profileId="profileId"
+                              :toolSets="toolSets"
+                              :editTool="editTool"
+                              :toolsForRow="toolsForRowFunc(row)"
+                              :row="row"
+                              :overlayFunc="overlayFunc"
+                              :overlayToGivingFunc="overlayToGivingFunc"
+                              :toolFunc="toolFunc"
+                              :facilities="facilities"
+        ></main-table-tools-row>
+        <br>
+      </div>
+      <template v-slot:load-more="{ props }">
+        <v-btn
+            icon="mdi-refresh"
+            variant="text"
+            size="small"
+            v-bind="props"
+        ></v-btn>
+      </template>
+    </v-infinite-scroll>
+  </v-sheet>
 </template>
 
 <script>
@@ -108,41 +122,67 @@ export default {
       rows: 1,
       overlay: false,
       overlayToGiving: false,
+      countLoadingPages: 0,
+      rowCount: 1
     }
   },
   mounted: function() {
     console.log('Запустил mounted')
 
-    var toolCount = 0;
-    var rowCount = 1;
 
-    // Запрашиваем отчеты
-    this.axios.get( "api/tool").then(tools => {
+
+    // Запрашиваем отчеты для информации в поле поиска
+    this.axios.get( "api/tool" + '?offset=' + this.countLoadingPages + '&limit=' + 10000).then(tools => {
           tools.data.forEach(t =>{
-            this.tools.push(t)
             this.toolNames.push(t.name)
             this.toolArticles.push(t.article)
-            if (toolCount <= 6) {
-              this.toolsForRow.push({
-                row: rowCount,
-                tool: t,
-              })
-              toolCount++
-              if (toolCount >= 6) {
-                toolCount = 0
-                rowCount++
-              }
-              console.log(this.toolsForRow)
-            }
           })
-          this.sortedTools = this.sortToolFunc(this.tools)
+
           this.rows =  Math.ceil(this.tools.length/6);
 
 
           this.toolNames.unshift('Все инструменты')
+          this.toolArticles.unshift('Все артикулы')
 
           this.toolNames = removeDuplicates(this.toolNames) // убираем дубликаты
-          this.toolArticles.unshift('Все артикулы')
+          this.toolArticles = removeDuplicates(this.toolArticles.filter( a => a != null)) // убираем дубликаты
+
+          console.log("this.toolArticles")
+          console.log(this.toolArticles)
+
+
+        }
+    )
+
+    // Запрашиваем отчеты для отображения на странице
+    var toolCount = 0;
+    this.rowCount = 1;
+
+    this.axios.get( "api/tool" + '?offset=' + this.countLoadingPages + '&limit=' + 60).then(tools => {
+          tools.data.forEach(t =>{
+            this.tools.push(t)
+
+          })
+
+          // Получаем сортированный по объектам список и сортируем по сотруднику
+          this.sortedTools =
+              this
+                  .sortToolFunc(this.tools)
+                  .forEach(t => {
+                    if (toolCount <= 6) {
+                      this.toolsForRow.push({
+                        row: this.rowCount,
+                        tool: t,
+                      })
+                      toolCount++
+                      if (toolCount >= 6) {
+                        toolCount = 0
+                        this.rowCount++
+                      }
+                    }
+                  })
+
+          this.rows =  Math.ceil(this.tools.length/6);
         }
     )
 
@@ -152,6 +192,7 @@ export default {
             this.users.push(t)
             this.userNames.push(t.name)
           })
+
           this.sortedUsers = this.sortUserFunc(this.users)
           this.userNames.unshift('Все сотрудники')
         }
@@ -170,6 +211,7 @@ export default {
                 this.facilities.push(f)
               }
           )
+
           this.facilities.forEach( f => this.facilityNames.push(f.name))
           this.facilityNames.unshift('Все объекты')
         }
@@ -190,15 +232,30 @@ export default {
       this.tools.push(tool)
       this.sortedTools = this.sortToolFunc(this.tools)
     },
+    // сортирует сначала по объектам затем по коллегам
     sortToolFunc: function (tools) {
-      return tools.sort((a, b) => {
-        if (a.id > b.id) {
-          return -1;
+      return tools
+          .sort((a, b) => {
+        if (a.facility) {
+          if (b.facility) {
+
+            if (((a.facility ? a.facility.name : '') < (b.facility ? b.facility.name : ''))) {
+              return -1;
+            }
+            if ((a.facility ? a.facility.name : '') > (b.facility ? b.facility.name : '')) {
+              return 1;
+            }
+            if (a.facility.name === b.facility.name) {
+              if (((a.user ? a.user.name : '') < (b.user ? b.user.name : ''))) {
+                return -1;
+              }
+              if ((a.user ? a.user.name : '') > (b.user ? b.user.name : '')) {
+                return 1;
+              }
+            }
+            return 0;
+          }
         }
-        if (a.id < b.id) {
-          return 1;
-        }
-        return 0;
       })
     },
     sortUserFunc: function (users) {
@@ -240,6 +297,50 @@ export default {
       // console.log("tool")
       // console.log(tool)
     },
+    // Блокровка загрузки страниц в режиме посике
+    loadBlockFunc: function (state) {
+      this.loadBlock = state;
+
+      // console.log("tool")
+      // console.log(tool)
+    },
+    load({ done }) {
+      if (!this.loadBlock) {
+        this.countLoadingPages++
+
+        var toolCount = 0;
+
+        // Запрашиваем отчеты
+        this.axios.get("api/tool" + '?offset=' + this.countLoadingPages + '&limit=' + 60).then(tools => {
+              tools.data.forEach(t => {
+                this.tools.push(t)
+                // this.toolNames.push(t.name)
+                // this.toolArticles.push(t.article)
+                if (toolCount <= 6) {
+                  this.toolsForRow.push({
+                    row: this.rowCount,
+                    tool: t,
+                  })
+                  toolCount++
+                  if (toolCount >= 6) {
+                    toolCount = 0
+                    this.rowCount++
+                  }
+                  // console.log(this.toolsForRow)
+                  done('ok')
+                }
+              })
+              this.sortedTools = this.sortToolFunc(this.tools)
+              this.rows = Math.ceil(this.tools.length / 6);
+
+              //
+              // this.toolNames = removeDuplicates(this.toolNames) // убираем дубликаты
+              // this.toolArticles = removeDuplicates(this.toolArticles.filter( a => a != null)) // убираем дубликаты
+
+            }
+        )
+      }
+    },
     filterToolFunc: function (tools) {
       this.sortedTools = tools;
       this.toolsForRow = []
@@ -249,21 +350,21 @@ export default {
       var toolCount = 0;
       var rowCount = 1;
 
-      this.sortedTools.forEach(t =>{
-        this.toolNames.push(t.name)
-        if (toolCount <= 6) {
-          this.toolsForRow.push({
-            row: rowCount,
-            tool: t,
-          })
-          toolCount++
-          if (toolCount >= 6) {
-            toolCount = 0
-            rowCount++
+      if (this.sortedTools)
+        this.sortedTools.forEach(t =>{
+          if (toolCount <= 6) {
+            this.toolsForRow.push({
+              row: rowCount,
+              tool: t,
+            })
+            toolCount++
+            if (toolCount >= 6) {
+              toolCount = 0
+              rowCount++
+            }
+            // console.log(this.toolsForRow)
           }
-          console.log(this.toolsForRow)
-        }
-      })
+        })
     }
   }}
 
@@ -294,8 +395,8 @@ function removeDuplicates(arr) {
       if (currentKeys.length !== comparisonKeys.length) continue;
 
       // Проверяем значение ключей
-      const currentKeysString = currentKeys.sort().join("").toLowerCase();
-      const comparisonKeysString = comparisonKeys.sort().join("").toLowerCase();
+      const currentKeysString = currentKeys.sort().join("1").toLowerCase();
+      const comparisonKeysString = comparisonKeys.sort().join("1").toLowerCase();
       if (currentKeysString !== comparisonKeysString) continue;
 
       // Проверяем индексы ключей

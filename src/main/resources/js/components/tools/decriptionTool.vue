@@ -57,7 +57,8 @@
           </v-sheet>
         </v-col >
         <v-col  style="font-size: 40px" >
-          <v-select
+          <v-autocomplete
+              density="compact"
               label="Комплектность"
               variant="solo"
               @update:modelValue="selectToolSet"
@@ -65,7 +66,7 @@
               :items="toolSetNames"
               :item-value="toolSetNameSelected"
           >
-          </v-select>
+          </v-autocomplete>
           <v-btn v-if="showConfirmBtn" color="green" size="small" @click="edit" > Применить </v-btn>
           <v-btn v-if="showConfirmBtn" color="red" size="small" @click="hideConfirmBtnFunc" > Отмена </v-btn>
           <v-card-text>

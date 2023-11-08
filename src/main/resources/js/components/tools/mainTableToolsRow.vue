@@ -18,9 +18,11 @@
                               :overlayFunc="overlayFunc"
                               :facilityNames="facilityNames"
                               :facilities="facilities"
+                              :updateFacilityBySorting="updateFacilityBySorting"
         ></main-table-tools-col>
       </div>
     </v-row>
+
     <br>
   </v-card>
 </template>
@@ -35,18 +37,22 @@ export default {
   components: {MainTableToolsCol, DecriptionTool, GivingTool},
   props: ['profile', 'role', 'tool', 'editTool',
     'toolSets', 'deleteTool', 'userNames', 'users', 'profileId',
-    'row', 'toolsForRow', 'overlayToGivingFunc', 'overlayFunc', 'toolFunc', 'facilityNames', 'facilities',
+    'row', 'toolsForRow', 'overlayToGivingFunc', 'overlayFunc', 'toolFunc', 'facilityNames', 'facilities' , 'updateFacilityBySorting',
   ],
   data() {
     return {
     }
   },
   mounted: function () {
-    console.log("this.toolsForRow")
-    console.log(this.toolsForRow)
+    // console.log("this.toolsForRow")
+    // console.log(this.toolsForRow)
   },
   methods: {
-
+    load() {
+      this.tools.push({name: "fsidf"})
+      // console.log("Page down!")
+      // console.log(this.countLoadingPages)
+    },
   }
 }
 </script>

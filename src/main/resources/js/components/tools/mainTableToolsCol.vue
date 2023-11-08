@@ -1,7 +1,7 @@
 <template xmlns="http://www.w3.org/1999/html">
   <v-sheet align="center" width="300" style="background-color: black">
-
     <v-card  fluid v-bind:height="(178)" width="300" color="#7d7f7d" rounded="lg"  >
+
       <v-sheet width="300" color="#7d7f7d" >
         <v-row align="center" justify="center">
           <v-col align-self="start">
@@ -149,26 +149,24 @@ export default {
   mounted: function() {
     // Запрашиваем события состоявшейся передачи
     this.axios.get( `api/event/user/moved/${this.tool.id}`).then(res => {
-
           this.event = res.data
         }
     )
-    console.log("this.event")
-    console.log(this.event)
+    // console.log("this.event")
+    // console.log(this.event)
 
     // Запрашиваем события которые на перемещение
     this.axios.get( `api/event/user/moving/${this.tool.id}`).then(res => {
-
           this.movingEvent = res.data
-          console.log(res.data)
+          // console.log(res.data)
           if (res.data[0]) this.moveStatus = true
         }
     )
-    console.log("this.event")
-    console.log(this.event)
+    // console.log("this.event")
+    // console.log(this.event)
 
     this.imageEditButton = this.tool.image
-    this.facilityNameSelected = this.toolFacilityNameIfPresent(this.tool)
+    this.facilityNameSelected = this.tool.facility ? this.tool.facility.name : ''
   },
   methods: {
     showConfirmBtnFunc: function () {
@@ -193,7 +191,7 @@ export default {
     assignFacility: function (tool) {
       this.axios.put(`api/tool/${tool.id}`, tool).then(result => {
         if (result.status === 200) {
-          console.log(result.data)
+          // console.log(result.data)
           this.facilityNameSelected = result.data.facility ? result.data.facility.name : ''
           this.sendEvent()
           this.showConfirmBtn = false
@@ -211,12 +209,9 @@ export default {
 
       this.axios.post(`api/event`, newEvent).then(result => {
         if (result.status === 200) {
-          console.log(result.data)
+          // console.log(result.data)
         }
       })
-    },
-    toolFacilityNameIfPresent: function (tool) {
-      return (tool.facility ? tool.facility.name : '')
     },
     closeDescriptionToolByDeleteConfirm: function () {
       this.overlay = false;
@@ -232,8 +227,13 @@ export default {
       this.overlayFunc(this.overlayToGivingFunc)
       this.toolFunc(this.tool)
     },
-
   },
+  watch: {
+    tool: function (newVal, oldVal) {
+      this.imageEditButton = newVal.image
+      this.facilityNameSelected = newVal.facility ? newVal.facility.name : ''
+    },
+  }
 }
 </script>
 

@@ -1,7 +1,9 @@
 package vimedia.service.ReportApp.repo.tools;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import vimedia.service.ReportApp.model.report.User;
+import vimedia.service.ReportApp.model.tools.Event;
 import vimedia.service.ReportApp.model.tools.Tool;
 
 import java.util.List;
@@ -13,4 +15,7 @@ public interface ToolRepo extends JpaRepository<Tool, Integer> {
     List<Tool> findByUser(User user);
 
     Optional<Tool> findById(Integer id);
+
+//    @Query(value = "SELECT * FROM TOOL")
+//    List<Tool> findToolsByPageAndQuantity(Integer pageNumber, Integer limit);
 }
