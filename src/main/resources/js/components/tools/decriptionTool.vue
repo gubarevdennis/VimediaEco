@@ -67,6 +67,16 @@
               :item-value="toolSetNameSelected"
           >
           </v-autocomplete>
+          <v-autocomplete
+              density="compact"
+              label="Категория"
+              variant="solo"
+              @update:modelValue="selectToolCategory"
+              v-model="toolCategoryNameSelected"
+              :items="toolCategoryNames"
+              :item-value="toolCategoryNameSelected"
+          >
+          </v-autocomplete>
           <v-btn v-if="showConfirmBtn" color="green" size="small" @click="edit" > Применить </v-btn>
           <v-btn v-if="showConfirmBtn" color="red" size="small" @click="hideConfirmBtnFunc" > Отмена </v-btn>
           <v-card-text>
@@ -220,18 +230,24 @@ export default {
     return {
       imageEditButton: false,
       toolSetNameSelected: '',
+      toolCategoryNameSelected: '',
       showConfirmBtn: false,
       toolSerialOnOverlay: '',
       toolSetNames: [],
       showConfirmDeleteTool: false,
-      overlayDel: false
+      overlayDel: false,
+      toolCategoryNames: ''
     }
   },
   mounted() {
     this.imageEditButton = this.tool ? this.tool.image : ''
     this.toolSetNameSelected = this.toolSetNameIfPresent(this.tool)
     this.toolSerialOnOverlay = this.tool ?  this.tool.serial : ''
-    this.toolSets.forEach(t => this.toolSetNames.push(t.name))
+    this.toolCategoryNameSelected = this.tool ?  this.tool.category : ''
+    this.toolSets.forEach(t => this.toolSetNames.push(t.name)) // добавляем имена инсрументов для выбора
+    this.toolCategoryNames =
+        ['Электроинструмент', 'Абразивный инструмент', 'Измерительный инструмент',
+          'Слесарно-монтажный инструмент', 'Без категории']
     console.log(this.toolSetNameSelected)
   },
   methods: {
@@ -240,6 +256,10 @@ export default {
     },
     selectToolSet: function (toolSetNameSelected) {
       this.toolSetNameSelected = toolSetNameSelected
+      this.showConfirmBtn = true
+    },
+    selectToolCategory: function (toolCategoryNameSelected) {
+      this.toolCategoryNameSelected = toolCategoryNameSelected
       this.showConfirmBtn = true
     },
     toolSetNameIfPresent: function (tool) {
@@ -254,12 +274,18 @@ export default {
       this.overlayDel=false;
     },
     edit: function () {
+      // Присвоение всех параметров из формы
       var tool = this.tool
 
+      // Находим нужный набор по имени и присваиваем инструмемнту, если нашли
       var toolSetFound = this.toolSets.find(t => t.name === this.toolSetNameSelected)
 
       if (toolSetFound)
         tool.toolSet = toolSetFound
+
+      // Присваиваем категорию инструмента
+      if (this.toolCategoryNameSelected)
+        tool.category = this.toolCategoryNameSelected
 
       this.axios.put(`api/tool/${tool.id}`, tool).then(result => {
         if (result.status === 200) {

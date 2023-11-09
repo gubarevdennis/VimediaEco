@@ -75,6 +75,9 @@ public class Tool {
     @JsonView(Views.IdName.class)
     private String description;
 
+    @JsonView(Views.IdName.class)
+    private String category;
+
 
 //    @Column(updatable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yy")  //  HH:mm:ss
@@ -276,5 +279,13 @@ public class Tool {
 
     public void setEvents(List<Event> events) {
         this.events = events;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }

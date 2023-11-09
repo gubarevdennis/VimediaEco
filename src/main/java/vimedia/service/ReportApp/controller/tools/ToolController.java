@@ -42,23 +42,7 @@ public class ToolController {
         this.facilityRepo = facilityRepo;
     }
 
-//    // Получаем все интсрументы с пагинацией
-//    @GetMapping("/tool")
-//    @JsonView(Views.IdName.class)
-//    public List<Tool> listWithPagination(@RequestParam(value = "offset", defaultValue = "0")
-//                                                 Integer offset, @RequestParam(value = "limit", defaultValue = "48") Integer limit) {
-//
-//
-//        Page<Tool> tools = toolRepo.findAll(
-//                PageRequest.of(offset,limit)
-//        ); // сортировка
-//
-//        System.out.println();
-//
-//        return tools.get().collect(Collectors.toList());
-//    }
-
-    // Поиск по имени
+    // Фильтрация и пагинация
     @GetMapping("/tool")
     @JsonView(Views.IdName.class)
     public List<Tool> findByName(@RequestParam(value = "offset", defaultValue = "0", required = false) Integer offset,
@@ -191,13 +175,6 @@ public class ToolController {
     @JsonView(Views.IdName.class)
     public Tool update(@PathVariable("id") Tool toolFromDB, // из базы данных
                        @RequestBody Tool tool) { // от пользователя
-
-//        if (tool.getFacility() != null)
-//        if (tool.getFacility().getId() == 0) {
-//            // Если не указан id для facility то он найдется по имени
-//            facilityRepo.findByName(tool.getFacility().getName()).ifPresent(tool::setFacility);
-//            System.out.println(tool);
-//        }
 
         BeanUtils.copyProperties(tool,toolFromDB,"id"); // заменяет поля кроме id
 
