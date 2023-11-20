@@ -8,9 +8,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import vimedia.service.ReportApp.TelegramBot.Bot;
 import vimedia.service.ReportApp.model.report.Facility;
 import vimedia.service.ReportApp.model.report.User;
@@ -118,21 +115,7 @@ public class EventController {
     // Получаем события по пользователю и инструменту
     @GetMapping("/user/moving/{id}")
     @JsonView(Views.IdName.class)
-    public List<Event> listOfEventByUserIdAndToolIdMoving(@PathVariable("id") Tool tool,
-                                                          @AuthenticationPrincipal MyUserDetails myUserDetails) {
-
-//        // Находим пользователя
-//        User user = userRepo
-//                .findByName(myUserDetails.getUsername())
-//                .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден!"));
-
-        //        List<Event> events = eventRepo.findByUser(user).stream().sorted(new Comparator<Event>() {
-//            @Override
-//            public int compare(Event o1, Event o2) {
-//                return - o1.getId() + o2.getId();
-//            }
-//        }).filter(e -> (e.getTool().equals(tool) && e.getName().equals("Направлен на передачу")))
-//                .collect(Collectors.toList()); // сортировка
+    public List<Event> listOfEventByUserIdAndToolIdMoving(@PathVariable("id") Tool tool) {
 
         return tool.getEvents().stream().sorted(new Comparator<Event>() {
             @Override

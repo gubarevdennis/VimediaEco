@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+
 @RestController
 @RequestMapping("/api")
 public class ToolController {
@@ -50,7 +51,8 @@ public class ToolController {
                                  @RequestParam(value = "name", defaultValue = "all", required = false) String name,
                                  @RequestParam(value = "article", defaultValue = "all", required = false) String article,
                                  @RequestParam(value = "facilityname", defaultValue = "all",required = false) String facilityName,
-                                 @RequestParam(value = "username",defaultValue = "all", required = false) String userName)
+                                 @RequestParam(value = "username",defaultValue = "all", required = false) String userName,
+                                 @RequestParam(value = "category",defaultValue = "all", required = false) String category)
     {
         List<Tool> tools;
 
@@ -96,6 +98,13 @@ public class ToolController {
                         return ("" + t.getUser().getName()).equals(userName);
                     }
                     else return userName.equals("all");
+                })
+                .filter(t -> {
+                    if (t.getCategory() != null && !category.equals("all")) {
+                        System.out.println("category " + category);
+                        return t.getCategory().equals(category);
+                    }
+                    else return category.equals("all");
                 })
                 .collect(Collectors.toList());
 

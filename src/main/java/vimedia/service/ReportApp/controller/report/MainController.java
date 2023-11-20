@@ -126,7 +126,7 @@ public class MainController {
         tool.ifPresent(value -> value.setImage(multipartFile.getOriginalFilename()));
 
         if (!multipartFile.isEmpty())
-        storageService.store(multipartFile);
+            storageService.store(multipartFile);
 
         redirectAttributes.addFlashAttribute("message",
                 "You successfully uploaded " + multipartFile.getOriginalFilename() + "!");
@@ -148,10 +148,10 @@ public class MainController {
         float imageQuality = 0.5f;
 
         // Create the buffered image
-      //  BufferedImage bufferedImageBeforeResizing = ImageIO.read(inputStream); // если нужен resize
+        //  BufferedImage bufferedImageBeforeResizing = ImageIO.read(inputStream); // если нужен resize
         BufferedImage bufferedImage = ImageIO.read(inputStream);
         // Create the buffered image
-      //  BufferedImage bufferedImage = resizeImage(bufferedImageBeforeResizing, 800, 600); // если нужен resize
+        //  BufferedImage bufferedImage = resizeImage(bufferedImageBeforeResizing, 800, 600); // если нужен resize
 
         // Get image writers
         Iterator<ImageWriter> imageWriters = ImageIO.getImageWritersByFormatName("jpg"); // Input your Format Name here
@@ -185,12 +185,12 @@ public class MainController {
     }
 
     public BufferedImage resizeImage(BufferedImage originalImage, int targetWidth, int targetHeight) throws IOException {
-            BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
-            Graphics2D graphics2D = resizedImage.createGraphics();
+        BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
+        Graphics2D graphics2D = resizedImage.createGraphics();
 //          graphics2D.rotate(Math.toRadians(90), 800.0 / 2, 600.0 / 2);
-            graphics2D.drawImage(originalImage, 0, 0, targetWidth, targetHeight, null);
-            graphics2D.dispose();
-            return resizedImage;
-        }
+        graphics2D.drawImage(originalImage, 0, 0, targetWidth, targetHeight, null);
+        graphics2D.dispose();
+        return resizedImage;
+    }
 
 }

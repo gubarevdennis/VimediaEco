@@ -79,7 +79,7 @@ public class Tool {
     private String category;
 
 
-//    @Column(updatable = false)
+    //    @Column(updatable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yy")  //  HH:mm:ss
     @JsonView(Views.IdName.class)
     private LocalDate purchaseDate;
@@ -104,12 +104,51 @@ public class Tool {
     @JsonView(Views.IdName.class)
     private List<Event> events;
 
-    public void addTool(Event event){
+    @OneToMany(mappedBy = "tool")
+    @JsonIgnore
+    @JsonView(Views.IdName.class)
+    private List<InventoryEvent> inventoryEvents;
+
+    @OneToMany(mappedBy = "tool")
+    @JsonIgnore
+    @JsonView(Views.IdName.class)
+    private List<RepairEvent> repairEvents;
+
+    @OneToMany(mappedBy = "tool")
+    @JsonIgnore
+    @JsonView(Views.IdName.class)
+    private List<ServiceEvent> serviceEvents;
+
+    public void addEvent(Event event){
         this.events.add(event);
         event.setTool(this);
     }
+    public void removeEvent(Event event){
+        this.events.remove(event);
+    }
 
-    public void removeTool(Event event){
+    public void addInventoryEvent(InventoryEvent event){
+        this.inventoryEvents.add(event);
+        event.setTool(this);
+    }
+    public void removeInventoryEvent(InventoryEvent event){
+        this.inventoryEvents.remove(event);
+    }
+
+    public void addRepairEvent(RepairEvent event){
+        this.repairEvents.add(event);
+        event.setTool(this);
+    }
+    public void removeRepairEvent(RepairEvent event){
+        this.repairEvents.remove(event);
+    }
+
+    public void addServiceEvent(ServiceEvent event){
+        this.serviceEvents.add(event);
+        event.setTool(this);
+    }
+
+    public void removeServiceEvent(ServiceEvent event){
         this.events.remove(event);
     }
 
@@ -287,5 +326,29 @@ public class Tool {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public List<InventoryEvent> getInventoryEvents() {
+        return inventoryEvents;
+    }
+
+    public void setInventoryEvents(List<InventoryEvent> inventoryEvents) {
+        this.inventoryEvents = inventoryEvents;
+    }
+
+    public List<RepairEvent> getRepairEvents() {
+        return repairEvents;
+    }
+
+    public void setRepairEvents(List<RepairEvent> repairEvents) {
+        this.repairEvents = repairEvents;
+    }
+
+    public List<ServiceEvent> getServiceEvents() {
+        return serviceEvents;
+    }
+
+    public void setServiceEvents(List<ServiceEvent> serviceEvents) {
+        this.serviceEvents = serviceEvents;
     }
 }

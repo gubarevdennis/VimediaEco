@@ -1,5 +1,5 @@
 <template>
-  <html style="max-height: 80vh; max-width: 90vh">
+  <html style="max-height: 100vh; max-width: 90vh">
   <v-sheet
       rounded="lg"
       contained
@@ -47,7 +47,7 @@
               </div>
             </v-sheet>
           </form>
-          <v-sheet style="width: 250px;">
+          <v-sheet style="width: 300px; ">
             <div style="font-weight: bold;">
               {{tool ? tool.name : ''}}
             </div>
@@ -55,6 +55,38 @@
               {{tool ? tool.article : ''}}
             </div>
           </v-sheet>
+          <br>
+          <v-card style="width: 300px; ">
+            <v-text style="font-weight: normal; color: #D88E32; font-size: 15px">
+              Обслуживания
+            </v-text>
+            <br>
+            <description-tool-inventary
+            >
+            </description-tool-inventary>
+          </v-card>
+          <br>
+          <v-card style="width: 300px; ">
+            <v-text style="font-weight: normal; color: #D88E32; font-size: 15px">
+              Ремонты
+            </v-text>
+            <br>
+            <description-tool-inventary>
+            </description-tool-inventary>
+          </v-card>
+          <br>
+          <v-card style="width: 300px; ">
+            <v-text style="font-weight: normal; color: #D88E32; font-size: 15px">
+              Инвентаризации
+            </v-text>
+            <br>
+            <description-tool-inventary
+            :tool="tool"
+            :inventoryEvents="inventoryEvents"
+            >
+            </description-tool-inventary>
+          </v-card>
+          <br>
         </v-col >
         <v-col  style="font-size: 40px" >
           <v-autocomplete
@@ -67,7 +99,7 @@
               :item-value="toolSetNameSelected"
           >
           </v-autocomplete>
-          <v-autocomplete
+          <v-select
               density="compact"
               label="Категория"
               variant="solo"
@@ -76,7 +108,7 @@
               :items="toolCategoryNames"
               :item-value="toolCategoryNameSelected"
           >
-          </v-autocomplete>
+          </v-select>
           <v-btn v-if="showConfirmBtn" color="green" size="small" @click="edit" > Применить </v-btn>
           <v-btn v-if="showConfirmBtn" color="red" size="small" @click="hideConfirmBtnFunc" > Отмена </v-btn>
           <v-card-text>
@@ -210,7 +242,7 @@
             <v-btn icon="mdi-close" @click="overlayDel = false"></v-btn>
             <confirm-delete-tool :deleteTool="deleteTool" :showConfirmDeleteToolFunc="showConfirmDeleteToolFunc" :tool="tool" ></confirm-delete-tool>
           </v-overlay>
-          <v-btn v-if="(this.role === 'Кладовщик' || this.role === 'Директор')" color="red" @click="overlayDel = !overlayDel" :showConfirmDeleteTool="showConfirmDeleteTool"
+          <v-btn v-if="(this.role === 'Директор')" color="red" @click="overlayDel = !overlayDel" :showConfirmDeleteTool="showConfirmDeleteTool"
           > Удалить инструмент </v-btn>
         </v-col>
       </v-row>
@@ -221,10 +253,11 @@
 
 <script>
 import DescriptionToolRow from "./descriptionToolRow.vue";
+import DescriptionToolInventary from "./descriptionToolInventary.vue";
 import ConfirmDeleteTool from "./confirmDeleteTool.vue";
 export default {
   name: "decriptionTool",
-  components: {ConfirmDeleteTool, DescriptionToolRow},
+  components: {ConfirmDeleteTool, DescriptionToolRow, DescriptionToolInventary},
   props: ['profile', 'role', 'tool', 'editTool', 'toolSets', 'deleteTool', 'closeDescriptionToolByDeleteConfirm'],
   data() {
     return {
@@ -236,19 +269,27 @@ export default {
       toolSetNames: [],
       showConfirmDeleteTool: false,
       overlayDel: false,
-      toolCategoryNames: ''
+      toolCategoryNames: '',
+      inventoryEvents: []
     }
   },
   mounted() {
     this.imageEditButton = this.tool ? this.tool.image : ''
-    this.toolSetNameSelected = this.toolSetNameIfPresent(this.tool)
+    this.toolSetNameSelected = this.tool ? this.tool.toolSet ? this.tool.toolSet.name : '' : ''
     this.toolSerialOnOverlay = this.tool ?  this.tool.serial : ''
     this.toolCategoryNameSelected = this.tool ?  this.tool.category : ''
     this.toolSets.forEach(t => this.toolSetNames.push(t.name)) // добавляем имена инсрументов для выбора
     this.toolCategoryNames =
         ['Электроинструмент', 'Абразивный инструмент', 'Измерительный инструмент',
           'Слесарно-монтажный инструмент', 'Без категории']
-    console.log(this.toolSetNameSelected)
+    // console.log(this.toolSetNameSelected)
+
+    // Подгружаем инвентаризации данного инструмента
+    if (this.tool)
+      this.axios.get( "api/inventory/tool/" + this.tool.id).then(events => {
+            events.data.forEach(e => this.inventoryEvents.push(e))
+          }
+      )
   },
   methods: {
     imageEditFunc: function () {
@@ -261,9 +302,6 @@ export default {
     selectToolCategory: function (toolCategoryNameSelected) {
       this.toolCategoryNameSelected = toolCategoryNameSelected
       this.showConfirmBtn = true
-    },
-    toolSetNameIfPresent: function (tool) {
-      return (tool ? tool.toolSet ? tool.toolSet.name : '' : '')
     },
     hideConfirmBtnFunc: function () {
       this.showConfirmBtn=false

@@ -129,8 +129,6 @@ export default {
   mounted: function() {
     console.log('Запустил mounted')
 
-
-
     // Запрашиваем отчеты для информации в поле поиска
     this.axios.get( "api/tool" + '?offset=' + this.countLoadingPages + '&limit=' + 10000).then(tools => {
           tools.data.forEach(t =>{
@@ -339,6 +337,8 @@ export default {
 
             }
         )
+      } else {
+        done('ok')
       }
     },
     filterToolFunc: function (tools) {

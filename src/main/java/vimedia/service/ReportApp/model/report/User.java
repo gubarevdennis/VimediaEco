@@ -1,13 +1,13 @@
 package vimedia.service.ReportApp.model.report;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import vimedia.service.ReportApp.model.tools.Event;
-import vimedia.service.ReportApp.model.tools.Tool;
+import vimedia.service.ReportApp.model.tools.*;
 
 import java.util.List;
 
@@ -44,9 +44,60 @@ public class User {
     @JsonIgnoreProperties("user")
     private List<Tool> tools;
 
+
     @OneToMany(mappedBy = "user")
-    @JsonIgnoreProperties("user")
+    @JsonIgnore
+    @JsonView(Views.IdName.class)
     private List<Event> events;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    @JsonView(Views.IdName.class)
+    private List<InventoryEvent> inventoryEvents;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    @JsonView(Views.IdName.class)
+    private List<RepairEvent> repairEvents;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    @JsonView(Views.IdName.class)
+    private List<ServiceEvent> serviceEvents;
+
+    public void addEvent(Event event){
+        this.events.add(event);
+        event.setUser(this);
+    }
+    public void removeEvent(Event event){
+        this.events.remove(event);
+    }
+
+    public void addInventoryEvent(InventoryEvent event){
+        this.inventoryEvents.add(event);
+        event.setUser(this);
+    }
+    public void removeInventoryEvent(InventoryEvent event){
+        this.inventoryEvents.remove(event);
+    }
+
+    public void addRepairEvent(RepairEvent event){
+        this.repairEvents.add(event);
+        event.setUser(this);
+    }
+    public void removeRepairEvent(RepairEvent event){
+        this.repairEvents.remove(event);
+    }
+
+    public void addServiceEvent(ServiceEvent event){
+        this.serviceEvents.add(event);
+        event.setUser(this);
+    }
+
+    public void removeServiceEvent(ServiceEvent event){
+        this.serviceEvents.remove(event);
+    }
+
 
     public void addReport(Report report){
         this.getReports().add(report);
@@ -62,14 +113,6 @@ public class User {
     }
     public void removeTool(Tool tool){
         this.tools.remove(tool);
-    }
-
-    public void addEvent(Event event){
-        this.events.add(event);
-        event.setUser(this);
-    }
-    public void removeEvent(Event event){
-        this.events.remove(event);
     }
 
     public List<Report> getReports() {
@@ -134,5 +177,37 @@ public class User {
 
     public void setTools(List<Tool> tools) {
         this.tools = tools;
+    }
+
+    public List<Event> getEvents() {
+        return events;
+    }
+
+    public void setEvents(List<Event> events) {
+        this.events = events;
+    }
+
+    public List<InventoryEvent> getInventoryEvents() {
+        return inventoryEvents;
+    }
+
+    public void setInventoryEvents(List<InventoryEvent> inventoryEvents) {
+        this.inventoryEvents = inventoryEvents;
+    }
+
+    public List<RepairEvent> getRepairEvents() {
+        return repairEvents;
+    }
+
+    public void setRepairEvents(List<RepairEvent> repairEvents) {
+        this.repairEvents = repairEvents;
+    }
+
+    public List<ServiceEvent> getServiceEvents() {
+        return serviceEvents;
+    }
+
+    public void setServiceEvents(List<ServiceEvent> serviceEvents) {
+        this.serviceEvents = serviceEvents;
     }
 }

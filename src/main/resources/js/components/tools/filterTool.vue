@@ -26,6 +26,17 @@
       <v-col>
         <br>
         <v-autocomplete
+            variant="outlined"
+            @update:modelValue="selectCategory"
+            :item-value="toolCategorySelected"
+            label="Категория"
+            :items="toolCategories"
+        >
+        </v-autocomplete>
+      </v-col>
+      <v-col>
+        <br>
+        <v-autocomplete
             label="Объект"
             variant="outlined"
             @update:modelValue="selectFacility"
@@ -71,11 +82,14 @@ export default {
       facilityNameSelected: '',
       subFacilityNameSelected: '',
       toolNameSelected: '',
+      toolCategorySelected: '',
       byFacility: false,
       bySubFacility: false,
       byTool: false,
+      byCategory: false,
       sortedToolsByFacility: [],
       sortedToolsBySubFacility: [],
+      sortedToolsByCategory: [],
       sortedToolsByName: [],
       sortedTools: [],
       userNameSelected: '',
@@ -86,7 +100,10 @@ export default {
       sortedToolsByArticle: [],
       tools: [],
       toolsFirst: [],
-      paginationInfo: ''
+      paginationInfo: '',
+      toolCategories: ['Все категории', 'Электроинструмент', 'Абразивный инструмент', 'Измерительный инструмент',
+        'Слесарно-монтажный инструмент', 'Без категории'],
+
     }
   },
   mounted() {
@@ -112,7 +129,7 @@ export default {
         return this.sortedToolsByFacility = tools
       }
 
-      if (!(this.byArticle || this.byTool || this.byUser) && this.byFacility) {
+      if (!(this.byArticle || this.byTool || this.byUser || this.byCategory) && this.byFacility) {
         this.tools = []
         this.axios.get("api/tool" + '?facilityname=' + this.facilityNameSelected).then(tools => {
           tools.data.forEach(t => {
@@ -148,6 +165,37 @@ export default {
                 && ((t.subFacility ? t.subFacility.name : '') === this.subFacilityNameSelected)))
       }
     },
+    selectCategory: function (toolCategorySelected) {
+      console.log('Запустил selectCategory')
+      this.byCategory = true
+      this.toolCategorySelected = toolCategorySelected
+
+      this.resultFilter()
+    },
+    sortByCategory: function (tools) {
+      console.log('Запустил sortByCategory')
+
+      // Если выбраны все работы
+      if (this.toolCategorySelected === 'Все категории') {
+        this.byUser = false;
+        return this.sortedToolsByCategory = tools}
+
+      if (!(this.byArticle || this.byTool || this.byFacility || this.byUser) && this.byCategory) {
+        this.tools = []
+        this.axios.get( "api/tool" + '?category=' + this.toolCategorySelected).then(tools => {
+          tools.data.forEach(t => {
+            this.tools.push(t)
+          })
+
+          if (this.byCategory) {
+            return this.sortedTools = this.tools
+          }
+        })
+      } else if (this.byCategory) {
+        return this.sortedToolsByCategory = tools.filter(t => t.category ? (t.category === this.toolCategorySelected) : false)
+      }
+
+    },
     selectUser: function (userNameSelected) {
       console.log('Запустил selectUser')
       this.byUser = true
@@ -162,7 +210,7 @@ export default {
         this.byUser = false;
         return this.sortedToolsByUser = tools}
 
-      if (!(this.byArticle || this.byTool || this.byFacility) && this.byUser) {
+      if (!(this.byArticle || this.byTool || this.byFacility || this.byCategory) && this.byUser) {
         this.tools = []
         this.axios.get( "api/tool" + '?username=' + this.userNameSelected).then(tools => {
           tools.data.forEach(t => {
@@ -194,7 +242,7 @@ export default {
         return this.sortedToolsByName = tools
       }
 
-      if (!(this.byArticle || this.byUser || this.byFacility) && this.byTool) {
+      if (!(this.byArticle || this.byUser || this.byFacility || this.byCategory) && this.byTool) {
         this.tools = []
         this.axios.get( "api/tool" + '?name=' + this.toolNameSelected).then(tools => {
           tools.data.forEach(t => {
@@ -227,7 +275,7 @@ export default {
         return this.sortedToolsByArticle = tools
       }
 
-      if (!(this.byTool || this.byUser || this.byFacility) && this.byArticle) {
+      if (!(this.byTool || this.byUser || this.byFacility || this.byCategory) && this.byArticle) {
         this.tools = []
         this.axios.get("api/tool" + '?article=' + this.toolArticleSelected).then(tools => {
           tools.data.forEach(t => {
@@ -247,12 +295,18 @@ export default {
 
       var sorted = this.toolsFromUnder
 
+      this.loadBlockFunc(true)
+
       if (this.byFacility) {
         sorted = this.sortByFacility(sorted)
       }
       //
       if (this.byUser) {
         sorted = this.sortByUser(sorted)
+      }
+      //
+      if (this.byCategory) {
+        sorted = this.sortByCategory(sorted)
       }
       //
       if (this.byTool) {
@@ -269,7 +323,7 @@ export default {
 
       this.sortedTools = sorted
 
-      if ((this.byFacility) && (this.byUser) && (this.byTool) && (this.byArticle))
+      if (!(this.byFacility) && !(this.byUser) && !(this.byTool) && !(this.byArticle) && !(this.byCategory))
         this.loadBlockFunc(false) // блокируем разворачивание страниц
 
 
