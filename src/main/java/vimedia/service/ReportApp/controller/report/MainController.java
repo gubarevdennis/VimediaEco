@@ -139,8 +139,7 @@ public class MainController {
         return ResponseEntity.notFound().build();
     }
 
-    public byte[] compressImage(MultipartFile image) throws IOException
-    {
+    public byte[] compressImage(MultipartFile image) throws IOException {
 
         InputStream inputStream = image.getInputStream();
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

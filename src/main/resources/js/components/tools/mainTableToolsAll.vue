@@ -132,7 +132,7 @@ export default {
     // Запрашиваем отчеты для информации в поле поиска
     this.axios.get( "api/tool" + '?offset=' + this.countLoadingPages + '&limit=' + 10000).then(tools => {
           tools.data.forEach(t =>{
-            this.toolNames.push(t.name)
+            this.toolNames.push(t.name.replace(/^\s\s*/, '').replace(/\s\s*$/, ''))
             this.toolArticles.push(t.article)
           })
 

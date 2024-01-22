@@ -262,7 +262,7 @@ export default {
           this.tool.article = toolInfo
           break;
         case 'name' :
-          this.tool.name = toolInfo
+          this.tool.name = toolInfo.replace(/^\s\s*/, '').replace(/\s\s*$/, '')
           break;
         case 'id' :
           this.tool.id = toolInfo
