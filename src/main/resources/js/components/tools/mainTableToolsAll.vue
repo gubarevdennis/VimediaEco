@@ -60,7 +60,8 @@
                    :tool="tool"
       ></giving-tool>
     </v-overlay>
-    <v-infinite-scroll mode="manual" @load="load" >
+
+    <v-infinite-scroll  :onLoad="load" >
       <div v-for="row in rows" v-bind:key="row" align="start" height="200px">
         <main-table-tools-row :deleteTool="deleteTool"
                               :facilityNames="facilityNames"
