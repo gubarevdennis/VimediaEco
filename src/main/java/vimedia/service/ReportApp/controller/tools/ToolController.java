@@ -72,7 +72,10 @@ public class ToolController {
                     if (t.getId() != 0 && !name.equals("all")) {
                         System.out.println("id " + name);
                         System.out.println("get id " + t.getId());
-                        return String.valueOf(t.getName()).equals(name);
+                        return ( String.valueOf(t.getName()).toLowerCase().startsWith(name.toLowerCase())
+                                || String.valueOf(t.getArticle()).toLowerCase().startsWith(name.toLowerCase())
+                                || String.valueOf(t.getModel()).toLowerCase().startsWith(name.toLowerCase())
+                        );
                     }
                     else return name.equals("all");
                 })
@@ -80,7 +83,7 @@ public class ToolController {
                     if (t.getArticle() != null && !article.equals("all")) {
                         System.out.println("article " + article);
                         System.out.println("get article " + t.getArticle());
-                        return t.getArticle().equals(article);
+                        return t.getArticle().toLowerCase().startsWith(article.toLowerCase());
                     }
                     else return article.equals("all");
                 })
@@ -88,21 +91,21 @@ public class ToolController {
                     if (t.getFacility() != null && !facilityName.equals("all")) {
                         System.out.println("facilityId " + facilityName);
                         System.out.println("t.getFacility().getId() " + t.getFacility().getId());
-                        return ("" + t.getFacility().getName()).equals(facilityName);
+                        return ("" + t.getFacility().getName()).toLowerCase().startsWith(facilityName.toLowerCase());
                     }
                     else return facilityName.equals("all");
                 })
                 .filter(t -> {
                     if (t.getUser() != null && !userName.equals("all")) {
                         System.out.println("userid " + userName);
-                        return ("" + t.getUser().getName()).equals(userName);
+                        return ("" + t.getUser().getName()).toLowerCase().startsWith(userName.toLowerCase());
                     }
                     else return userName.equals("all");
                 })
                 .filter(t -> {
                     if (t.getCategory() != null && !category.equals("all")) {
                         System.out.println("category " + category);
-                        return t.getCategory().equals(category);
+                        return t.getCategory().toLowerCase().startsWith(category.toLowerCase());
                     }
                     else return category.equals("all");
                 })

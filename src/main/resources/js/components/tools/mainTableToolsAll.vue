@@ -13,6 +13,8 @@
         :toolArticles="toolArticles"
         :filterToolFunc="filterToolFunc"
         :loadBlockFunc="loadBlockFunc"
+        :filterRequestInfo="filterRequestInfo"
+        :filterRequestInfoFunc="filterRequestInfoFunc"
     >
     </filter-tool>
     <v-overlay
@@ -124,7 +126,8 @@ export default {
       overlay: false,
       overlayToGiving: false,
       countLoadingPages: 0,
-      rowCount: 1
+      rowCount: 1,
+      filterRequestInfo: ''
     }
   },
   mounted: function() {
@@ -298,10 +301,15 @@ export default {
     },
     // Блокровка загрузки страниц в режиме посике
     loadBlockFunc: function (state) {
-      this.loadBlock = state;
+       // this.loadBlock = state;
 
       // console.log("tool")
       // console.log(tool)
+    },
+    filterRequestInfoFunc: function (requestInfo) {
+      if (requestInfo !== '') {
+          this.filterRequestInfo = requestInfo;
+      }
     },
     load({ done }) {
       if (!this.loadBlock) {
@@ -310,7 +318,7 @@ export default {
         var toolCount = 0;
 
         // Запрашиваем отчеты
-        this.axios.get("api/tool" + '?offset=' + this.countLoadingPages + '&limit=' + 60).then(tools => {
+        this.axios.get("api/tool" + '?offset=' + this.countLoadingPages + '&limit=' + 60 + this.filterRequestInfo).then(tools => {
               tools.data.forEach(t => {
                 this.tools.push(t)
                 // this.toolNames.push(t.name)

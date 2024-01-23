@@ -3,20 +3,21 @@
     <v-row align="stretch" justify="center">
       <v-col>
         <br>
-        <v-autocomplete
+        <v-combobox
+            clearable
             variant="outlined"
-            @update:modelValue="selectTool"
+            @update:search="selectTool"
             :item-value="toolNameSelected"
-            label="Название"
+            label="Название, модель"
             :items="toolNames"
         >
-        </v-autocomplete>
+        </v-combobox>
       </v-col>
       <v-col>
         <br>
         <v-autocomplete
             variant="outlined"
-            @update:modelValue="selectArticle"
+            @update:search="selectArticle"
             :item-value="toolArticleSelected"
             label="Артикул"
             :items="toolArticles"
@@ -27,7 +28,7 @@
         <br>
         <v-autocomplete
             variant="outlined"
-            @update:modelValue="selectCategory"
+            @update:model-value="selectCategory"
             :item-value="toolCategorySelected"
             label="Категория"
             :items="toolCategories"
@@ -39,7 +40,7 @@
         <v-autocomplete
             label="Объект"
             variant="outlined"
-            @update:modelValue="selectFacility"
+            @update:model-value="selectFacility"
             :items="facilityNames"
             :item-value="facilityNameSelected"
         >
@@ -50,7 +51,7 @@
         <v-autocomplete
             label="Подобъект"
             variant="outlined"
-            @update:modelValue="selectSubFacility"
+            @update:model-value="selectSubFacility"
             :items="subFacilities"
             :item-value="subFacilityNameSelected"
         >
@@ -61,7 +62,7 @@
         <br>
         <v-autocomplete
             variant="outlined"
-            @update:modelValue="selectUser"
+            @update:model-value="selectUser"
             :item-value="userNameSelected"
             label="Сотрудник"
             :items="userNames"
@@ -76,7 +77,7 @@
 export default {
   name: "filterTool",
   props: ['profile', 'role', 'facilities', 'facilityNames', 'userNames' , 'toolNames' ,
-    'filterToolFunc', 'toolArticles', 'toolsFromUnder', 'loadBlockFunc'],
+    'filterToolFunc', 'toolArticles', 'toolsFromUnder', 'loadBlockFunc', 'filterRequestInfoFunc'],
   data() {
     return {
       facilityNameSelected: '',
@@ -101,6 +102,7 @@ export default {
       tools: [],
       toolsFirst: [],
       paginationInfo: '',
+      prepareRequestInfo: '',
       toolCategories: ['Все категории', 'Электроинструмент', 'Абразивный инструмент', 'Измерительный инструмент',
         'Слесарно-монтажный инструмент', 'Без категории'],
 
@@ -121,8 +123,8 @@ export default {
     sortByFacility: function (tools) {
       console.log('Запустил sortByFacility')
 
-      // Если выбраны все объекты
-      if (this.facilityNameSelected === 'Все объекты') {
+      // Если выбраны все объекты или не выбраны
+      if ((this.facilityNameSelected === 'Все объекты') || (this.facilityNameSelected === '')) {
         // Выключаем фильтр по подобъекта когда выбраны Все объекты
         this.bySubFacility = false
 
@@ -154,8 +156,8 @@ export default {
     },
     sortBySubFacility: function (tools) {
       console.log('Запустил sortBySubFacility')
-      // Если выбраны все подобъекты
-      if (this.bySubFacility && this.subFacilityNameSelected === 'Все подобъекты') {
+      // Если выбраны все подобъекты или не выбраны
+      if ((this.bySubFacility && this.subFacilityNameSelected === 'Все подобъекты') || (this.bySubFacility && this.subFacilityNameSelected === '')) {
         return this.sortedToolsBySubFacility = tools
             .filter(t => (t.facility ? (t.facility.name === this.facilityNameSelected) : false))}
 
@@ -176,7 +178,7 @@ export default {
       console.log('Запустил sortByCategory')
 
       // Если выбраны все работы
-      if (this.toolCategorySelected === 'Все категории') {
+      if ((this.toolCategorySelected === 'Все категории') || (this.toolCategorySelected === '')) {
         this.byUser = false;
         return this.sortedToolsByCategory = tools}
 
@@ -205,8 +207,8 @@ export default {
     },
     sortByUser: function (tools) {
       console.log('Запустил sortByUser')
-      // Если выбраны все работы
-      if (this.userNameSelected === 'Все сотрудники') {
+      // Если выбраны все сотрудники или не выбран не один
+      if ((this.userNameSelected === 'Все сотрудники') || (this.userNameSelected === '')) {
         this.byUser = false;
         return this.sortedToolsByUser = tools}
 
@@ -236,8 +238,8 @@ export default {
     sortByTool: function (tools) {
       console.log('Запустил sortByToolName')
 
-      // Если выбраны все работы
-      if (this.toolNameSelected === 'Все инструменты') {
+      // Если выбраны все инструменты или не выбран ни один
+      if ((this.toolNameSelected === 'Все инструменты') || (this.toolNameSelected === '')) {
         this.byTool = false
         return this.sortedToolsByName = tools
       }
@@ -269,8 +271,8 @@ export default {
     sortByArticle: function (tools) {
       console.log('Запустил sortByArticle')
 
-      // Если выбраны все работы
-      if (this.toolArticleSelected === 'Все артикулы') {
+      // Если выбраны все работы или не выбраны ни одна
+      if ((this.toolArticleSelected === 'Все артикулы') || (this.toolArticleSelected === '')) {
         this.byArticle = false
         return this.sortedToolsByArticle = tools
       }
@@ -287,11 +289,13 @@ export default {
           }
         })
       } else if (this.byArticle) {
-        return this.sortedToolsByArticle = tools.filter(t => t.article === this.toolArticleSelected)
+        return this.sortedToolsByArticle = tools.filter(t => (t.article ? t.article.startsWith(this.toolArticleSelected) : false))
       }
     },
     resultFilter: function () {
       console.log('Запустил resultFilter')
+
+      this.prepareRequestInfo = '';
 
       var sorted = this.toolsFromUnder
 
@@ -299,27 +303,47 @@ export default {
 
       if (this.byFacility) {
         sorted = this.sortByFacility(sorted)
+        if (!(this.facilityNameSelected === 'Все объекты')) {
+          this.prepareRequestInfo = this.prepareRequestInfo + '&facilityname=' + this.facilityNameSelected;
+        }
       }
       //
       if (this.byUser) {
         sorted = this.sortByUser(sorted)
+        if (!(this.userNameSelected === 'Все сотрудники')) {
+          this.prepareRequestInfo = this.prepareRequestInfo + '&username=' + this.userNameSelected;
+        }
       }
       //
       if (this.byCategory) {
         sorted = this.sortByCategory(sorted)
+        if (!(this.toolCategorySelected === 'Все сотрудники')) {
+          this.prepareRequestInfo = this.prepareRequestInfo + '&category=' + this.toolCategorySelected;
+        }
       }
       //
       if (this.byTool) {
         sorted = this.sortByTool(sorted)
+        if (!(this.toolNameSelected === 'Все инструменты')) {
+          this.prepareRequestInfo = this.prepareRequestInfo + '&name=' + this.toolNameSelected;
+        }
       }
       //
       if (this.byArticle) {
         sorted = this.sortByArticle(sorted)
+        if (!(this.toolArticleSelected === 'Все артикулы')) {
+          this.prepareRequestInfo = this.prepareRequestInfo + '&article=' + this.toolArticleSelected;
+        }
       }
       //
       if (this.byFacility && this.bySubFacility) {
         sorted = this.sortBySubFacility(sorted)
+        if (!(this.subFacilityNameSelected === 'Все подобьекты')) {
+          this.prepareRequestInfo = this.prepareRequestInfo + '&subfacility=' + this.subFacilityNameSelected;
+        }
       }
+
+      this.filterRequestInfoFunc(this.prepareRequestInfo); // собираем строку для запроса через фильтры
 
       this.sortedTools = sorted
 

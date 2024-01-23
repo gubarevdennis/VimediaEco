@@ -1,14 +1,23 @@
 <template xmlns="http://www.w3.org/1999/html">
-  <v-sheet align="center" width="300" style="background-color: black">
-    <v-card  fluid v-bind:height="(178)" width="300" color="#7d7f7d" rounded="lg"  >
-
-      <v-sheet width="300" color="#7d7f7d" >
+  <v-sheet align="center" width="320" style="background-color: black">
+    <v-card fluid v-bind:height="(290)" width="320"  color="#7d7f7d" rounded="lg"  >
+      <v-sheet width="320" color="#7d7f7d" >
         <v-row align="center" justify="center">
-          <v-col align-self="start">
-            <v-sheet width="240" color="#7d7f7d" style="background-color: #7d7f7d;" >
-              <v-row >
+          <v-col align-self="start" >
+            <v-row justify="center" align="center" style="margin-top: 24px;  margin-bottom: 15px; padding-left: 20px">
+              <v-sheet style="background-color: #7d7f7d; " >
+                <v-row justify="center" align="center" >
+                  <v-sheet class="text-subtitle-1" color="#EBB652"  align="center"
+                           style="background-color: #a3a2a2;font-weight: bold ; font-size: 14px; " width="290">
+                    {{ tool.name }}
+                  </v-sheet>
+                </v-row>
+              </v-sheet>
+            </v-row>
+            <v-sheet width="240" style="background-color: #7d7f7d;" >
+              <v-row>
                 <v-col row  wrap >
-                  <v-row style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px" >
+                  <v-row style="margin-left: 10px; margin-top: 5px; margin-bottom: 0px" >
                     <v-sheet rounded="lg" style="background-color: #7d7f7d" width="100px" height="100px">
                       <v-card rounded="lg" width="100px" height="100px" align="center" @click="overlayFuncInner">
                         <v-img
@@ -22,15 +31,30 @@
                     </v-sheet>
                   </v-row>
                 </v-col>
-                <v-col>
-                  <v-sheet width="110" style="background-color: #7d7f7d;">
-                    <v-card-title  class=" pa-0" align="start" style="background-color: #7d7f7d; font-size: 15px;
-                    font-weight: bold" width="100px" >
-                      {{ tool.name }}
-                    </v-card-title>
-                    <v-sheet class=" pa-0" align="start" style="background-color: #7d7f7d; font-size: 14px;" width="110px" >
+                <v-col align="start" style="vertical-align: center">
+                  <v-sheet width="110" style="background-color: #7d7f7d; margin-top: 5px;">
+                    <v-sheet class=" pa-0 text-subtitle-1" align="start" style="background-color: #7d7f7d;
+                    font-size: 12px; font-weight: bold; " width="110px" >
+                      <div v-if="tool.model">
+                        {{ tool.model }}
+                      </div>
+                    </v-sheet>
+                    <v-sheet class=" pa-0 text-subtitle-1" align="start" style="background-color: #7d7f7d;
+                    font-size: 12px; font-weight: bold; " width="110px" >
                       <div v-if="tool.article">
                         {{ tool.article }}
+                      </div>
+                    </v-sheet>
+                    <v-sheet class=" pa-0 text-subtitle-1" align="start" style="background-color: #7d7f7d;
+                    font-size: 12px; " width="110px" >
+                      <div v-if="tool.vendor">
+                        {{ tool.vendor }}
+                      </div>
+                    </v-sheet>
+                    <v-sheet class=" pa-0 text-subtitle-2" align="start" style="background-color: #7d7f7d;
+                    font-size: 12px; " width="110px" >
+                      <div v-if="tool.serial">
+                        {{ tool.serial }}
                       </div>
                     </v-sheet>
                   </v-sheet>
@@ -41,61 +65,60 @@
                     <!--            <br>-->
                     <!--            от {{ event.user ? event.user.name : '' }}-->
                     <!--          </v-row>-->
-                    <v-row justify="center" align="center" >
-                      <v-select
-                          style="margin-top: 20px; margin-left:10px; "
-                          outlined
-                          density="0"
-                          class="inline custom-select"
-                          label="Объект"
-                          variant="outlined"
-                          @update:modelValue="selectFacility"
-                          v-model="facilityNameSelected"
-                          :items="facilityNames"
-                          :item-value="facilityNameSelected"
-                      >
-                      </v-select>
-                    </v-row>
-                    <v-row justify="center" align="center">
-                      <div v-if="showConfirmBtn">
-                        <v-btn v-if="showConfirmBtn" width="80" color="green" size="small" @click="edit" >
-                          <div style="font-size: 8px">
-                            Переместить
-                          </div>
-                        </v-btn>
-                        <v-btn v-if="showConfirmBtn" width="20" color="red" size="small" @click="hideConfirmBtnFunc" >
-                          <div style="font-size: 8px">
-                            Отмена
-                          </div>
-                        </v-btn>
-                        <br>
-                        <br>
-                      </div>
-                    </v-row>
+
                   </v-sheet>
                 </v-col>
               </v-row>
-              <v-row>
-                <v-sheet style="background-color: #7d7f7d;" width="300px" >
-                  <v-row justify="center" align="center">
-                    <v-sheet color="#EBB652"  align="center" style="background-color: #EBB652;" width="300">
-                      <div v-if="tool ? (tool.user ? tool.user.name : '') : ''">
-                        Прикреплен к: {{ tool ? (tool.user ? tool.user.name : '') : ''}}
-                      </div>
-                    </v-sheet>
-                    <v-sheet color="red"  align="center" style="background-color: #7d7f7d;" width="300">
-                      <div v-if="moveStatus">
-                        Направлен: {{ (movingEvent[0]) ? movingEvent[0].toUser : ''}}
-                      </div>
-                    </v-sheet>
-                  </v-row>
-                </v-sheet>
-              </v-row>
             </v-sheet>
+            <v-row justify="center" align="center" style="font-size: 10px;">
+              <v-select
+                  style="margin-top: 15px; margin-left:30px; "
+                  density=0
+                  label="Объект"
+                  variant="outlined"
+                  @update:modelValue="selectFacility"
+                  v-model="facilityNameSelected"
+                  :items="facilityNames"
+                  :item-value="facilityNameSelected"
+              >
+              </v-select>
+            </v-row>
+            <v-row justify="center" align="center">
+              <div v-if="showConfirmBtn">
+                <v-btn v-if="showConfirmBtn" width="80" color="green" size="small" @click="edit" >
+                  <div style="font-size: 8px">
+                    Переместить
+                  </div>
+                </v-btn>
+                <v-btn v-if="showConfirmBtn" width="20" color="red" size="small" @click="hideConfirmBtnFunc" >
+                  <div style="font-size: 8px">
+                    Отмена
+                  </div>
+                </v-btn>
+                <br>
+                <br>
+              </div>
+            </v-row>
+            <v-row justify="center" align="center">
+              <v-sheet style="background-color: #7d7f7d;"  >
+                <v-row justify="center" align="center" >
+                  <v-sheet color="#EBB652"  align="center" style="background-color: #EBB652; font-size: 14px; " width="310">
+                    <div v-if="tool ? (tool.user ? tool.user.name : '') : ''">
+                      Прикреплен к: {{ tool ? (tool.user ? tool.user.name : '') : ''}}
+                    </div>
+                  </v-sheet>
+                  <v-sheet color="red"  align="center" style="background-color: #7d7f7d; font-size: 14px; " width="310">
+                    <div v-if="moveStatus">
+                      Направлен: {{ (movingEvent[0]) ? movingEvent[0].toUser : ''}}
+                    </div>
+                  </v-sheet>
+                </v-row>
+              </v-sheet>
+            </v-row>
           </v-col>
           <v-col>
             <v-card class="align-center justify-center d-flex flex-column"
-                    align="center" height="178"  style="background-color: #EBB652;"
+                    align="center" height="300"  style="background-color: #EBB652;"
                     color="green" @click="overlayToGivingFuncInner">
               <v-icon  icon="mdi-send" >
               </v-icon>

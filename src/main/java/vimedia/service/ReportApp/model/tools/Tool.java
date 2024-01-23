@@ -12,7 +12,6 @@ import vimedia.service.ReportApp.model.report.*;
 import vimedia.service.ReportApp.model.report.Views;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -38,7 +37,7 @@ public class Tool {
     private String article;
 
     @JsonView(Views.IdName.class)
-    private Integer quantity;
+    private String model;
 
     @JsonView(Views.IdName.class)
     @Column(unique=true)
@@ -264,12 +263,12 @@ public class Tool {
         this.toolSet = toolSet;
     }
 
-    public Integer getQuantity() {
-        return quantity;
+    public String getModel() {
+        return model;
     }
 
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
+    public void setModel(String model) {
+        this.model = model;
     }
 
     public String getDescription() {

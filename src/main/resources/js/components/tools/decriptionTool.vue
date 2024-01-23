@@ -121,17 +121,17 @@
           </v-card-text>
           <v-card-text >
             <v-row>
-              <div style="font-weight: bold;color: #0B0B0B"> Артикул: &nbsp</div>
+              <div style="font-weight: bold;color: #0B0B0B"> Модель: &nbsp</div>
               <description-tool-row :editTool="editTool"  :profile="profile" :role="role" :tool="tool"
-                                    v-bind:rowInputText="tool ? tool.article : ''" v-bind:rowInputType="'article'">
+                                    v-bind:rowInputText="tool ? tool.model : ''" v-bind:rowInputType="'model'">
               </description-tool-row>
             </v-row>
           </v-card-text>
           <v-card-text >
             <v-row>
-              <div style="font-weight: bold;color: #0B0B0B"> Колличество: &nbsp</div>
+              <div style="font-weight: bold;color: #0B0B0B"> Артикул: &nbsp</div>
               <description-tool-row :editTool="editTool"  :profile="profile" :role="role" :tool="tool"
-                                    v-bind:rowInputText="tool ? tool.quantity : ''" v-bind:rowInputType="'quantity'">
+                                    v-bind:rowInputText="tool ? tool.article : ''" v-bind:rowInputType="'article'">
               </description-tool-row>
             </v-row>
           </v-card-text>

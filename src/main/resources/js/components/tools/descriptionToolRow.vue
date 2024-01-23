@@ -37,8 +37,8 @@ export default {
       var tool = this.tool
 
       switch (this.rowInputType) {
-        case 'quantity' :
-          tool.quantity = this.toolInfo
+        case 'model' :
+          tool.model = this.toolInfo
           break;
         case 'article' :
           tool.article = this.toolInfo

@@ -88,7 +88,7 @@
           </v-card-text>
           <v-card-text class="pa-3">
             <v-row>
-              <div style="font-weight: bold;font-size: 14px;color: #0B0B0B"> Колличество: &nbsp</div>
+              <div style="font-weight: bold;font-size: 14px;color: #0B0B0B"> Модель: &nbsp</div>
               <description-tool-row :editTool="editTool"  :profile="profile" :role="role" :tool="tool"
                                     v-bind:rowInputText="tool ? tool.quantity : ''" v-bind:rowInputType="'quantity'"
                                     :showConfirmBtnFuncParrent="showConfirmBtnFuncParrent">
@@ -255,8 +255,8 @@ export default {
     },
     showConfirmBtnFuncParrent: function (rowInputType, toolInfo) {
       switch (rowInputType) {
-        case 'quantity' :
-          this.tool.quantity = toolInfo
+        case 'model' :
+          this.tool.model = toolInfo
           break;
         case 'article' :
           this.tool.article = toolInfo

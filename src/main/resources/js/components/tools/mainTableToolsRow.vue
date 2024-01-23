@@ -2,7 +2,7 @@
   <v-card align="center" color="black" rounded="lg"  class="ma-2" >
     <br>
     <v-row justify="center" align="center">
-      <div v-for="tool in toolsForRow" style="width: 320px; height: 200px">
+      <div v-for="tool in toolsForRow" style="width: 340px; height: 310px">
         <main-table-tools-col :deleteTool="deleteTool"
                               :users="users"
                               :userNames="userNames"

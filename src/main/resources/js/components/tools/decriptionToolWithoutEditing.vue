@@ -38,6 +38,12 @@
       </v-card-text>
       <v-card-text >
         <v-row>
+          <div style="font-weight: bold;color: #0B0B0B"> Модель: &nbsp</div>
+          {{ tool.model }}
+        </v-row>
+      </v-card-text>
+      <v-card-text >
+        <v-row>
           <div style="font-weight: bold;color: #0B0B0B"> Артикул: &nbsp</div>
           {{ tool.article }}
         </v-row>
@@ -46,12 +52,6 @@
         <v-row>
           <div style="font-weight: bold;color: #0B0B0B"> Комплектность: &nbsp</div>
           {{ tool.toolSet ? tool.toolSet.name : 'Не входит в комплект'}}
-        </v-row>
-      </v-card-text>
-      <v-card-text >
-        <v-row>
-          <div style="font-weight: bold;color: #0B0B0B"> Колличество: &nbsp</div>
-          {{ tool.quantity }}
         </v-row>
       </v-card-text>
       <v-card-text >
