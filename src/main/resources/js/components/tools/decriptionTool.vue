@@ -81,14 +81,15 @@
             </v-text>
             <br>
             <description-tool-inventary
-            :tool="tool"
-            :inventoryEvents="inventoryEvents"
+                :tool="tool"
+                :inventoryEvents="inventoryEvents"
             >
             </description-tool-inventary>
           </v-card>
           <br>
         </v-col >
         <v-col  style="font-size: 40px" >
+
           <v-autocomplete
               density="compact"
               label="Комплектность"
@@ -109,10 +110,13 @@
               :item-value="toolCategoryNameSelected"
           >
           </v-select>
-          <v-btn v-if="showConfirmBtn" color="green" size="small" @click="edit" > Применить </v-btn>
-          <v-btn v-if="showConfirmBtn" color="red" size="small" @click="hideConfirmBtnFunc" > Отмена </v-btn>
+          <v-row justify="center" align-content="center" style="margin-bottom: 5px">
+            <v-btn v-if="showConfirmBtn" color="green"  @click="edit" > Применить </v-btn>
+
+            <v-btn v-if="showConfirmBtn" color="red"  @click="hideConfirmBtnFunc" > Отмена </v-btn>
+          </v-row>
           <v-card-text>
-            <v-row>
+            <v-row >
               <div style="font-weight: bold;color: #0B0B0B"> Наименование: &nbsp</div>
               <description-tool-row :editTool="editTool"  :profile="profile" :role="role" :tool="tool"
                                     v-bind:rowInputText="tool ? tool.name : ''" v-bind:rowInputType="'name'">
@@ -236,12 +240,23 @@
           <v-overlay
               scroll-strategy="reposition"
               class="align-center justify-center"
+              v-model="overlayCopy"
+              align="end"
+          >
+            <v-btn icon="mdi-close" @click="overlayCopy = false"></v-btn>
+            <confirm-copy-tool :copyTool="copyTool" :showConfirmCopyToolFunc="showConfirmCopyToolFunc" :tool="tool" ></confirm-copy-tool>
+          </v-overlay>
+          <v-overlay
+              scroll-strategy="reposition"
+              class="align-center justify-center"
               v-model="overlayDel"
               align="end"
           >
             <v-btn icon="mdi-close" @click="overlayDel = false"></v-btn>
             <confirm-delete-tool :deleteTool="deleteTool" :showConfirmDeleteToolFunc="showConfirmDeleteToolFunc" :tool="tool" ></confirm-delete-tool>
           </v-overlay>
+          <v-btn v-if="(this.role === 'Кладовщик') || (this.role === 'Директор')" color="yellow" @click="overlayCopy = !overlayCopy" :showConfirmCopyTool="showConfirmCopyTool"
+          > Копировать </v-btn>
           <v-btn v-if="(this.role === 'Директор')" color="red" @click="overlayDel = !overlayDel" :showConfirmDeleteTool="showConfirmDeleteTool"
           > Удалить инструмент </v-btn>
         </v-col>
@@ -255,10 +270,11 @@
 import DescriptionToolRow from "./descriptionToolRow.vue";
 import DescriptionToolInventary from "./descriptionToolInventary.vue";
 import ConfirmDeleteTool from "./confirmDeleteTool.vue";
+import ConfirmCopyTool from "./confirmCopyTool.vue";
 export default {
   name: "decriptionTool",
-  components: {ConfirmDeleteTool, DescriptionToolRow, DescriptionToolInventary},
-  props: ['profile', 'role', 'tool', 'editTool', 'toolSets', 'deleteTool', 'closeDescriptionToolByDeleteConfirm'],
+  components: {ConfirmDeleteTool, DescriptionToolRow, DescriptionToolInventary, ConfirmCopyTool},
+  props: ['profile', 'role', 'tool', 'editTool', 'toolSets', 'categories', 'deleteTool', 'copyTool', 'closeDescriptionToolByDeleteConfirm', 'closeDescriptionToolByCopyConfirm'],
   data() {
     return {
       imageEditButton: false,
@@ -268,8 +284,10 @@ export default {
       toolSerialOnOverlay: '',
       toolSetNames: [],
       showConfirmDeleteTool: false,
+      showConfirmCopyTool: false,
       overlayDel: false,
-      toolCategoryNames: '',
+      overlayCopy: false,
+      toolCategoryNames: [],
       inventoryEvents: []
     }
   },
@@ -277,11 +295,11 @@ export default {
     this.imageEditButton = this.tool ? this.tool.image : ''
     this.toolSetNameSelected = this.tool ? this.tool.toolSet ? this.tool.toolSet.name : '' : ''
     this.toolSerialOnOverlay = this.tool ?  this.tool.serial : ''
-    this.toolCategoryNameSelected = this.tool ?  this.tool.category : ''
+    this.toolCategoryNameSelected = this.tool ?  this.tool.category ? this.tool.category.name : '' : ''
     this.toolSets.forEach(t => this.toolSetNames.push(t.name)) // добавляем имена инсрументов для выбора
-    this.toolCategoryNames =
-        ['Электроинструмент', 'Абразивный инструмент', 'Измерительный инструмент',
-          'Слесарно-монтажный инструмент', 'Без категории']
+    this.categories.forEach(c => this.toolCategoryNames.push(c.name))
+        // ['Электроинструмент', 'Абразивный инструмент', 'Измерительный инструмент',
+        //   'Слесарно-монтажный инструмент', 'Без категории']
     // console.log(this.toolSetNameSelected)
 
     // Подгружаем инвентаризации данного инструмента
@@ -311,6 +329,10 @@ export default {
       this.closeDescriptionToolByDeleteConfirm()
       this.overlayDel=false;
     },
+    showConfirmCopyToolFunc: function (){
+      this.closeDescriptionToolByCopyConfirm()
+      this.overlayCopy=false;
+    },
     edit: function () {
       // Присвоение всех параметров из формы
       var tool = this.tool
@@ -321,10 +343,13 @@ export default {
       if (toolSetFound)
         tool.toolSet = toolSetFound
 
-      // Присваиваем категорию инструмента
-      if (this.toolCategoryNameSelected)
-        tool.category = this.toolCategoryNameSelected
+      // Находим нужную категорию по имени и присваиваем инструмемнту, если нашли
+      var categoryFound = this.categories.find(t => t.name === this.toolCategoryNameSelected)
 
+      if (categoryFound)
+        tool.category = categoryFound
+
+      // Запрос на редактирование инструмента
       this.axios.put(`api/tool/${tool.id}`, tool).then(result => {
         if (result.status === 200) {
           this.editTool(result.data)

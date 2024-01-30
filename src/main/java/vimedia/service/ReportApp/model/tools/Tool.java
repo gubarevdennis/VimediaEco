@@ -8,6 +8,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import vimedia.service.ReportApp.model.report.*;
 import vimedia.service.ReportApp.model.report.Views;
 
@@ -74,29 +76,34 @@ public class Tool {
     @JsonView(Views.IdName.class)
     private String description;
 
-    @JsonView(Views.IdName.class)
-    private String category;
-
-
     //    @Column(updatable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yy")  //  HH:mm:ss
     @JsonView(Views.IdName.class)
     private LocalDate purchaseDate;
 
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     @JsonIgnoreProperties({"tools", "subFacilities"})
     @JsonView(Views.IdName.class)
     private Facility facility;
 
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     @JsonView(Views.IdName.class)
     @JsonIgnoreProperties({"tools", "reports", "password"})
     private User user;
 
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     @JsonIgnoreProperties("tools")
     @JsonView(Views.IdName.class)
     private ToolSet toolSet;
+
+    @ManyToOne
+    @OnDelete(action = OnDeleteAction.SET_NULL)
+    @JsonIgnoreProperties("tools")
+    @JsonView(Views.IdName.class)
+    private Category category;
 
     @OneToMany(mappedBy = "tool")
     @JsonIgnore
@@ -319,11 +326,11 @@ public class Tool {
         this.events = events;
     }
 
-    public String getCategory() {
+    public Category getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(Category category) {
         this.category = category;
     }
 

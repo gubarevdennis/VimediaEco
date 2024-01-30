@@ -1,9 +1,9 @@
 <template>
-  <div style="color: #0B0B0B">
+  <div style="color: #0B0B0B" align="center">
     <input style="width: 220px" type="text" @change="showConfirmBtnFunc" v-model="toolInfo" />
-    <div>
-    <v-btn v-if="showConfirmBtn" color="green" size="small" @click="edit" > Применить </v-btn>
-    <v-btn v-if="showConfirmBtn" color="red" size="small" @click="hideConfirmBtnFunc" > Отмена </v-btn>
+    <div style="margin-top: 5px">
+    <v-btn v-if="showConfirmBtn" color="green"  @click="edit" > Применить </v-btn>
+    <v-btn v-if="showConfirmBtn" color="red"  @click="hideConfirmBtnFunc" > Отмена </v-btn>
     </div>
   </div>
 </template>
@@ -84,6 +84,7 @@ export default {
           break;
       }
 
+
       this.axios.put(`api/tool/${tool.id}`, tool).then(result => {
         if (result.status === 200) {
           this.editTool(tool)
@@ -101,3 +102,18 @@ export default {
 <style scoped>
 
 </style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

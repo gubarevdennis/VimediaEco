@@ -7,7 +7,7 @@
             <v-row justify="center" align="center" style="margin-top: 24px;  margin-bottom: 15px; padding-left: 20px">
               <v-sheet style="background-color: #7d7f7d; " >
                 <v-row justify="center" align="center" >
-                  <v-sheet class="text-subtitle-1" color="#EBB652"  align="center"
+                  <v-sheet class="text-subtitle-1" color="#b0aeae"  align="center"
                            style="background-color: #a3a2a2;font-weight: bold ; font-size: 14px; " width="290">
                     {{ tool.name }}
                   </v-sheet>
@@ -32,7 +32,7 @@
                   </v-row>
                 </v-col>
                 <v-col align="start" style="vertical-align: center">
-                  <v-sheet width="110" style="background-color: #7d7f7d; margin-top: 5px;">
+                  <v-sheet width="110" style="background-color: #7d7f7d; padding-top: 1%">
                     <v-sheet class=" pa-0 text-subtitle-1" align="start" style="background-color: #7d7f7d;
                     font-size: 12px; font-weight: bold; " width="110px" >
                       <div v-if="tool.model">
@@ -65,7 +65,6 @@
                     <!--            <br>-->
                     <!--            от {{ event.user ? event.user.name : '' }}-->
                     <!--          </v-row>-->
-
                   </v-sheet>
                 </v-col>
               </v-row>
@@ -83,22 +82,14 @@
               >
               </v-select>
             </v-row>
-            <v-row justify="center" align="center">
-              <div v-if="showConfirmBtn">
-                <v-btn v-if="showConfirmBtn" width="80" color="green" size="small" @click="edit" >
-                  <div style="font-size: 8px">
-                    Переместить
-                  </div>
-                </v-btn>
-                <v-btn v-if="showConfirmBtn" width="20" color="red" size="small" @click="hideConfirmBtnFunc" >
-                  <div style="font-size: 8px">
-                    Отмена
-                  </div>
-                </v-btn>
-                <br>
-                <br>
-              </div>
-            </v-row>
+            <v-sheet color="#7d7f7d" justify="center" align="center" align-content="center" v-if="showConfirmBtn" style="margin-left: 30px; margin-bottom: 50px">
+              <v-row justify="center" align="center" align-content="center">
+                <v-btn v-if="showConfirmBtn"  color="green"  @click="edit" >Переместить</v-btn>
+                <v-btn v-if="showConfirmBtn"  color="red"  @click="hideConfirmBtnFunc" >Отмена</v-btn>
+              </v-row>
+              <br>
+              <br>
+            </v-sheet>
             <v-row justify="center" align="center">
               <v-sheet style="background-color: #7d7f7d;"  >
                 <v-row justify="center" align="center" >
@@ -166,7 +157,9 @@ export default {
       overlayToGiving: false,
       event: '',
       moveStatus: false,
-      movingEvent: ''
+      movingEvent: '',
+      toFacilityName: ''
+
     }
   },
   mounted: function() {
@@ -208,7 +201,14 @@ export default {
     edit: function () {
       var facility = this.facilities.find( f => f.name === this.facilityNameSelected)
       var tool = this.tool
+
+      if (this.toFacilityName)
+      this.toFacilityName = tool.facility.name; // записываем старый объект для отправки
+
+      // Указываем на новый объект для прикрепления
       tool.facility = {id : facility ? facility.id : '', name : facility ? facility.name : ''}
+
+      // Привязываем новый объект
       this.assignFacility(tool)
     },
     assignFacility: function (tool) {
@@ -225,7 +225,7 @@ export default {
       var newEvent = {
         name: 'Перемещен',
         tool: {id: this.tool.id, name: this.tool.name},
-        fromFacility: this.tool.facility.name,
+        fromFacility: this.toFacilityName,
         toFacility: this.facilityNameSelected,
         toUser: this.profile,
       }
@@ -236,9 +236,12 @@ export default {
         }
       })
     },
-    closeDescriptionToolByDeleteConfirm: function () {
-      this.overlay = false;
-    },
+    // closeDescriptionToolByDeleteConfirm: function () {
+    //   this.overlay = false;
+    // },
+    // closeDescriptionToolByCopyConfirm: function () {
+    //   this.overlay = false;
+    // },
 
     overlayToGivingFuncInner: function () {
       this.overlayToGiving = !this.overlayToGiving;

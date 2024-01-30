@@ -137,7 +137,7 @@ export default {
               .forEach(u => {
                 u.reports.forEach(r => {
                       this.reports.push(r)
-                      if (!this.facilities.find((f) => f.id === r.facility.id)) {
+                      if (!this.facilities.find((f) => f.id === (r.facility ? r.facility.id : ''))) {
                         this.facilities.push(r.facility)
                       }
                     }
@@ -150,7 +150,7 @@ export default {
               .reports.forEach(r => {
 
                 this.reports.push(r)
-                if (!this.facilities.find((f) => f.id === r.facility.id)) {
+                if (!this.facilities.find((f) => f.id === (r.facility ? r.facility.id : ''))) {
                   this.facilities.push(r.facility)
                   console.log(this.facilities)
                 }

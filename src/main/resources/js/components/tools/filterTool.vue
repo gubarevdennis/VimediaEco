@@ -31,7 +31,7 @@
             @update:model-value="selectCategory"
             :item-value="toolCategorySelected"
             label="Категория"
-            :items="toolCategories"
+            :items="categoryNames"
         >
         </v-autocomplete>
       </v-col>
@@ -77,7 +77,7 @@
 export default {
   name: "filterTool",
   props: ['profile', 'role', 'facilities', 'facilityNames', 'userNames' , 'toolNames' ,
-    'filterToolFunc', 'toolArticles', 'toolsFromUnder', 'loadBlockFunc', 'filterRequestInfoFunc'],
+    'filterToolFunc', 'toolArticles', 'toolsFromUnder', 'loadBlockFunc', 'filterRequestInfoFunc', 'categories', 'categoryNames'],
   data() {
     return {
       facilityNameSelected: '',
@@ -103,8 +103,6 @@ export default {
       toolsFirst: [],
       paginationInfo: '',
       prepareRequestInfo: '',
-      toolCategories: ['Все категории', 'Электроинструмент', 'Абразивный инструмент', 'Измерительный инструмент',
-        'Слесарно-монтажный инструмент', 'Без категории'],
 
     }
   },

@@ -144,16 +144,16 @@ public class EventController {
         // Находим пользователя
         User user = userRepo.findByName(myUserDetails.getUsername()).orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден!"));
 
-        // Вставляем его id в пользователя для отчета
+        // Вставляем его id в пользователя для события
         user.setId(user.getId());
-        event.setUser(user);
+
 
         System.out.println("tool from event  " + event.getTool());
         System.out.println("tool ID from event  " + event.getTool().getId());
 
         int toolId = event.getTool().getId();
 
-        // Находим инструмент c таким же ID, если есть, ставим ему отправителя
+        // Находим инструмент c таким же ID, если есть, далее ставим ему отправителя
         Optional<Tool> tool = toolRepo.findById(toolId);
 
         System.out.println("toooool ->   " + toolRepo.findByUser(user).toString());
@@ -164,13 +164,23 @@ public class EventController {
         System.out.println("tool " + tool);
 
         if (tool.isPresent()) {
+            if (tool.get().getUser() != null) {
+                event.setUser(tool.get().getUser()); // если инструмент за кем то закреплен, то событие формируется им, как отправителем
+                event.setToUser(tool.get().getUser().getName()); // и он же получает
 
-            tool.get().setUser(user);
-//            tool.get().setStatus("Направлен на передачу");
+                if (!tool.get().getUser().getName().equals(user.getName())) {
+                    //TODO ничего не делаем просто
+                };
+            } else {
+                // Закрепляем инструмент за текущим пользователем, если у он ни за кем не закреплен
+                tool.get().setUser(user);
+                event.setUser(user);
+            }
 
             boolean alreadyDone = false; // Переменная обозначающая есть ли уже перемещение
 
             if (lastEvent.isPresent()) {
+                if (lastEvent.get().getTool() != null)
                 alreadyDone = lastEvent.get().getTool().getId() == tool.get().getId();
                 System.out.println("Request for sending already exist! -> " + lastEvent);
             }

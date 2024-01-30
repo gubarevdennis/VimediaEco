@@ -13,7 +13,6 @@
       scroll-strategy="block"
       align="center"
   >
-
     <v-btn icon="mdi-close" @click="overlay = !overlay"></v-btn>
     <br>
     <br>
@@ -53,6 +52,7 @@
   <div v-for="row in rows" v-bind:key="row" align="center"  height="200px">
     <main-table-tools-row :deleteTool="deleteTool"
                           :facilityNames="facilityNames"
+                          :facilities="facilities"
                           :users="users"
                           :userNames="userNames"
                           :role="role"
@@ -77,6 +77,7 @@ import ConfirmToolTable from "./confirmToolTable.vue";
 import { isProxy, toRaw } from 'vue'
 import GivingTool from "./givingTool.vue";
 import DecriptionToolWithoutEditing from "./decriptionToolWithoutEditing.vue";
+
 export default {
   components: {AddTool, MainTableToolsRow, ConfirmToolTable, GivingTool, DecriptionToolWithoutEditing},
   props: ['profile', 'role', 'profileId'],

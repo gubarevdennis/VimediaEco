@@ -65,7 +65,7 @@ public class ToolController {
             tools = toolRepo.findAll();
         }
 
-        System.out.println(tools);
+//        System.out.println(tools);
 
         tools = tools.stream()
                 .filter(t -> {
@@ -105,7 +105,7 @@ public class ToolController {
                 .filter(t -> {
                     if (t.getCategory() != null && !category.equals("all")) {
                         System.out.println("category " + category);
-                        return t.getCategory().toLowerCase().startsWith(category.toLowerCase());
+                        return t.getCategory().getName().toLowerCase().startsWith(category.toLowerCase());
                     }
                     else return category.equals("all");
                 })
@@ -174,6 +174,13 @@ public class ToolController {
     @JsonView(Views.IdName.class)
     public Tool getOne(@PathVariable("id") Tool tool) {
         return tool;
+    }
+
+    // Создание события
+    @PostMapping("/tool/copy")
+    public Tool create(@RequestBody Tool tool, @RequestParam(value = "quantity", defaultValue = "1", required = false) Integer quantity) {
+
+        return toolRepo.save(tool);
     }
 
     // Создание события

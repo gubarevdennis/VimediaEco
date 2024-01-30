@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -32,16 +34,19 @@ public class Report {
 
     @JsonView(Views.IdName.class)
     @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     @JsonIgnoreProperties("reports") //"subFacilities"
     private Facility facility;
 
     @JsonView(Views.IdName.class)
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     @JsonIgnoreProperties("reports")
     private SubFacility subFacility;
 
     @JsonView(Views.IdName.class)
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     @JsonIgnoreProperties("reports")
     private User user;
 

@@ -1,11 +1,25 @@
 <template>
   <v-sheet color="black">
-    <add-tool  v-if="((this.role === 'Кладовщик') || (this.role === 'Директор'))" :addTool="addTool" :toolSets="toolSets" :editTool="editTool" :facilities="facilities" ></add-tool>
+    <add-tool  v-if="((this.role === 'Кладовщик') || (this.role === 'Директор'))"
+               :addTool="addTool"
+               v-bind:toolSets="toolSets"
+               :editTool="editTool"
+               :facilities="facilities"
+               v-bind:categories="categories"
+               :editCategory="editCategory"
+               :addCategory="addCategory"
+               :editToolSet="editToolSet"
+               :addToolSet="addToolSet"
+               :deleteToolSet="deleteToolSet"
+               :deleteCategory="deleteCategory"
+    ></add-tool>
 
     <filter-tool
         :profile="profile"
         :role="role"
         :toolsFromUnder="tools"
+        :categories="categories"
+        :categoryNames="categoryNames"
         :facilityNames="facilityNames"
         :facilities="facilities"
         :toolNames="toolNames"
@@ -17,8 +31,8 @@
         :filterRequestInfoFunc="filterRequestInfoFunc"
     >
     </filter-tool>
-    <v-overlay
 
+    <v-overlay
         v-model="overlay"
         class="align-center justify-center"
         scroll-strategy="block"
@@ -30,8 +44,10 @@
       <br>
       <decription-tool
           :closeDescriptionToolByDeleteConfirm="closeDescriptionToolByDeleteConfirm"
+          :closeDescriptionToolByCopyConfirm="closeDescriptionToolByCopyConfirm"
           :deleteTool="deleteTool"
           :toolSets="toolSets"
+          :categories="categories"
           :editTool="editTool"
           :profile="profile"
           :role="role"
@@ -54,6 +70,7 @@
                    :facilityNames="facilityNames"
                    :facilities="facilities"
                    :toolSets="toolSets"
+                   :categories="categories"
                    :editTool="editTool"
                    :profile="profile"
                    :role="role"
@@ -64,7 +81,7 @@
     </v-overlay>
 
     <v-infinite-scroll  :onLoad="load" >
-      <div v-for="row in rows" v-bind:key="row" align="start" height="200px">
+      <div v-for="row in rows" :key="row" align="start" height="200px">
         <main-table-tools-row :deleteTool="deleteTool"
                               :facilityNames="facilityNames"
                               :users="users"
@@ -73,6 +90,7 @@
                               :profile="profile"
                               :profileId="profileId"
                               :toolSets="toolSets"
+                              :categories="categories"
                               :editTool="editTool"
                               :toolsForRow="toolsForRowFunc(row)"
                               :row="row"
@@ -98,6 +116,7 @@
 <script>
 import MainTableToolsRow from "./mainTableToolsRow.vue";
 import AddTool from "./addTool.vue";
+import AddCategory from "./addCategory.vue";
 import ConfirmToolTable from "./confirmToolTable.vue";
 import { isProxy, toRaw } from 'vue'
 import GivingTool from "./givingTool.vue";
@@ -105,7 +124,7 @@ import DecriptionTool from "./decriptionTool.vue";
 import FilterTool from "./filterTool.vue"
 
 export default {
-  components: {AddTool, MainTableToolsRow, ConfirmToolTable, GivingTool, DecriptionTool, FilterTool},
+  components: {AddTool, AddCategory, MainTableToolsRow, ConfirmToolTable, GivingTool, DecriptionTool, FilterTool},
   props: ['profile', 'role', 'profileId'],
   data() {
     return {
@@ -127,7 +146,9 @@ export default {
       overlayToGiving: false,
       countLoadingPages: 0,
       rowCount: 1,
-      filterRequestInfo: ''
+      filterRequestInfo: '',
+      categories: [],
+      categoryNames:[]
     }
   },
   mounted: function() {
@@ -160,7 +181,7 @@ export default {
     var toolCount = 0;
     this.rowCount = 1;
 
-    this.axios.get( "api/tool" + '?offset=' + this.countLoadingPages + '&limit=' + 60).then(tools => {
+    this.axios.get( "api/tool" + '?offset=' + this.countLoadingPages + '&limit=' + 30).then(tools => {
           tools.data.forEach(t =>{
             this.tools.push(t)
 
@@ -207,6 +228,15 @@ export default {
         }
     )
 
+    // Запрашиваем категории
+    this.axios.get( "api/category").then(res => {
+          res.data.forEach(t =>
+              this.categories.push(t))
+      this.categories.forEach( c => this.categoryNames.push(c.name))
+      this.categoryNames.unshift('Все категории')
+        }
+    )
+
     // Запрашиваем отчеты
     this.axios.get( "api/facility").then(res => {
           res.data.forEach(f => {
@@ -234,6 +264,33 @@ export default {
       this.tools.push(tool)
       this.sortedTools = this.sortToolFunc(this.tools)
     },
+    editCategory: function (category) {
+      // Редактируем категорию инструментов
+      this.categories.splice(
+          this.categories.findIndex(c => c.id === category.id),
+          1,
+          category
+      )
+    },
+    addCategory: function (category) {
+      // Добавляем категорию инструментов
+      this.categories.push(category)
+    },
+    editToolSet: function (toolSet) {
+      // Редактируем комплекты
+      this.toolSets.splice(
+          this.toolSets.findIndex(ts => ts.id === toolSet.id),
+          1,
+          toolSet
+      )
+    },
+    addToolSet: function (toolSet) {
+
+      // Добавляем комплекты
+      this.toolSets.push(toolSet)
+
+      console.log(this.toolSets)
+    },
     // сортирует сначала по объектам затем по коллегам
     sortToolFunc: function (tools) {
       return tools
@@ -260,6 +317,22 @@ export default {
         }
       })
     },
+    // сортирует сначала по объектам затем по коллегам
+    sortToolSetFunc: function (toolSets) {
+      return toolSets
+          .sort((a, b) => {
+            if (a.name) {
+              if (b.name) {
+                if ((a.name) < (b.name)) {
+                  return -1;
+                }
+                if ((a.name) > (b.name)) {
+                  return 1;
+                }
+              }
+            }
+          })
+    },
     sortUserFunc: function (users) {
       return users.sort((a, b) => {
         if (a.name < b.name) {
@@ -279,10 +352,43 @@ export default {
       return toolsWithOutRow
     },
     deleteTool: function (tool) {
-      this.tools.splice(this.tools.indexOf(tool), 1) // удаления объекта из коллекции
+
+      console.log("this.tool -> ")
+      console.log(this.tools)
+      console.log("delete tool index -> " + this.tools.findIndex(t => t.id === tool.id))
+
+      this.tools.splice(this.tools.findIndex(t => t.id === tool.id), 1) // удаления объекта из коллекции
+      this.sortedTools = this.sortToolFunc(this.tools)
+    },
+    deleteToolSet: function (toolSet) {
+
+      console.log(this.toolSets)
+      console.log("this.toolSets id -> ")
+      this.toolSets.forEach(t => console.log(t.name + toolSet.name));
+      console.log("delete toolSet index -> " + this.toolSets.findIndex(t => t.name === toolSet.name))
+
+      this.toolSets.splice(this.toolSets.findIndex(t => t.name === toolSet.name), 1) // удаления объекта из коллекции
+
+      this.toolSets = this.sortToolSetFunc(this.toolSets)
+
+      console.log(this.toolSets)
+    },
+    deleteCategory: function (category) {
+
+      console.log("this.categories -> ")
+      console.log(this.categories)
+      console.log("delete categories index -> " + this.categories.findIndex(t => t.name === category.name))
+
+      this.categories.splice(this.categories.findIndex(t => t.name === category.name), 1) // удаления объекта из коллекции
+    },
+    copyTool: function (tool) {
+      this.tools.add(tool) // копирование объекта в коллекцию
       this.sortedTools = this.sortToolFunc(this.tools)
     },
     closeDescriptionToolByDeleteConfirm: function () {
+      this.overlay = false;
+    },
+    closeDescriptionToolByCopyConfirm: function () {
       this.overlay = false;
     },
     overlayFunc: function (overlay) {
@@ -318,7 +424,7 @@ export default {
         var toolCount = 0;
 
         // Запрашиваем отчеты
-        this.axios.get("api/tool" + '?offset=' + this.countLoadingPages + '&limit=' + 60 + this.filterRequestInfo).then(tools => {
+        this.axios.get("api/tool" + '?offset=' + this.countLoadingPages + '&limit=' + 30 + this.filterRequestInfo).then(tools => {
               tools.data.forEach(t => {
                 this.tools.push(t)
                 // this.toolNames.push(t.name)

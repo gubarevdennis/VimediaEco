@@ -7,7 +7,7 @@
         </v-card-title>
       </v-col>
       <v-col cols="10">
-      <v-card color="#F9F9F9" height="65px" rounded="xl" v-for="subFacilityInner in subFacilities" class="pa-2 ma-2" >
+      <v-card color="#F9F9F9" height="65px" rounded="xl" v-for="subFacilityInner in subFacilities" :key="subFacilityInner.id" class="pa-2 ma-2" >
         <sub-facility-row
             :editSubFacility="editSubFacility"
             :deleteSubFacility="deleteSubFacility"

@@ -7,6 +7,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import vimedia.service.ReportApp.model.report.User;
 import vimedia.service.ReportApp.model.report.Views;
 
@@ -49,11 +51,13 @@ public class Event {
     private LocalDateTime eventTimeAndDate;
 
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     @JsonIgnoreProperties({"events", "reports", "password", "tools"})
     @JsonView(Views.IdName.class)
     private User user;
 
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     @JsonIgnoreProperties({"facility", "user", "toolSet", "events"})
     @JsonView(Views.IdName.class)
     private Tool tool;

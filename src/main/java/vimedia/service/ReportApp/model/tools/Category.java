@@ -6,8 +6,6 @@ import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import vimedia.service.ReportApp.model.report.Views;
 
 import java.util.List;
@@ -16,27 +14,27 @@ import java.util.List;
 @Table
 @ToString(of = {"id","name"})
 @EqualsAndHashCode(of = {"id"})
-public class ToolSet {
+public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonView(vimedia.service.ReportApp.model.report.Views.Id.class)
+    @JsonView(Views.Id.class)
     private int id;
 
-    @JsonView(vimedia.service.ReportApp.model.report.Views.IdName.class)
+    @JsonView(Views.IdName.class)
     @Column(unique=true)
     private String name;
 
     @JsonView(Views.IdName.class)
     private String text;
 
-    @OneToMany(mappedBy = "toolSet")
+    @OneToMany(mappedBy = "category")
     @JsonIgnore
     private List<Tool> tools;
 
     public void addTool(Tool tool){
         this.tools.add(tool);
-        tool.setToolSet(this);
+        tool.setCategory(this);
     }
 
     public void removeTool(Tool tool){
