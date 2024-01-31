@@ -17,7 +17,7 @@
       >
         <v-row align="center" justify="center"
                style="background-color: rgba(0,0,0,0); width: 200px;  font-size: 15px; vertical-align: center">
-          {{report.user.name}}
+          {{report.user ? report.user.name : ''}}
           <v-overlay
               activator="parent"
               location-strategy="connected"

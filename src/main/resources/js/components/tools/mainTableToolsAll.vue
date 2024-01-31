@@ -31,15 +31,14 @@
         :filterRequestInfoFunc="filterRequestInfoFunc"
     >
     </filter-tool>
-
+<div>
     <v-overlay
         v-model="overlay"
         class="align-center justify-center"
         scroll-strategy="block"
         align="center"
     >
-
-      <v-btn icon="mdi-close" @click="overlay = !overlay"></v-btn>
+      <v-btn icon="mdi-close" @click="overlay = !overlay" :ripple="false"></v-btn>
       <br>
       <br>
       <decription-tool
@@ -54,14 +53,13 @@
           :tool="tool"
       ></decription-tool>
     </v-overlay>
-
+</div>
     <v-overlay
         v-model="overlayToGiving"
         class="align-center justify-center"
         scroll-strategy="block"
         align="center"
     >
-
       <v-btn icon="mdi-close" @click="overlayToGiving = !overlayToGiving"></v-btn>
       <br>
       <br>

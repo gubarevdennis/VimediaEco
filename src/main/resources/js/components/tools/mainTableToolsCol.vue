@@ -19,13 +19,14 @@
                 <v-col row  wrap >
                   <v-row style="margin-left: 10px; margin-top: 5px; margin-bottom: 0px" >
                     <v-sheet rounded="lg" style="background-color: #7d7f7d" width="100px" height="100px">
-                      <v-card rounded="lg" width="100px" height="100px" align="center" @click="overlayFuncInner">
+                      <v-card :ripple="false" rounded="lg" width="100px" height="100px" align="center" @click="overlayFuncInner">
                         <v-img
                             density="0"
                             v-if="(this.imageEditButton)"
                             v-bind:src=" 'upload/files/' + (tool ? tool.image : '')"
                             class="text-white"
                             height="100px"
+
                         />
                       </v-card>
                     </v-sheet>
@@ -108,7 +109,7 @@
             </v-row>
           </v-col>
           <v-col>
-            <v-card class="align-center justify-center d-flex flex-column"
+            <v-card :ripple="false" class="align-center justify-center d-flex flex-column"
                     align="center" height="300"  style="background-color: #EBB652;"
                     color="green" @click="overlayToGivingFuncInner">
               <v-icon  icon="mdi-send" >

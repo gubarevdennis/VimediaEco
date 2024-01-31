@@ -183,7 +183,9 @@ export default {
 
       var attributesByDay = []
 
+
       this.sortedReportsByUser.forEach(r => {
+        if (r.facility)
             if (r.facility.id === facilityId) {
               var newDate = r.reportDay
 
@@ -456,6 +458,7 @@ export default {
                     this.userNames.push(u.name + ' - ' +  u.role) // имена для select сотрудников
                     u.reports.forEach(r => {
                           this.reports.push(r)
+                      if (r.facility)
                           if (!this.facilities.find((f) => f.id === r.facility.id)) {
                             this.facilities.push(r.facility)
 
@@ -474,6 +477,7 @@ export default {
                   .data
                   .reports.forEach(r => {
                     this.reports.push(r)
+                if (r.facility)
                     if (!this.facilities.find((f) => f.id === r.facility.id)) {
                       this.facilities.push(r.facility)
                     }

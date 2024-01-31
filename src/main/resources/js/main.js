@@ -35,7 +35,7 @@ app.use(router)
 app.use(vuetify)
 app.use(VInfiniteScroll)
 app.use(VCalendar, {})
-app.use(VueAxios, axios.create({baseURL: 'http://reports.vimedia.ru/' ,}))
+app.use(VueAxios, axios.create({baseURL: 'http://localhost:9000/' ,}))
 
 //'http://localhost:9000/'    'http://reports.vimedia.ru/'
 
