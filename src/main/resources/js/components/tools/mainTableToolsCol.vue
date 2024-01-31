@@ -203,7 +203,6 @@ export default {
       var facility = this.facilities.find( f => f.name === this.facilityNameSelected)
       var tool = this.tool
 
-      if (this.toFacilityName)
       this.toFacilityName = tool.facility.name; // записываем старый объект для отправки
 
       // Указываем на новый объект для прикрепления

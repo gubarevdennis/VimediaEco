@@ -60,7 +60,7 @@
         scroll-strategy="block"
         align="center"
     >
-      <v-btn icon="mdi-close" @click="overlayToGiving = !overlayToGiving"></v-btn>
+      <v-btn icon="mdi-close" @click="overlayToGiving = !overlayToGiving" :ripple="false"></v-btn>
       <br>
       <br>
       <giving-tool :closeDescriptionToolByDeleteConfirm="closeDescriptionToolByDeleteConfirm"

@@ -123,7 +123,7 @@ export default {
             }
           })
           this.sortedTools = this.sortToolFunc(this.tools)
-          this.rows =  Math.ceil(this.tools.length/8);
+          this.rows =  Math.ceil(this.tools.length/6);
         }
     )
 

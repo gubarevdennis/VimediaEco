@@ -166,10 +166,9 @@ public class EventController {
         if (tool.isPresent()) {
             if (tool.get().getUser() != null) {
                 event.setUser(tool.get().getUser()); // если инструмент за кем то закреплен, то событие формируется им, как отправителем
-                event.setToUser(tool.get().getUser().getName()); // и он же получает
 
                 if (!tool.get().getUser().getName().equals(user.getName())) {
-                    //TODO ничего не делаем просто
+                    event.setToUser(tool.get().getUser().getName()); //  остается за другим, если это не инструмент чувака который совершает действие и это не перемещение
                 };
             } else {
                 // Закрепляем инструмент за текущим пользователем, если у он ни за кем не закреплен
