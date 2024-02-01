@@ -8,7 +8,7 @@
             variant="outlined"
             @update:search="selectTool"
             :item-value="toolNameSelected"
-            label="Название, модель"
+            label="Название, модель, серийник"
             :items="toolNames"
         >
         </v-combobox>

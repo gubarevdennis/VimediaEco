@@ -75,6 +75,7 @@ public class ToolController {
                         return ( String.valueOf(t.getName()).toLowerCase().startsWith(name.toLowerCase())
                                 || String.valueOf(t.getArticle()).toLowerCase().startsWith(name.toLowerCase())
                                 || String.valueOf(t.getModel()).toLowerCase().startsWith(name.toLowerCase())
+                                || String.valueOf(t.getSerial()).toLowerCase().startsWith(name.toLowerCase())
                         );
                     }
                     else return name.equals("all");
