@@ -136,7 +136,7 @@
         <br>
       </v-text>
     </v-row>
-    <v-sheet class="text-subtitle-1" v-if="tool.article" align="center" style="max-width: 280px">
+    <v-sheet class="text-subtitle-1" align="center" style="max-width: 280px">
       <v-row v-if="!toolSendConfirmField" justify="center" align="center">
         <v-autocomplete
             label="Кому ?"

@@ -8,21 +8,21 @@
             variant="outlined"
             @update:search="selectTool"
             :item-value="toolNameSelected"
-            label="Название, модель, серийник"
+            label="Название, модель, серийник или артикул"
             :items="toolNames"
         >
         </v-combobox>
       </v-col>
       <v-col>
         <br>
-        <v-autocomplete
+        <v-combobox
             variant="outlined"
             @update:search="selectArticle"
             :item-value="toolArticleSelected"
-            label="Артикул"
-            :items="toolArticles"
+            label="Комплект"
+            :items="toolSets.map(t => t.name)"
         >
-        </v-autocomplete>
+        </v-combobox>
       </v-col>
       <v-col>
         <br>
@@ -77,7 +77,7 @@
 export default {
   name: "filterTool",
   props: ['profile', 'role', 'facilities', 'facilityNames', 'userNames' , 'toolNames' ,
-    'filterToolFunc', 'toolArticles', 'toolsFromUnder', 'loadBlockFunc', 'filterRequestInfoFunc', 'categories', 'categoryNames'],
+    'filterToolFunc', 'toolArticles', 'toolsFromUnder', 'loadBlockFunc', 'filterRequestInfoFunc', 'categories', 'categoryNames', 'toolSets'],
   data() {
     return {
       facilityNameSelected: '',

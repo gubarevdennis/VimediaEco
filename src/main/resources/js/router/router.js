@@ -12,7 +12,9 @@ import mainEventsTable from "../components/events/mainEventsTable.vue";
 import mainReportForEach from "../components/mainReport/mainReportForEach.vue";
 import mainTableToolsAll from "../components/tools/mainTableToolsAll.vue";
 import test from "../components/tools/test.vue";
-
+import jobs from "../components/jobs/facilityList.vue";
+import bonus from "../components/individualJob/facilityList.vue";
+import bonusByMyObjects from "../components/jobs/facilityListForManagers.vue";
 
 const router = createRouter({
   routes: [
@@ -55,6 +57,15 @@ const router = createRouter({
     },
     {
       path: '/events', component: mainEventsTable
+    },
+    {
+      path: '/jobs', component: jobs
+    },
+    {
+      path: '/bonus', component: bonus
+    },
+    {
+      path: '/bonusByMyObjects', component: bonusByMyObjects
     },
     {
       path: '/test', component: test

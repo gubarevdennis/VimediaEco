@@ -46,6 +46,16 @@ public class Facility {
     @JsonIgnoreProperties("facility")
     private List<Tool> tools;
 
+    @OneToMany(mappedBy = "facility")
+//    @JsonView(Views.IdName.class)
+    @JsonIgnoreProperties("facility")
+    private List<Job> jobs;
+
+    @OneToMany(mappedBy = "facility")
+//    @JsonView(Views.IdName.class)
+    @JsonIgnoreProperties("facility")
+    private List<User> users;
+
     public void addReport(Report report){
         this.reports.add(report);
         report.setFacility(this);
@@ -73,8 +83,27 @@ public class Facility {
         this.tools.add(tool);
         tool.setFacility(this);
     }
+
     public void removeTool(Tool tool){
         this.tools.remove(tool);
+    }
+
+    public void addJob(Job job){
+        this.jobs.add(job);
+        job.setFacility(this);
+    }
+
+    public void removeJob(Job job){
+        this.jobs.remove(job);
+    }
+
+    public void addUser(User user){
+        this.users.add(user);
+        user.setFacility(this);
+    }
+
+    public void removeUser(User user){
+        this.users.remove(user);
     }
 
     public List<SubFacility> getSubFacilities() {
@@ -123,5 +152,21 @@ public class Facility {
 
     public void setTools(List<Tool> tools) {
         this.tools = tools;
+    }
+
+    public List<Job> getJobs() {
+        return jobs;
+    }
+
+    public void setJobs(List<Job> jobs) {
+        this.jobs = jobs;
+    }
+
+    public List<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<User> users) {
+        this.users = users;
     }
 }

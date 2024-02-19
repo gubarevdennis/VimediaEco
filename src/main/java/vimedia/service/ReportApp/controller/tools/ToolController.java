@@ -84,7 +84,16 @@ public class ToolController {
                     if (t.getArticle() != null && !article.equals("all")) {
                         System.out.println("article " + article);
                         System.out.println("get article " + t.getArticle());
-                        return t.getArticle().toLowerCase().startsWith(article.toLowerCase());
+                        if (t.getToolSet() != null) {
+                            return (
+                                    t.getArticle().toLowerCase().startsWith(article.toLowerCase()) // добавил сюда же поиск по комплекту
+                                            || String.valueOf(t.getToolSet().getName()).toLowerCase().startsWith(article.toLowerCase())
+                            );
+                        } else {
+                            return (
+                                    t.getArticle().toLowerCase().startsWith(article.toLowerCase())
+                            );
+                        }
                     }
                     else return article.equals("all");
                 })

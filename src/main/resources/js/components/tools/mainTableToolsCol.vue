@@ -1,6 +1,6 @@
 <template xmlns="http://www.w3.org/1999/html">
   <v-sheet align="center" width="320" style="background-color: black">
-    <v-card fluid v-bind:height="(290)" width="320"  color="#7d7f7d" rounded="lg"  >
+    <v-card fluid v-bind:height="(300)" width="320"  color="#7d7f7d" rounded="lg"  >
       <v-sheet width="320" color="#7d7f7d" >
         <v-row align="center" justify="center">
           <v-col align-self="start" >
@@ -17,7 +17,7 @@
             <v-sheet width="240" style="background-color: #7d7f7d;" >
               <v-row>
                 <v-col row  wrap >
-                  <v-row style="margin-left: 10px; margin-top: 5px; margin-bottom: 0px" >
+                  <v-row style="margin-left: 10px; margin-top: 10px; margin-bottom: 0px" >
                     <v-sheet rounded="lg" style="background-color: #7d7f7d" width="100px" height="100px">
                       <v-card :ripple="false" rounded="lg" width="100px" height="100px" align="center" @click="overlayFuncInner">
                         <v-img
@@ -26,7 +26,6 @@
                             v-bind:src=" 'upload/files/' + (tool ? tool.image : '')"
                             class="text-white"
                             height="100px"
-
                         />
                       </v-card>
                     </v-sheet>
@@ -58,6 +57,12 @@
                         {{ tool.serial }}
                       </div>
                     </v-sheet>
+                    <v-card class=" pa-0 text-subtitle-2" align="start" style="background-color: burlywood;
+                    font-size: 12px;" width="110px"  max-height="20px">
+                      <div align="center" v-if="tool.toolSet">
+                        {{ tool.toolSet.name }}
+                      </div>
+                    </v-card>
                   </v-sheet>
                   <v-sheet v-if="tool.article" align="center"  style="background-color: #7d7f7d;" width="110px;" >
                     <!--          <v-row v-if="!moveStatus" justify="center" align="center" class=" pa-1">-->
@@ -160,7 +165,6 @@ export default {
       moveStatus: false,
       movingEvent: '',
       toFacilityName: ''
-
     }
   },
   mounted: function() {
@@ -243,7 +247,6 @@ export default {
     // closeDescriptionToolByCopyConfirm: function () {
     //   this.overlay = false;
     // },
-
     overlayToGivingFuncInner: function () {
       this.overlayToGiving = !this.overlayToGiving;
       this.overlayToGivingFunc(this.overlayToGivingFunc)

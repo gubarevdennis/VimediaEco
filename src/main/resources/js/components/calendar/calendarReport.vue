@@ -2,14 +2,21 @@
   <v-card>
     <br>
     <v-row justify="center">
-      <v-card @click="allWorks" width="100" align="center">Все работы</v-card>
-      <v-card @click="redWork" width="100" color="red" align="center">Монтаж</v-card>
-      <v-card @click="greenWork" width="100" color="green" align="center">Проект</v-card>
-      <v-card @click="pinkWork" width="100" color="pink" align="center">Менеджмент</v-card>
-      <v-card @click="blueWork" width="100" color="blue" align="center">Сборка</v-card>
-      <v-card @click="tealWork" width="100" color="teal" align="center">ПНР</v-card>
-      <v-card @click="yellowWork" width="100" color="yellow" align="center">Сервис</v-card>
-      <v-card @click="greyWork" width="100" color="grey" align="center">Остальное</v-card>
+      <v-card @click="allWorks" width="200" align="center">Все работы</v-card>
+      <v-card @click="redWork" width="200" color="#A0522D" align="center">Черновой монтаж</v-card>
+      <v-card @click="greenWork" width="200" color="#FF0000" align="center">Чистовой монтаж</v-card>
+      <v-card @click="pinkWork" width="200" color="#F08080" align="center">Шефмонтаж</v-card>
+      <v-card @click="blueWork" width="300" color="#9ACD32" align="center">Концептуальное проектирование</v-card>
+      <v-card @click="tealWork" width="200" color="#00FF00" align="center">Рабочее проектирование</v-card>
+      <v-card @click="yellowWork" width="200" color="#BC8F8F" align="center">Сборка щитов</v-card>
+      <v-card @click="greyWork" width="100" color="#FF4500" align="center">ПНР</v-card>
+      <v-card @click="grey1Work" width="100" color="#FFA500" align="center">Сервис</v-card>
+      <v-card @click="grey2Work" width="200" color="#FF1493" align="center">Авторский надзор</v-card>
+      <v-card @click="grey3Work" width="200" color="#BDB76B" align="center">Другие работы</v-card>
+      <v-card @click="grey4Work" width="200" color="#7FFFD4" align="center">Отпуск оплачиваемый</v-card>
+      <v-card @click="grey5Work" width="300" color="#7B68EE" align="center">Отпуск по семейным обстоятельствам</v-card>
+      <v-card @click="grey6Work" width="300" color="#00FFFF" align="center">Отпуск без сохранения ЗП</v-card>
+      <v-card @click="grey7Work" width="100" color="##800080" align="center">Больничный</v-card>
     </v-row>
 
     <br>
@@ -64,45 +71,93 @@ import CalendarPage from "./calendarPage.vue";
 // const port = ''
 
 function setColorByWork(work) {
-  switch (work) {
-    case 'Монтаж' : return 'red'
-      break;
-    case 'Проект' : return 'green'
-      break;
-    case 'Менеджмент' : return 'pink'
-      break;
-    case 'Сборка' : return 'aqua'
-      break;
-    case 'ПНР' : return 'teal'
-      break;
-    case 'Сервис' : return 'yellow'
-      break;
-    default: return 'gray'
-  }
+    switch (work) {
+      case 'Черновой монтаж' :
+        return '#A0522D'
+        break;
+      case 'Чистовой монтаж' :
+        return '#FF0000'
+        break;
+      case 'Шефмонтаж' :
+        return '#F08080'
+        break;
+      case 'Концептуальное проектирование' :
+        return '#9ACD32'
+        break;
+      case 'Рабочее проектирование' :
+        return '#006400'
+        break;
+      case 'Сборка щитов' :
+        return '#E0FFFF'
+        break;
+      case 'Расключение шкафов' :
+        return '#008B8B'
+        break;
+      case 'ПНР' :
+        return '#FF4500'
+        break;
+      case 'Сервис' :
+        return '#FFA500'
+        break;
+      case 'Авторский надзор' :
+        return '#FF1493'
+        break;
+      case 'Другие работы' :
+        return '#BDB76B'
+        break;
+      case 'Отпуск' :
+        return '#7FFFD4'
+        break;
+      case 'Отпуск по семейным обстоятельствам' :
+        return '#7B68EE'
+        break;
+      case 'Отпуск без сохранения ЗП' :
+        return '#00008B'
+      case 'Больничный' :
+        return '#800080'
+        break;
+      default:
+        return '#FFFFFF'
+    }
 }
 
 function workToNumber(typeOfWork) {
   var typeOfWorkByNumber = 0;
   switch (typeOfWork) {
-    case 'Монтаж' : typeOfWorkByNumber = 1;
+    case 'Черновой монтаж' : typeOfWorkByNumber = 1;
       break;
-    case 'Проект' : typeOfWorkByNumber = 2;
+    case 'Рабочее проектирование' : typeOfWorkByNumber = 2;
       break;
-    case 'Менеджмент' : typeOfWorkByNumber = 3;
+    case 'Авторский надзор' : typeOfWorkByNumber = 3;
       break;
-    case 'Сборка' : typeOfWorkByNumber = 4;
+    case 'Сборка щитов' : typeOfWorkByNumber = 4;
       break;
     case 'ПНР' : typeOfWorkByNumber = 5;
       break;
     case 'Сервис' : typeOfWorkByNumber = 6;
       break;
-    case 'Отпуск' : typeOfWorkByNumber = 7;
+    case 'Отпуск оплачиваемый' : typeOfWorkByNumber = 7;
       break;
     case 'Больничный' : typeOfWorkByNumber = 8;
+      break;
+    case 'Отпуск без сохранения ЗП' : typeOfWorkByNumber = 9;
+      break;
+    case 'Другие работы' : typeOfWorkByNumber = 10;
+      break;
+    case 'Концептуальное проектирование' : typeOfWorkByNumber = 11;
+      break;
+    case 'Шефмонтаж' : typeOfWorkByNumber = 12;
+      break;
+    case 'Чистовой монтаж' : typeOfWorkByNumber = 13;
+      break;
+    case 'Отпуск по семейным обстоятельствам' : typeOfWorkByNumber = 14;
+      break;
+    case 'Расключение шкафов' : typeOfWorkByNumber = 15;
       break;
   }
   return typeOfWorkByNumber;
 }
+
 
 // Функция удаления дубликатов
 function removeDuplicates(arr) {
@@ -231,34 +286,50 @@ export default {
       this.sortedReports = []
       this.sortedReportsByUser = []
 
-      this.sortByColor('Монтаж')
-      this.sortWorkHoursByWorkTypes('Монтаж')
+      this.sortByColor('Черновой монтаж')
+      this.sortWorkHoursByWorkTypes('Черновой монтаж')
     },
     greenWork: function () {
       this.sortedFacilities = []
       this.sortedReports = []
       this.sortedReportsByUser = []
 
-      this.sortByColor('Проект')
-      this.sortWorkHoursByWorkTypes('Проект')
+      this.sortByColor('Чистовой монтаж')
+      this.sortWorkHoursByWorkTypes('Чистовой монтаж')
     },
     pinkWork: function () {
       this.sortedFacilities = []
       this.sortedReports = []
       this.sortedReportsByUser = []
 
-      this.sortByColor('Менеджмент')
-      this.sortWorkHoursByWorkTypes('Менеджмент')
+      this.sortByColor('Шефмонтаж')
+      this.sortWorkHoursByWorkTypes('Шефмонтаж')
     },
     blueWork: function () {
       this.sortedFacilities = []
       this.sortedReports = []
       this.sortedReportsByUser = []
 
-      this.sortByColor('Сборка')
-      this.sortWorkHoursByWorkTypes('Сборка')
+      this.sortByColor('Концептуальное проектирование')
+      this.sortWorkHoursByWorkTypes('Концептуальное проектирование')
     },
     tealWork: function () {
+      this.sortedFacilities = []
+      this.sortedReports = []
+      this.sortedReportsByUser = []
+
+      this.sortByColor('Рабочее проектирование')
+      this.sortWorkHoursByWorkTypes('Рабочее проектирование')
+    },
+    yellowWork: function () {
+      this.sortedFacilities = []
+      this.sortedReports = []
+      this.sortedReportsByUser = []
+
+      this.sortByColor('Сборка щитов')
+      this.sortWorkHoursByWorkTypes('Сборка щитов')
+    },
+    greyWork: function () {
       this.sortedFacilities = []
       this.sortedReports = []
       this.sortedReportsByUser = []
@@ -266,7 +337,7 @@ export default {
       this.sortByColor('ПНР')
       this.sortWorkHoursByWorkTypes('ПНР')
     },
-    yellowWork: function () {
+    grey1Work: function () {
       this.sortedFacilities = []
       this.sortedReports = []
       this.sortedReportsByUser = []
@@ -274,15 +345,53 @@ export default {
       this.sortByColor('Сервис')
       this.sortWorkHoursByWorkTypes('Сервис')
     },
-    greyWork: function () {
+    grey2Work: function () {
+      this.sortedFacilities = []
+      this.sortedReports = []
+      this.sortedReportsByUser = []
+
+      this.sortByColor('Авторский надзор')
+      this.sortWorkHoursByWorkTypes('Авторский надзор')
+    },
+    grey3Work: function () {
+      this.sortedFacilities = []
+      this.sortedReports = []
+      this.sortedReportsByUser = []
+
+      this.sortByColor('Другие работы')
+      this.sortWorkHoursByWorkTypes('Другие работы')
+    },
+    grey4Work: function () {
+      this.sortedFacilities = []
+      this.sortedReports = []
+      this.sortedReportsByUser = []
+
+      this.sortByColor('Отпуск оплачиваемый')
+      this.sortWorkHoursByWorkTypes('Отпуск оплачиваемый')
+    },
+    grey5Work: function () {
+      this.sortedFacilities = []
+      this.sortedReports = []
+      this.sortedReportsByUser = []
+
+      this.sortByColor('Отпуск по семейным обстоятельствам')
+      this.sortWorkHoursByWorkTypes('Отпуск по семейным обстоятельствам')
+    },
+    grey6Work: function () {
+      this.sortedFacilities = []
+      this.sortedReports = []
+      this.sortedReportsByUser = []
+
+      this.sortByColor('Отпуск без сохранения ЗП')
+      this.sortWorkHoursByWorkTypes('Отпуск без сохранения ЗП')
+    },
+    grey7Work: function () {
       this.sortedFacilities = []
       this.sortedReports = []
       this.sortedReportsByUser = []
 
       this.sortByColor('Больничный')
-      this.sortByColor('Отпуск')
       this.sortWorkHoursByWorkTypes('Больничный')
-      this.sortWorkHoursByWorkTypes('Отпуск')
     },
     selected: function (userName) {
       this.userName = userName

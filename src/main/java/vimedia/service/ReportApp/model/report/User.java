@@ -7,6 +7,8 @@ import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import vimedia.service.ReportApp.model.tools.*;
 
 import java.util.List;
@@ -26,7 +28,8 @@ public class User {
     private String name;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    @JsonView(Views.Id.class)
+    @JsonView(Views.IdNameAndReports.class)
+    @JsonIgnoreProperties("subFacilities")
     private List<Report> reports;
 
     private String password;
@@ -64,6 +67,27 @@ public class User {
     @JsonIgnore
     @JsonView(Views.IdName.class)
     private List<ServiceEvent> serviceEvents;
+
+    // Связь с работами
+    @JsonView(Views.IdName.class)
+    @ManyToMany(mappedBy = "users")
+    @OnDelete(action = OnDeleteAction.SET_NULL)
+    @JsonIgnoreProperties("users")
+    private List<Job> jobs;
+
+    // Связь с объектами
+    @ManyToOne
+    @OnDelete(action = OnDeleteAction.SET_NULL)
+    @JsonIgnoreProperties({"tools", "subFacilities"})
+    @JsonView(Views.IdName.class)
+    private Facility facility;
+
+    // Связь с подобьектами
+    @JsonView(Views.IdName.class)
+    @ManyToOne
+    @OnDelete(action = OnDeleteAction.SET_NULL)
+    @JsonIgnoreProperties("reports")
+    private SubFacility subFacility;
 
     public void addEvent(Event event){
         this.events.add(event);
@@ -210,4 +234,30 @@ public class User {
     public void setServiceEvents(List<ServiceEvent> serviceEvents) {
         this.serviceEvents = serviceEvents;
     }
+
+    public List<Job> getJobs() {
+        return jobs;
+    }
+
+    public void setJobs(List<Job> jobs) {
+        this.jobs = jobs;
+    }
+
+    public Facility getFacility() {
+        return facility;
+    }
+
+    public void setFacility(Facility facility) {
+        this.facility = facility;
+    }
+
+    public SubFacility getSubFacility() {
+        return subFacility;
+    }
+
+    public void setSubFacility(SubFacility subFacility) {
+        this.subFacility = subFacility;
+    }
+
+
 }

@@ -43,6 +43,11 @@ public class SubFacility {
     @JsonIgnoreProperties("subFacility")
     private List<Report> reports;
 
+    @OneToMany(mappedBy = "subFacility")
+//    @JsonView(Views.IdName.class)
+    @JsonIgnoreProperties("subFacility")
+    private List<Job> jobs;
+
     public void addReport(Report report){
         this.reports.add(report);
         report.setSubFacility(this);
@@ -50,6 +55,16 @@ public class SubFacility {
     public void removeReport(Report report){
         this.reports.remove(report);
     }
+
+    public void addJob(Job job){
+        this.jobs.add(job);
+        job.setSubFacility(this);
+    }
+
+    public void removeJob(Job job){
+        this.jobs.remove(job);
+    }
+
     public List<Report> getReports() {
         return reports;
     }
@@ -96,5 +111,13 @@ public class SubFacility {
 
     public void setFacility(Facility facility) {
         this.facility = facility;
+    }
+
+    public List<Job> getJobs() {
+        return jobs;
+    }
+
+    public void setJobs(List<Job> jobs) {
+        this.jobs = jobs;
     }
 }

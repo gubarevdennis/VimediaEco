@@ -6,9 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
-import vimedia.service.ReportApp.model.report.Report;
-import vimedia.service.ReportApp.model.report.User;
-import vimedia.service.ReportApp.model.report.Views;
+import vimedia.service.ReportApp.model.report.*;
 import vimedia.service.ReportApp.repo.report.ReportRepo;
 import vimedia.service.ReportApp.repo.report.SubFacilityRepo;
 import vimedia.service.ReportApp.repo.report.UserRepo;
@@ -68,6 +66,18 @@ public class ReportController {
             userId = Math.toIntExact(user.getId());
             return reportRepo.getReportsByMonthAndUser(offsetMonth, userId);
         } else return null;
+    }
+
+    @GetMapping("/facility/{id}")
+    @JsonView(Views.IdName.class)
+    public List<Report> getReportsByFacility(@PathVariable("id") Facility facility) {
+        return reportRepo.getReportsByFacility(facility);
+    }
+
+    @GetMapping("/subFacility/{id}")
+    @JsonView(Views.IdName.class)
+    public List<Report> getReportsBySubFacility(@PathVariable("id") SubFacility subFacility) {
+        return reportRepo.getReportsBySubFacility(subFacility);
     }
 
     @PostMapping

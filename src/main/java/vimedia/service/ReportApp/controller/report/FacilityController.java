@@ -6,12 +6,15 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import vimedia.service.ReportApp.model.report.Facility;
+import vimedia.service.ReportApp.model.report.Job;
+import vimedia.service.ReportApp.model.report.User;
 import vimedia.service.ReportApp.model.report.Views;
 import vimedia.service.ReportApp.repo.report.FacilityRepo;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
@@ -92,6 +95,28 @@ public class FacilityController {
         return facilityRepo.getSumHoursByFacilityMonthUserAndWorkType(facility.getId(),  userId, offsetMonth, toWord(typeOfWork));
     }
 
+    // Получаем по пользователю
+    @GetMapping("/user/{id}")
+    @JsonView(Views.IdName.class)
+    public Facility getByUser(@PathVariable("id") User user) {
+        return user.getFacility();
+    }
+
+    // Получаем прикрепленные к пользователю обьекты
+    @GetMapping("/job/user/{id}")
+    @JsonView(Views.IdName.class)
+    public List<Facility> getByJobAndUser(@PathVariable("id") User user) {
+        return user.getJobs().stream().map(Job::getFacility).filter(Objects::nonNull).distinct().collect
+                (Collectors.toList());
+    }
+
+    // Получаем по работе
+    @GetMapping("/job/{id}")
+    @JsonView(Views.IdName.class)
+    public Facility getByJob(@PathVariable("id") Job job) {
+        return job.getFacility();
+    }
+
     @PutMapping("{id}")
     public Facility update(@PathVariable("id") Facility facilityFromDB, // из базы данных
                            @RequestBody Facility facility) { // от пользователя
@@ -109,21 +134,35 @@ public class FacilityController {
     public String toWord(Integer typeOfWork) {
         String typeOfWorkByWord;
         switch (typeOfWork) {
-            case 1 : typeOfWorkByWord = "Монтаж";
+            case 1 : typeOfWorkByWord = "Черновой монтаж";
                 break;
-            case 2 : typeOfWorkByWord = "Проект";
+            case 2 : typeOfWorkByWord = "Рабочее проектирование";
                 break;
-            case 3 : typeOfWorkByWord = "Менеджмент";
+            case 3 : typeOfWorkByWord = "Авторский надзор";
                 break;
-            case 4 : typeOfWorkByWord = "Сборка";
+            case 4 : typeOfWorkByWord = "Сборка щитов";
                 break;
             case 5 : typeOfWorkByWord = "ПНР";
                 break;
             case 6 : typeOfWorkByWord = "Сервис";
                 break;
-            case 7 : typeOfWorkByWord = "Отпуск";
+            case 7 : typeOfWorkByWord = "Отпуск оплачиваемый";
                 break;
             case 8 : typeOfWorkByWord = "Больничный";
+                break;
+            case 9 : typeOfWorkByWord = "Отпуск без сохранения ЗП";
+                break;
+            case 10 : typeOfWorkByWord = "Другие работы";
+                break;
+            case 11 : typeOfWorkByWord = "Концептуальное проектирование";
+                break;
+            case 12 : typeOfWorkByWord = "Шефмонтаж";
+                break;
+            case 13 : typeOfWorkByWord = "Чистовой монтаж";
+                break;
+            case 14 : typeOfWorkByWord = "Отпуск по семейным обстоятельствам";
+                break;
+            case 15 : typeOfWorkByWord = "Расключение шкафов";
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + typeOfWork);
@@ -132,3 +171,4 @@ public class FacilityController {
     }
 
 }
+

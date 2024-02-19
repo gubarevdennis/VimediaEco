@@ -25,15 +25,17 @@
         :toolNames="toolNames"
         :userNames="userNames"
         :toolArticles="toolArticles"
+        :toolSets="toolSets"
         :filterToolFunc="filterToolFunc"
         :loadBlockFunc="loadBlockFunc"
         :filterRequestInfo="filterRequestInfo"
         :filterRequestInfoFunc="filterRequestInfoFunc"
     >
     </filter-tool>
+
 <div>
     <v-overlay
-        v-model="overlay"
+        :model-value="overlay"
         class="align-center justify-center"
         scroll-strategy="block"
         align="center"
@@ -54,8 +56,9 @@
       ></decription-tool>
     </v-overlay>
 </div>
+
     <v-overlay
-        v-model="overlayToGiving"
+        :model-value="overlayToGiving"
         class="align-center justify-center"
         scroll-strategy="block"
         align="center"
@@ -99,6 +102,7 @@
         ></main-table-tools-row>
         <br>
       </div>
+
       <template v-slot:load-more="{ props }">
         <v-btn
             icon="mdi-refresh"
@@ -161,7 +165,6 @@ export default {
 
           this.rows =  Math.ceil(this.tools.length/6);
 
-
           this.toolNames.unshift('Все инструменты')
           this.toolArticles.unshift('Все артикулы')
 
@@ -170,7 +173,6 @@ export default {
 
           console.log("this.toolArticles")
           console.log(this.toolArticles)
-
 
         }
     )

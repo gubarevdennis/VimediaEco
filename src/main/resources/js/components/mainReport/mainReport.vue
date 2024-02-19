@@ -43,12 +43,37 @@
             @update:modelValue="selectWork"
             :item-value="workNameSelected"
             label="Вид работ"
-            :items="['Все работы','Проект','Менеджмент','Монтаж','Сборка','ПНР','Сервис','Отпуск','Больничный','Отгул']"
+            :items="['Все работы','Черновой монтаж', 'Чистовой монтаж','Шефмонтаж',  'Сборка щитов',
+          'Концептуальное проектирование', 'Рабочее проектирование', 'Расключение шкафов',
+          'ПНР', 'Сервис','Авторский надзор', 'Другие работы' , 'Отпуск по семейным обстоятельствам',
+          'Отпуск без сохранения ЗП', 'Отпуск оплачиваемый', 'Больничный']"
         >
         </v-select>
       </v-col>
     </v-row>
   </v-sheet>
+  <br>
+  <br>
+  <v-row color="#393a34" justify="center">
+    <v-card  width="200" align="center">Все работы</v-card>
+    <v-card  width="200" color="#A0522D" align="center">Черновой монтаж</v-card>
+    <v-card  width="200" color="#FF0000" align="center">Чистовой монтаж</v-card>
+    <v-card  width="200" color="#F08080" align="center">Шефмонтаж</v-card>
+    <v-card  width="300" color="#9ACD32" align="center">Концептуальное проектирование</v-card>
+    <v-card  width="200" color="#00FF00" align="center">Рабочее проектирование</v-card>
+    <v-card  width="200" color="#BC8F8F" align="center">Сборка щитов</v-card>
+    <v-card  width="200" color="#008B8B" align="center">Расключение шкафов</v-card>
+    <v-card  width="100" color="#FF4500" align="center">ПНР</v-card>
+    <v-card  width="100" color="#FFA500" align="center">Сервис</v-card>
+    <v-card  width="200" color="#FF1493" align="center">Авторский надзор</v-card>
+    <v-card  width="200" color="#BDB76B" align="center">Другие работы</v-card>
+    <v-card  width="200" color="#7FFFD4" align="center">Отпуск оплачиваемый</v-card>
+    <v-card width="300" color="#7B68EE" align="center">Отпуск по семейным обстоятельствам</v-card>
+    <v-card  width="300" color="#00FFFF" align="center">Отпуск без сохранения ЗП</v-card>
+    <v-card width="100" color="#800080" align="center">Больничный</v-card>
+  </v-row>
+  <br>
+  <br>
   <month :updateAllReports="updateAllReports" :reports="sortedReports" ></month>
 </template>
 
@@ -154,7 +179,7 @@ export default {
       }
 
       if (this.byFacility) {
-        return this.sortedReportsByFacility = reports.filter(r => r.facility.name === this.facilityNameSelected)}
+        return this.sortedReportsByFacility = reports.filter(r => ((r.facility ? r.facility.name : '') === this.facilityNameSelected))}
 
     },
     selectSubFacility: function (subFacilityNameSelected) {
@@ -169,12 +194,14 @@ export default {
       // Если выбраны все подобъекты
       if (this.bySubFacility && this.subFacilityNameSelected === 'Все подобъекты') {
         return this.sortedReportsBySubFacility = reports
-            .filter(r => (r.facility.name === this.facilityNameSelected))}
+            .filter(r => ((r.facility ? r.facility.name : '') === this.facilityNameSelected))
+      }
 
       if (this.bySubFacility) {
         return this.sortedReportsBySubFacility = reports
             .filter(r => ((r.facility.name === this.facilityNameSelected)
-                && ((r.subFacility ? r.subFacility.name : '') === this.subFacilityNameSelected)))}
+                && ((r.subFacility ? r.subFacility.name : '') === this.subFacilityNameSelected)))
+      }
     },
     selectUser: function (userNameSelected) {
       console.log('Запустил selectUser')
@@ -187,10 +214,12 @@ export default {
       console.log('Запустил sortByUser')
       // Если выбраны все работы
       if (this.userNameSelected === 'Все сотрудники') {
-        return this.sortedReportsByUser = reports}
+        return this.sortedReportsByUser = reports
+      }
 
       if (this.byUser) {
-        return this.sortedReportsByUser = reports.filter(r => r.user.name === this.userNameSelected)}
+        return this.sortedReportsByUser = reports.filter(r => r.user.name === this.userNameSelected)
+      }
 
     },
     selectWork: function (workNameSelected) {

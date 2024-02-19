@@ -1,16 +1,18 @@
 <template>
-  <div v-for="tool in sortedTools">
-  <confirm-tool-row
-                    :users="users"
-                    :userNames="userNames"
-                    :role="role"
-                    :profileId="profileId"
-                    :profile="profile"
-                    :toolSets="toolSets"
-                    :tool="tool"
-  ></confirm-tool-row>
-  </div>
-
+  <br>
+  <v-row justify="center">
+    <div v-for="tool in sortedTools">
+      <confirm-tool-row
+          :users="users"
+          :userNames="userNames"
+          :role="role"
+          :profileId="profileId"
+          :profile="profile"
+          :toolSets="toolSets"
+          :tool="tool"
+      ></confirm-tool-row>
+    </div>
+  </v-row>
 </template>
 
 <script>
