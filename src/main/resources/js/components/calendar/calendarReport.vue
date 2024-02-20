@@ -71,54 +71,54 @@ import CalendarPage from "./calendarPage.vue";
 // const port = ''
 
 function setColorByWork(work) {
-    switch (work) {
-      case 'Черновой монтаж' :
-        return '#A0522D'
-        break;
-      case 'Чистовой монтаж' :
-        return '#FF0000'
-        break;
-      case 'Шефмонтаж' :
-        return '#F08080'
-        break;
-      case 'Концептуальное проектирование' :
-        return '#9ACD32'
-        break;
-      case 'Рабочее проектирование' :
-        return '#006400'
-        break;
-      case 'Сборка щитов' :
-        return '#E0FFFF'
-        break;
-      case 'Расключение шкафов' :
-        return '#008B8B'
-        break;
-      case 'ПНР' :
-        return '#FF4500'
-        break;
-      case 'Сервис' :
-        return '#FFA500'
-        break;
-      case 'Авторский надзор' :
-        return '#FF1493'
-        break;
-      case 'Другие работы' :
-        return '#BDB76B'
-        break;
-      case 'Отпуск' :
-        return '#7FFFD4'
-        break;
-      case 'Отпуск по семейным обстоятельствам' :
-        return '#7B68EE'
-        break;
-      case 'Отпуск без сохранения ЗП' :
-        return '#00008B'
-      case 'Больничный' :
-        return '#800080'
-        break;
-      default:
-        return '#FFFFFF'
-    }
+  switch (work) {
+    case 'Черновой монтаж' :
+      return '#A0522D'
+      break;
+    case 'Чистовой монтаж' :
+      return '#FF0000'
+      break;
+    case 'Шефмонтаж' :
+      return '#F08080'
+      break;
+    case 'Концептуальное проектирование' :
+      return '#9ACD32'
+      break;
+    case 'Рабочее проектирование' :
+      return '#006400'
+      break;
+    case 'Сборка щитов' :
+      return '#E0FFFF'
+      break;
+    case 'Расключение шкафов' :
+      return '#008B8B'
+      break;
+    case 'ПНР' :
+      return '#FF4500'
+      break;
+    case 'Сервис' :
+      return '#FFA500'
+      break;
+    case 'Авторский надзор' :
+      return '#FF1493'
+      break;
+    case 'Другие работы' :
+      return '#BDB76B'
+      break;
+    case 'Отпуск' :
+      return '#7FFFD4'
+      break;
+    case 'Отпуск по семейным обстоятельствам' :
+      return '#7B68EE'
+      break;
+    case 'Отпуск без сохранения ЗП' :
+      return '#00008B'
+    case 'Больничный' :
+      return '#800080'
+      break;
+    default:
+      return '#FFFFFF'
+  }
 }
 
 function workToNumber(typeOfWork) {
@@ -240,19 +240,19 @@ export default {
 
 
       this.sortedReportsByUser.forEach(r => {
-        if (r.facility)
-            if (r.facility.id === facilityId) {
-              var newDate = r.reportDay
+            if (r.facility)
+              if (r.facility.id === facilityId) {
+                var newDate = r.reportDay
 
-              attributesByDay.push({
-                highlight: {
-                  color: setColorByWork(r.typeOfWork),
-                  fillMode: 'solid',
-                  contentClass: 'italic',
-                },
-                dates: new Date(newDate.substr(6, 4), newDate.substr(3, 2) - 1, newDate.substr(0, 2)),
-              })
-            }
+                attributesByDay.push({
+                  highlight: {
+                    color: setColorByWork(r.typeOfWork),
+                    fillMode: 'solid',
+                    contentClass: 'italic',
+                  },
+                  dates: new Date(newDate.substr(6, 4), newDate.substr(3, 2) - 1, newDate.substr(0, 2)),
+                })
+              }
           }
       )
 
@@ -532,20 +532,18 @@ export default {
     sortWorkHoursByWorkTypes: function (typeOfWork) {
       {
         if (this.directorOff) {
-          this.axios.get("api/user").then(result =>
+          this.axios.get("/report/user/").then(result =>
               result
                   .data
-                  .forEach(u => {
-                    u.reports.forEach(r => {
-                          var typeOfWorkByNumber = workToNumber(typeOfWork)
+                  .forEach(r => {
+                        var typeOfWorkByNumber = workToNumber(typeOfWork)
 
-                          // Функции просчета времени наработки
-                          this.getHoursOfWorkByMonthAndWorkType(r, typeOfWorkByNumber)
-                          this.getHoursOfWorkingByUserMonthAndWorkType(r, typeOfWorkByNumber)
+                        // Функции просчета времени наработки
+                        this.getHoursOfWorkByMonthAndWorkType(r, typeOfWorkByNumber)
+                        this.getHoursOfWorkingByUserMonthAndWorkType(r, typeOfWorkByNumber)
 
-                        }
-                    )
-                  })
+                      }
+                  )
           )
         }
       }
@@ -560,38 +558,38 @@ export default {
         this.sumHoursByMonthAndUser = []
 
         if (this.directorOff) {
-          this.axios.get( "api/user").then(result =>
+          this.axios.get( "api/report/user/").then(result =>
               result
                   .data
-                  .forEach(u => {
-                    this.userNames.push(u.name + ' - ' +  u.role) // имена для select сотрудников
-                    u.reports.forEach(r => {
+                  .forEach(r => {
+                        if (r.user) {
+                          this.userNames.push(r.user.name + ' - ' + r.user.role) // имена для select сотрудников
                           this.reports.push(r)
-                      if (r.facility)
-                          if (!this.facilities.find((f) => f.id === r.facility.id)) {
-                            this.facilities.push(r.facility)
-
-                          }
+                          if (r.facility)
+                            if (!this.facilities.find((f) => f.id === r.facility.id)) {
+                              this.facilities.push(r.facility)
+                            }
 
                           // Функции просчета времени наработки
                           this.getHoursOfWorkByMonth(r)
                           this.getHoursOfWorkingByUserAndMonth(r)
                         }
-                    )}))
+                      }
+                  ))
 
         } else {
 // фильтруем под человека
-          this.axios.get( "api/user/" + this.profileId).then(result =>
+          this.axios.get( "api/report/user/" + this.profileId).then(result =>
               result
                   .data
-                  .reports.forEach(r => {
-                    this.reports.push(r)
-                if (r.facility)
-                    if (!this.facilities.find((f) => f.id === r.facility.id)) {
-                      this.facilities.push(r.facility)
-                    }
-                  }
-              )
+                  .forEach(r => {
+                        this.reports.push(r)
+                        if (r.facility)
+                          if (!this.facilities.find((f) => f.id === r.facility.id)) {
+                            this.facilities.push(r.facility)
+                          }
+                      }
+                  )
           )
         }
 

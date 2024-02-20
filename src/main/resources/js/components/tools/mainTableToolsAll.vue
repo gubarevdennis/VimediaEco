@@ -1,5 +1,4 @@
 <template>
-  <v-sheet color="black">
     <add-tool  v-if="((this.role === 'Кладовщик') || (this.role === 'Директор'))"
                :addTool="addTool"
                v-bind:toolSets="toolSets"
@@ -33,14 +32,14 @@
     >
     </filter-tool>
 
-<div>
     <v-overlay
         :model-value="overlay"
         class="align-center justify-center"
-        scroll-strategy="block"
         align="center"
+        :opacity="1"
+        :z-index="10"
     >
-      <v-btn icon="mdi-close" @click="overlay = !overlay" :ripple="false"></v-btn>
+      <v-btn icon="mdi-close" @click="overlay = false" :ripple="false"></v-btn>
       <br>
       <br>
       <decription-tool
@@ -55,15 +54,15 @@
           :tool="tool"
       ></decription-tool>
     </v-overlay>
-</div>
 
     <v-overlay
         :model-value="overlayToGiving"
         class="align-center justify-center"
-        scroll-strategy="block"
         align="center"
+        :opacity="1"
+        :z-index="10"
     >
-      <v-btn icon="mdi-close" @click="overlayToGiving = !overlayToGiving" :ripple="false"></v-btn>
+      <v-btn icon="mdi-close" @click="overlayToGiving = false" :ripple="false"></v-btn>
       <br>
       <br>
       <giving-tool :closeDescriptionToolByDeleteConfirm="closeDescriptionToolByDeleteConfirm"
@@ -80,7 +79,7 @@
                    :tool="tool"
       ></giving-tool>
     </v-overlay>
-
+    <keep-alive>
     <v-infinite-scroll  :onLoad="load" >
       <div v-for="row in rows" :key="row" align="start" height="200px">
         <main-table-tools-row :deleteTool="deleteTool"
@@ -112,7 +111,7 @@
         ></v-btn>
       </template>
     </v-infinite-scroll>
-  </v-sheet>
+    </keep-alive>
 </template>
 
 <script>

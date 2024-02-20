@@ -71,7 +71,7 @@ public class JobController {
 
     // Получаем по пользователю
     @GetMapping("/user/{id}")
-    @JsonView(Views.IdName.class)
+    @JsonView(Views.IdNameAndUsers.class)
     public List<Job> getByUser(@PathVariable("id") User user) {
         return user.getJobs();
     }

@@ -1,6 +1,6 @@
 <template>
   <v-sheet  color="#F9F9F9">
-    <v-card-title style="font-size: 25px; font-weight: lighter">
+    <v-card-title style="font-size: 20px; font-weight: lighter">
       {{subFacility.name}}
     </v-card-title>
     <v-card-text v-for="job in jobs">
@@ -36,7 +36,8 @@
 
 
 export default {
-  props: ['subFacility','facility', 'editSubFacility','facilities', 'role', 'subFacilities', 'deleteSubFacility', 'jobs', 'profileId' ,'profile'], // получаем переменную facility
+  props: ['subFacility','facility', 'editSubFacility','facilities', 'role', 'subFacilities',
+    'deleteSubFacility', 'jobs', 'profileId' ,'profile', 'assignedUsers'], // получаем переменную facility
   data() {
     return {
       reports: [],
@@ -61,12 +62,19 @@ export default {
     calculateAllBonusMoney: function (job) {
       console.log("this.bonusMoney")
       console.log(this.bonusMoney)
-      return (job.budget -
-          this.reports
-              .filter(r => r.user)
-              .filter(r => (r.typeOfWork === job.name))
-              .map(r => r.hoursOfWorking * r.user.salary/8)
-              .reduce((partialSum, a) => partialSum + a, 0))
+
+      this.reportCoast = this.reports
+          .filter(r => r.user)
+          .filter(r => r.user.salary !== null)
+          .filter(r => (r.typeOfWork === job.name))
+          .map(r => r.hoursOfWorking * r.user.salary/8)
+          .reduce((partialSum, a) => partialSum + a, 0)
+
+      console.log("reportCoast")
+      console.log(this.reportCoast)
+
+
+      return (job.budget -this.reportCoast)
           * (job.marginPercentage/100)
           * (job.bonus/100);
     },
@@ -76,6 +84,7 @@ export default {
       return (
           this.reports
               .filter(r => r.user)
+              .filter(r => job.users ? job.users.find(u => (u.id === r.user.id)) : false) // учитываем только время закрепленных за объектом сотрудников
               .filter(r => r.user ? r.user.role.split(' ')[0] !== 'Руководитель' : false)
               .filter(r => (r.typeOfWork === job.name))
               .map(r => r.hoursOfWorking)

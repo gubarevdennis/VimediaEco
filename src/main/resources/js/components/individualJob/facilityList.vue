@@ -16,6 +16,7 @@
                        :profile="profile"
                        :profileId="profileId"
                        :jobs="jobs.filter(j => j.facility ?  j.facility.id === facility.id : false)"
+
         />
       </v-card>
     </v-col>
@@ -47,7 +48,8 @@ export default {
       subFacilities: [],
       editFacilityStatus: false,
       overlay: false,
-      jobs: []
+      jobs: [],
+
     }
   },
   computed: {
@@ -81,6 +83,7 @@ export default {
             .data
             .forEach(j => {
               this.jobs.push(j)
+
             }))
     console.log(this.jobs)
 

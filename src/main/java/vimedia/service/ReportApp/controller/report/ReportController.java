@@ -56,6 +56,13 @@ public class ReportController {
         return reportRepo.getReportsByUser(user);
     }
 
+    @GetMapping("/user/{id}")
+    @JsonView(Views.IdName.class)
+    public List<Report> listByUserId(@PathVariable("id") Integer id,@AuthenticationPrincipal MyUserDetails myUserDetails) {
+        User user = userRepo.findById(id).orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден!"));
+        return reportRepo.getReportsByUser(user);
+    }
+
     @GetMapping("/month/user/{offsetMonth}")
     @JsonView(Views.IdName.class)
     public List<Report> listByMonthAndUser(@PathVariable("offsetMonth") Integer offsetMonth, @AuthenticationPrincipal MyUserDetails myUserDetails) {

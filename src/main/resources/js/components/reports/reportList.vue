@@ -131,11 +131,10 @@ export default {
 
 
     if (this.role === 'admin' || this.role === 'Директор' || this.role === 'HR') {
-      this.axios.get("/api/user").then(result =>
+      this.axios.get("/api/report/user").then(result =>
           result
               .data
-              .forEach(u => {
-                u.reports.forEach(r => {
+              .forEach(r => {
                       this.reports.push(r)
                       if (r.facility) {
                         if (!this.facilities.find((f) => f.id === (r.facility ? r.facility.id : ''))) {
@@ -143,13 +142,13 @@ export default {
                         }
                       }
                     }
-                )}))
+                ))
     } else {
 // фильтруем под человека
-      this.axios.get("/api/user/" + this.profileId).then(result =>
+      this.axios.get("/api/report/user/" + this.profileId).then(result =>
           result
               .data
-              .reports.forEach(r => {
+              .forEach(r => {
 
                 this.reports.push(r)
 

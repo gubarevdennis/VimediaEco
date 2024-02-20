@@ -89,8 +89,6 @@ export default {
     console.log(this.role)
 
     // Добавление объектов
-    if (this.role === 'admin' || this.role === 'Директор' || this.role === 'HR' || this.role === 'Диспетчер'
-        || this.role === 'Руководитель отдела ведения проектов') {
       this.axios.get( "api/facility/job/user/" + this.profileId).then(result =>
           result
               .data
@@ -103,19 +101,6 @@ export default {
                     }
                   }
               ))
-    } else {
-// фильтруем под человека
-      this.axios.get("api/user/" + this.profileId).then(result =>
-          result
-              .data
-              .reports.forEach(r => {
-                if (!this.facilities.find((f) => f.id === r.facility.id)) {
-                  this.facilities.push(r.facility)
-                }
-              }
-          )
-      )
-    }
 
   },
   methods: {

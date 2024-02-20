@@ -55,7 +55,6 @@
   <br>
   <br>
   <v-row color="#393a34" justify="center">
-    <v-card  width="200" align="center">Все работы</v-card>
     <v-card  width="200" color="#A0522D" align="center">Черновой монтаж</v-card>
     <v-card  width="200" color="#FF0000" align="center">Чистовой монтаж</v-card>
     <v-card  width="200" color="#F08080" align="center">Шефмонтаж</v-card>

@@ -3,11 +3,10 @@
     <div>
       <v-row>
         <v-col cols="10">
-          <v-card-title style="font-size: 25px; font-weight: lighter" primary-title>
+          <v-card-title style="font-size: 20px; font-weight: lighter" primary-title>
             {{facility.name}}
           </v-card-title>
           <v-card-text v-if="subFacilities ? !subFacilities[0] : false" v-for="job in jobs">
-{{calculateAllBonusMoney(job)}}
             <div  v-if=" this.role.split(' ')[0] !== 'Руководитель'">
              <div style="color: #006600; font-weight: bold; font-size: 20px"> {{ calculateIndividualHours(job) !== 0 ?
                  Math.round(calculateAllBonusMoney(job) * 0.8 * calculateIndividualHours(job) / calculateAllHours(job)) : 0 }} р </div>
@@ -63,12 +62,13 @@ export default {
       reports: [],
       bonusMoney: '',
       allHours: '',
-      individualHours: ''
+      individualHours: '',
+      assignedUsers: []
     }
   },
   components: {SubFacilityRow},
   props: ['facility', 'editFacility','facilities', 'role', 'deleteSubFacility', 'setSubFacility', 'jobs',
-    'url', 'port', 'profileId' ,'profile'], // получаем переменную facility
+    'url', 'port', 'profileId' ,'profile', ], // получаем переменную facility
 
   mounted() {
     this.facility.subFacilities ? this.facility.subFacilities.forEach( s => this.subFacilities.push(s)) : []
@@ -83,17 +83,24 @@ export default {
               )
         }
     )
+
   },
   methods: {
     calculateAllBonusMoney: function (job) {
       console.log("this.bonusMoney")
       console.log(this.bonusMoney)
-      return (job.budget -
-          this.reports
-              .filter(r => r.user)
-              .filter(r => (r.typeOfWork === job.name))
-              .map(r => r.hoursOfWorking * r.user.salary/8)
-              .reduce((partialSum, a) => partialSum + a, 0))
+
+      this.reportCoast = this.reports
+          .filter(r => r.user)
+          .filter(r => r.user.salary !== null)
+          .filter(r => (r.typeOfWork === job.name))
+          .map(r => r.hoursOfWorking * r.user.salary/8)
+          .reduce((partialSum, a) => partialSum + a, 0)
+
+      console.log("reportCoast")
+      console.log(this.reportCoast)
+
+      return (job.budget - this.reportCoast)
           * (job.marginPercentage/100)
           * (job.bonus/100);
 
@@ -104,6 +111,7 @@ export default {
      return (
           this.reports
               .filter(r => r.user)
+              .filter(r => job.users ? job.users.find(u => (u.id === r.user.id)) : false)  // учитываем только время закрепленных за объектом сотрудников
               .filter(r => r.user ? r.user.role.split(' ')[0] !== 'Руководитель' : false)
               .filter(r => (r.typeOfWork === job.name))
               .map(r => r.hoursOfWorking)

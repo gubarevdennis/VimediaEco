@@ -5,6 +5,9 @@
       contained
       align="center"
   >
+    <v-card-title>
+      {{facility.name}} {{subFacility.name}}
+    </v-card-title>
     <v-col >
       <v-row justify="center" align="start">
           <div v-for="job in this.jobs" :key="job.id">

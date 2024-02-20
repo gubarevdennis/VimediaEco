@@ -73,6 +73,7 @@ export default {
       bonusMoney: '',
       allHours: 0,
       individualHours: 0,
+      reportCoast: 0
     }
   },
   mounted() {
@@ -113,10 +114,17 @@ export default {
       }
     },
     calculateAllBonusMoney: function () {
-      return Math.round(this.job.budget -
-          this.reports
-              .map(r => r.hoursOfWorking * r.user.salary/8)
-              .reduce((partialSum, a) => partialSum + a, 0))
+      this.reportCoast = this.reports
+          .filter(r => r.user)
+          .filter(r => r.user.salary !== null)
+          .map(r => r.hoursOfWorking * r.user.salary/8)
+          .reduce((partialSum, a) => partialSum + a, 0)
+
+      console.log("reportCoast")
+      console.log(this.reportCoast)
+
+      return Math.round(this.job.budget - this.reportCoast
+          )
           * (this.job.marginPercentage/100)
           * (this.job.bonus/100);
     },
@@ -136,8 +144,9 @@ export default {
       console.log(this.allHours)
       return (
           this.reports
-              .filter(r => r.user)
-              .filter(r => r.user ? r.user.role.split(' ')[0] !== 'Руководитель' : false)
+              .filter(r => r.user) // только те отчеты которые принадлежат хоть какому-то пользователю
+              .filter(r => this.assignedUsers.find(u => (u.id === r.user.id)))  // учитываем только время закрепленных за объектом сотрудников
+              .filter(r => r.user ? r.user.role.split(' ')[0] !== 'Руководитель' : false) // часы руководителей не входят
               .map(r => r.hoursOfWorking)
               .reduce((partialSum, a) => partialSum + a, 0))
     },
