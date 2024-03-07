@@ -2,10 +2,7 @@
   <v-card
       class="bg-surface-variant mb-6"
   >
-
-
     <v-col>
-
       <v-overlay
           v-model="overlay"
           class="align-center justify-center"
@@ -23,10 +20,10 @@
             :profileId="profileId"
             :overlay="overlay"
             :overlayChange="overlayChange"
+            :users="users"
+            :userNames="userNames"
         ></job-list>
       </v-overlay>
-
-
       <v-card rounded="lg" :profile="profile" :role="role" :profileId="profileId"
 
               v-bind:color="facility.color"
@@ -44,6 +41,8 @@
                        :role="role"
                        :turnOverlayAndSetFacilityToJobList="turnOverlayAndSetFacilityToJobList"
                        :turnOverlayAndSetSubFacilityToJobList="turnOverlayAndSetSubFacilityToJobList"
+                       :users="users"
+                       :userNames="userNames"
         />
       </v-card>
     </v-col>
@@ -76,7 +75,9 @@ export default {
       color: '',
       subFacilities: [],
       editFacilityStatus: false,
-      overlay: false
+      overlay: false,
+      users: [],
+      userNames: []
     }
   },
   computed: {
@@ -89,19 +90,27 @@ export default {
     console.log(this.role)
 
     // Добавление объектов
-      this.axios.get( "api/facility/job/user/" + this.profileId).then(result =>
-          result
-              .data
-              .forEach(fac => {
-                    if (!this.facilities.find((f) => f.id === fac.id)) {
-                      this.facilities.push(fac)
-                      fac.subFacilities.forEach(s => {
-                        this.subFacilities.push(s)
-                      })
-                    }
+    this.axios.get( "api/facility/user/" + this.profileId).then(result =>
+        result
+            .data
+            .forEach(fac => {
+                  if (!this.facilities.find((f) => f.id === fac.id)) {
+                    this.facilities.push(fac)
+                    fac.subFacilities.forEach(s => {
+                      this.subFacilities.push(s)
+                    })
                   }
-              ))
+                }
+            ))
 
+    // Запрашиваем пользователей
+    this.axios.get( "api/user").then(tools => {
+          tools.data.forEach(t => {
+            this.users.push(t)
+            this.userNames.push(t.name)
+          })
+        }
+    )
   },
   methods: {
     turnOverlayAndSetFacilityToJobList: function (overlay, facility) {

@@ -38,9 +38,9 @@ public class JobController {
 
     // Получаем все
     @GetMapping
-    @JsonView(Views.IdNameAndUsers.class)
+    @JsonView(Views.IdName.class)
     public List<Job> list() {
-        return jobRepo.findAll().stream().sorted(new Comparator<Job>() {
+        return jobRepo.findAll().stream().filter(j -> j.getName() != null).sorted(new Comparator<Job>() {
             @Override
             public int compare(Job o1, Job o2) {
                 return o1.getName().toUpperCase().compareTo(o2.getName().toUpperCase());
@@ -50,28 +50,28 @@ public class JobController {
 
     // Получаем одно
     @GetMapping("{id}")
-    @JsonView(Views.IdNameAndUsers.class)
+    @JsonView(Views.IdName.class)
     public Job getOne(@PathVariable("id") Job job) {
         return job;
     }
 
     // Получаем по объекту
     @GetMapping("/facility/{id}")
-    @JsonView(Views.IdNameAndUsers.class)
+    @JsonView(Views.IdName.class)
     public List<Job> getByFacility(@PathVariable("id") Facility facility) {
         return facility.getJobs();
     }
 
     // Получаем по подобъекту
     @GetMapping("/subFacility/{id}")
-    @JsonView(Views.IdNameAndUsers.class)
+    @JsonView(Views.IdName.class)
     public List<Job> getBySubFacility(@PathVariable("id") SubFacility subFacility) {
         return subFacility.getJobs();
     }
 
     // Получаем по пользователю
     @GetMapping("/user/{id}")
-    @JsonView(Views.IdNameAndUsers.class)
+    @JsonView(Views.IdName.class)
     public List<Job> getByUser(@PathVariable("id") User user) {
         return user.getJobs();
     }
@@ -79,7 +79,12 @@ public class JobController {
 
     // Создание
     @PostMapping
+    @JsonView(Views.IdName.class)
     public Job create(@RequestBody Job job, @AuthenticationPrincipal MyUserDetails myUserDetails) {
+
+        if (job.getAutoBonus() == null) {
+            job.setAutoBonus(0);
+        }
 
         // Если не указан объект, но указан подобъект мы сами ищем соответствующий объект и добавляем в работу
  //       if (job.getName() != null) // фильтруем первое добавление
@@ -111,7 +116,7 @@ public class JobController {
 
     // Редактирование
     @PutMapping("{id}")
-    @JsonView(Views.IdNameAndUsers.class)
+    @JsonView(Views.IdName.class)
     public Job update(@PathVariable("id") Job jobFromDB, // из базы данных
                       @RequestBody Job job, @AuthenticationPrincipal MyUserDetails myUserDetails) { // от пользователя
 
@@ -133,7 +138,7 @@ public class JobController {
             }
         }
 
-        return jobRepo.save(job);
+        return jobRepo.save(jobFromDB);
     }
 
     private void sendTGMessageForJob(Optional<User> toUser, Job job, User user) {
@@ -149,10 +154,10 @@ public class JobController {
                 outMess.setChatId(chatId);
             }
             if (job.getSubFacility() != null) {
-                outMess.setText(user.getName() + " назначил вас ответственным за проведение работы " + job.getName().toLowerCase() + " на объекте " + job.getFacility().getName() + ", " + String.valueOf(job.getSubFacility().getName()) +
+                outMess.setText(user.getRole() + " " + user.getName() + " назначил вас ответственным за проведение работы " + job.getName().toLowerCase() + " на объекте " + job.getFacility().getName() + ", " + String.valueOf(job.getSubFacility().getName()) +
                         ". Бонусная база за данную работу составляет " + Math.round(job.getBudget() * (job.getBonus() / 100) * (job.getMarginPercentage() / 100) * 0.8) + "р. Удачи, бро!" + "http://reports.vimedia.ru/bonus");
             } else {
-                outMess.setText(user.getName() + " назначил вас ответственным за проведение работы " + job.getName().toLowerCase() + " на объекте " + job.getFacility().getName() +
+                outMess.setText(user.getRole() + " " + user.getName() + " назначил вас ответственным за проведение работы " + job.getName().toLowerCase() + " на объекте " + job.getFacility().getName() +
                         ". Бонусная база за данную работу составляет " + Math.round(job.getBudget() * (job.getBonus() / 100) * (job.getMarginPercentage() / 100) * 0.8) + "р. Удачи, бро!" + "http://reports.vimedia.ru/bonus");
             }
             try {
@@ -165,6 +170,7 @@ public class JobController {
     }
 
     @DeleteMapping("{id}")
+    @JsonView(Views.IdName.class)
     public void delete(@PathVariable("id") Job toolSet) {
         jobRepo.delete(toolSet);
     }

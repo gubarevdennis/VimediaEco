@@ -1,6 +1,7 @@
 package vimedia.service.ReportApp.model.report;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
@@ -8,9 +9,11 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import vimedia.service.ReportApp.model.bonus.Bonus;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table
@@ -58,6 +61,12 @@ public class Report {
 
     @JsonView(Views.IdName.class)
     private int hoursOfWorking;
+
+    @JsonView(Views.IdName.class)
+    @ManyToMany(mappedBy = "reports")
+    @OnDelete(action = OnDeleteAction.SET_NULL)
+    @JsonIgnore
+    private List<Job> jobs;
 
     public int getId() {
         return id;
@@ -128,6 +137,14 @@ public class Report {
 
     public void setHoursOfWorking(int hoursOfWorking) {
         this.hoursOfWorking = hoursOfWorking;
+    }
+
+    public List<Job> getBonuses() {
+        return jobs;
+    }
+
+    public void setBonuses(List<Job> jobs) {
+        this.jobs = jobs;
     }
 }
 

@@ -30,7 +30,7 @@ public class FacilityController {
     @GetMapping
     @JsonView(Views.IdName.class)
     public List<Facility> list() {
-        return facilityRepo.findAll().stream().sorted(new Comparator<Facility>() {
+        return facilityRepo.findAll().stream().filter(j -> j.getName() != null).sorted(new Comparator<Facility>() {
             @Override
             public int compare(Facility o1, Facility o2) {
                 return o1.getName().toUpperCase().compareTo(o2.getName().toUpperCase());
@@ -98,8 +98,8 @@ public class FacilityController {
     // Получаем по пользователю
     @GetMapping("/user/{id}")
     @JsonView(Views.IdName.class)
-    public Facility getByUser(@PathVariable("id") User user) {
-        return user.getFacility();
+    public List<Facility> getByUser(@PathVariable("id") User user) {
+        return user.getFacilities();
     }
 
     // Получаем прикрепленные к пользователю обьекты
@@ -122,6 +122,9 @@ public class FacilityController {
                            @RequestBody Facility facility) { // от пользователя
 
         BeanUtils.copyProperties(facility,facilityFromDB,"id"); // заменяет поля кроме id
+
+        //TODO Сохраним user если он прилетел вместе с объектом
+
 
         return facilityRepo.save(facilityFromDB);
     }
@@ -152,7 +155,7 @@ public class FacilityController {
                 break;
             case 9 : typeOfWorkByWord = "Отпуск без сохранения ЗП";
                 break;
-            case 10 : typeOfWorkByWord = "Другие работы";
+            case 10 : typeOfWorkByWord = "Менеджмент";
                 break;
             case 11 : typeOfWorkByWord = "Концептуальное проектирование";
                 break;

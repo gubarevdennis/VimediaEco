@@ -7,16 +7,24 @@
             {{facility.name}}
           </v-card-title>
           <v-card-text v-if="subFacilities ? !subFacilities[0] : false" v-for="job in jobs">
-            <div  v-if=" this.role.split(' ')[0] !== 'Руководитель'">
-             <div style="color: #006600; font-weight: bold; font-size: 20px"> {{ calculateIndividualHours(job) !== 0 ?
-                 Math.round(calculateAllBonusMoney(job) * 0.8 * calculateIndividualHours(job) / calculateAllHours(job)) : 0 }} р </div>
-              <div style="color: red; font-size: 18px"> {{ job.name }} </div>
-              за {{calculateIndividualHours(job)}} ч из {{calculateAllHours(job)}} ч
+            <div v-if="job.autoBonus">
+              <div>
+                <div style="color: #006600; font-weight: bold; font-size: 20px"> {{ calculateIndividualHours(job) !== 0 ?
+                    Math.round(calculateAllBonusMoney(job)  * calculateIndividualHours(job) / calculateAllHours(job)) : 0 }} р </div>
+                <div style="color: red; font-size: 18px"> {{ job.name }} </div>
+                за {{calculateIndividualHours(job)}} ч из {{calculateAllHours(job)}} ч
+              </div>
             </div>
-            <div style="font-size: 25px" v-if=" this.role.split(' ')[0] === 'Руководитель'">
-              <div style="color: #006600; font-weight: bold; font-size: 20px"> {{ Math.round(calculateAllBonusMoney(job) * 0.1) }} р </div>
-              <div style="color: red; font-size: 18px"> {{ job.name }} </div>
-              за {{calculateIndividualHours(job)}} ч из {{calculateAllHours(job)}} ч
+            <div v-if="!job.autoBonus">
+              <div>
+                <div style="color: #006600; font-weight: bold; font-size: 20px">
+                  {{this.bonuses.find(b => b.job.id === job.id) ?
+                    Math.round((this.bonuses.find(b => b.job.id === job.id).value / 100) * calculateAllBonusMoney(job) )
+                    : '0'}} р
+                </div>
+                <div style="color: red; font-size: 18px"> {{ job.name }} </div>
+                за {{calculateIndividualHours(job)}} ч из {{calculateAllHours(job)}} ч
+              </div>
             </div>
           </v-card-text>
         </v-col>
@@ -33,6 +41,7 @@
                   :profile="profile"
                   :profileId="profileId"
                   :jobs="jobs.filter(j => (j.subFacility ? (j.subFacility.id === subFacility.id) : false))"
+                  :bonuses="bonuses"
               />
             </div>
           </v-card>
@@ -63,12 +72,12 @@ export default {
       bonusMoney: '',
       allHours: '',
       individualHours: '',
-      assignedUsers: []
+      assignedUsers: [],
     }
   },
   components: {SubFacilityRow},
   props: ['facility', 'editFacility','facilities', 'role', 'deleteSubFacility', 'setSubFacility', 'jobs',
-    'url', 'port', 'profileId' ,'profile', ], // получаем переменную facility
+    'url', 'port', 'profileId' ,'profile', 'bonuses'], // получаем переменную facility
 
   mounted() {
     this.facility.subFacilities ? this.facility.subFacilities.forEach( s => this.subFacilities.push(s)) : []
@@ -108,11 +117,11 @@ export default {
     calculateAllHours: function (job) {
       console.log("this.allHours")
       console.log(this.allHours)
-     return (
+      return (
           this.reports
               .filter(r => r.user)
               .filter(r => job.users ? job.users.find(u => (u.id === r.user.id)) : false)  // учитываем только время закрепленных за объектом сотрудников
-              .filter(r => r.user ? r.user.role.split(' ')[0] !== 'Руководитель' : false)
+              // .filter(r => r.user ? r.user.role.split(' ')[0] !== 'Руководитель' : false)
               .filter(r => (r.typeOfWork === job.name))
               .map(r => r.hoursOfWorking)
               .reduce((partialSum, a) => partialSum + a, 0))
@@ -122,7 +131,7 @@ export default {
     calculateIndividualHours: function (job) {
       console.log("this.individualHours")
       console.log(this.individualHours)
-     return  (
+      return  (
           this.reports
               .filter(r => r.user)
               .filter(r => r.user.id === this.profileId)

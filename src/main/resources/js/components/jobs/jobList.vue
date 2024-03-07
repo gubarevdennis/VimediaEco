@@ -44,7 +44,9 @@ import jobRow from "./jobRow.vue";
 export default {
   name: "jobList",
   components: {jobRow},
-  props: ['profile', 'profileId', 'subFacility', 'facility', 'role', 'tool', 'editTool', 'toolSets', 'categories', 'deleteTool', 'copyTool', 'closeDescriptionToolByDeleteConfirm', 'closeDescriptionToolByCopyConfirm'],
+  props: ['profile', 'profileId', 'subFacility', 'facility', 'role', 'tool', 'editTool',
+    'toolSets', 'categories', 'deleteTool', 'copyTool', 'closeDescriptionToolByDeleteConfirm',
+    'closeDescriptionToolByCopyConfirm', 'users', 'usernames'],
   data() {
     return {
       imageEditButton: false,
@@ -60,8 +62,6 @@ export default {
       toolCategoryNames: [],
       inventoryEvents: [],
       jobs: [],
-      users: [],
-      userNames: [],
       assignedUsers: [],
       job: '',
       reports: [],
@@ -111,14 +111,6 @@ export default {
       )
     }
 
-    // Запрашиваем пользователей
-    this.axios.get( "api/user").then(tools => {
-          tools.data.forEach(t => {
-            this.users.push(t)
-            this.userNames.push(t.name)
-          })
-        }
-    )
   },
   methods: {
     addNewJobByFacility: function (facility) {
@@ -147,7 +139,6 @@ export default {
           this.editJob(result.data)
           this.showConfirmBtn = false
         } else {
-          this.toolInfo = this.rowInputText
           this.showConfirmBtn = false
         }
       })

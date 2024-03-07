@@ -18,6 +18,23 @@
         </v-col>
       </v-row>
 
+      <v-row justify="center" v-if=" this.role.split(' ')[0] === 'Руководитель' || this.role === 'Директор'">
+        <v-card-title >
+          Всего за месяц:
+          {{ Math.round(this.reports
+            .filter(r => ((
+                (Number(r.reportDay.substr(3, 2)))
+            ) === Number(nowMonth())))
+            .map(r => r.user ? r.user.salary ? r.hoursOfWorking * r.user.salary/8 : 0 : 0)
+            .reduce((partialSum, a) => partialSum + a, 0))
+          }} р
+        </v-card-title>
+      </v-row>
+      <v-row justify="center" v-if="facilityCoast !== 0 && this.role === 'Директор'">
+        <v-card-title>
+          Всего по объекту: {{ facilityCoast }} р
+        </v-card-title>
+      </v-row>
 
       <v-row justify="center"
              align="center" v-for="w in [1,2,3,4,5]" v-bind:key="w">
@@ -46,7 +63,7 @@ Date.prototype.addDays = function(days) {
 
 import Week from "./week.vue";
 export default {
-  props: ['users', 'profile', 'role', 'profileId', 'reports', 'updateAllReports'],
+  props: ['users', 'profile', 'role', 'profileId', 'reports', 'updateAllReports', 'facilityCoast'],
   components: {
     Week,
   },
@@ -102,6 +119,13 @@ export default {
       // Выводим текущую дату
       var date = this.date
       var options = { month: 'long' }; // weekday: 'long',
+
+      return date.toLocaleDateString("ru", options).toUpperCase()
+    },
+    nowMonth: function () {
+      // Выводим текущую дату
+      var date = this.date
+      var options = { month: 'numeric' }; // weekday: 'long',
 
       return date.toLocaleDateString("ru", options).toUpperCase()
     },

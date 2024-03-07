@@ -12,7 +12,7 @@
       <v-card @click="greyWork" width="100" color="#FF4500" align="center">ПНР</v-card>
       <v-card @click="grey1Work" width="100" color="#FFA500" align="center">Сервис</v-card>
       <v-card @click="grey2Work" width="200" color="#FF1493" align="center">Авторский надзор</v-card>
-      <v-card @click="grey3Work" width="200" color="#BDB76B" align="center">Другие работы</v-card>
+      <v-card @click="grey3Work" width="200" color="#BDB76B" align="center">Менеджмент</v-card>
       <v-card @click="grey4Work" width="200" color="#7FFFD4" align="center">Отпуск оплачиваемый</v-card>
       <v-card @click="grey5Work" width="300" color="#7B68EE" align="center">Отпуск по семейным обстоятельствам</v-card>
       <v-card @click="grey6Work" width="300" color="#00FFFF" align="center">Отпуск без сохранения ЗП</v-card>
@@ -102,7 +102,7 @@ function setColorByWork(work) {
     case 'Авторский надзор' :
       return '#FF1493'
       break;
-    case 'Другие работы' :
+    case 'Менеджмент' :
       return '#BDB76B'
       break;
     case 'Отпуск' :

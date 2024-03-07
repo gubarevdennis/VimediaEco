@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import vimedia.service.ReportApp.model.bonus.Bonus;
 import vimedia.service.ReportApp.model.tools.*;
 
 import java.util.List;
@@ -71,23 +72,37 @@ public class User {
     // Связь с работами
     @JsonView(Views.IdName.class)
     @ManyToMany(mappedBy = "users")
+    @JsonIgnore
     @OnDelete(action = OnDeleteAction.SET_NULL)
-    @JsonIgnoreProperties("users")
+//    @JsonIgnoreProperties({"users", "jobs", "bonuses"})
     private List<Job> jobs;
 
     // Связь с объектами
-    @ManyToOne
-    @OnDelete(action = OnDeleteAction.SET_NULL)
-    @JsonIgnoreProperties({"tools", "subFacilities"})
-    @JsonView(Views.IdName.class)
-    private Facility facility;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
+//    @JsonView(Views.IdName.class)
+    private List<Facility> facilities;
 
     // Связь с подобьектами
-    @JsonView(Views.IdName.class)
-    @ManyToOne
-    @OnDelete(action = OnDeleteAction.SET_NULL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
+ //   @JsonView(Views.IdName.class)
     @JsonIgnoreProperties("reports")
-    private SubFacility subFacility;
+    private List<SubFacility> subFacilities;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+//    @JsonView(Views.IdName.class)
+    @JsonIgnoreProperties("user")
+    private List<Bonus> bonuses;
+
+    public void addBonus(Bonus bonus){
+        this.bonuses.add(bonus);
+        bonus.setUser(this);
+    }
+    public void removeBonus(Bonus bonus){
+        this.bonuses.remove(bonus);
+    }
 
     public void addEvent(Event event){
         this.events.add(event);
@@ -96,6 +111,23 @@ public class User {
     public void removeEvent(Event event){
         this.events.remove(event);
     }
+
+    public void addFacility(Facility facility){
+        this.facilities.add(facility);
+        facility.setUser(this);
+    }
+    public void removeFacility(Facility facility){
+        this.events.remove(facility);
+    }
+
+    public void addSubFacility(SubFacility subFacility){
+        this.subFacilities.add(subFacility);
+        subFacility.setUser(this);
+    }
+    public void removeSubFacility(SubFacility subFacility){
+        this.subFacilities.remove(subFacility);
+    }
+
 
     public void addInventoryEvent(InventoryEvent event){
         this.inventoryEvents.add(event);
@@ -243,21 +275,27 @@ public class User {
         this.jobs = jobs;
     }
 
-    public Facility getFacility() {
-        return facility;
+    public List<Facility> getFacilities() {
+        return facilities;
     }
 
-    public void setFacility(Facility facility) {
-        this.facility = facility;
+    public void setFacilities(List<Facility> facilities) {
+        this.facilities = facilities;
     }
 
-    public SubFacility getSubFacility() {
-        return subFacility;
+    public List<SubFacility> getSubFacilities() {
+        return subFacilities;
     }
 
-    public void setSubFacility(SubFacility subFacility) {
-        this.subFacility = subFacility;
+    public void setSubFacilities(List<SubFacility> subFacilities) {
+        this.subFacilities = subFacilities;
     }
 
+    public List<Bonus> getBonuses() {
+        return bonuses;
+    }
 
+    public void setBonuses(List<Bonus> bonuses) {
+        this.bonuses = bonuses;
+    }
 }

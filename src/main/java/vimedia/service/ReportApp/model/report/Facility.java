@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import vimedia.service.ReportApp.model.tools.Tool;
 
 import java.time.LocalDateTime;
@@ -38,7 +40,7 @@ public class Facility {
 
     @OneToMany(mappedBy = "facility", cascade = CascadeType.ALL)
     @JsonView(Views.IdName.class)
-    @JsonIgnoreProperties("facility")
+    @JsonIgnoreProperties("subFacilities")
     private List<SubFacility> subFacilities;
 
     @OneToMany(mappedBy = "facility")
@@ -51,10 +53,11 @@ public class Facility {
     @JsonIgnoreProperties("facility")
     private List<Job> jobs;
 
-    @OneToMany(mappedBy = "facility")
-//    @JsonView(Views.IdName.class)
+    @ManyToOne
+    @OnDelete(action = OnDeleteAction.SET_NULL)
+    @JsonView(Views.IdName.class)
     @JsonIgnoreProperties("facility")
-    private List<User> users;
+    private User user;
 
     public void addReport(Report report){
         this.reports.add(report);
@@ -97,14 +100,6 @@ public class Facility {
         this.jobs.remove(job);
     }
 
-    public void addUser(User user){
-        this.users.add(user);
-        user.setFacility(this);
-    }
-
-    public void removeUser(User user){
-        this.users.remove(user);
-    }
 
     public List<SubFacility> getSubFacilities() {
         return subFacilities;
@@ -162,11 +157,11 @@ public class Facility {
         this.jobs = jobs;
     }
 
-    public List<User> getUsers() {
-        return users;
+    public User getUser() {
+        return user;
     }
 
-    public void setUsers(List<User> users) {
-        this.users = users;
+    public void setUser(User user) {
+        this.user = user;
     }
 }

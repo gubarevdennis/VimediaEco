@@ -19,7 +19,7 @@
             label="Подобъект"
             variant="outlined"
             @update:modelValue="selectSubFacility"
-            :items="subFacilities"
+            :items="subFacilities.map(s => s.name)"
             :item-value="subFacilityNameSelected"
         >
 
@@ -45,7 +45,7 @@
             label="Вид работ"
             :items="['Все работы','Черновой монтаж', 'Чистовой монтаж','Шефмонтаж',  'Сборка щитов',
           'Концептуальное проектирование', 'Рабочее проектирование', 'Расключение шкафов',
-          'ПНР', 'Сервис','Авторский надзор', 'Другие работы' , 'Отпуск по семейным обстоятельствам',
+          'ПНР', 'Сервис','Авторский надзор', 'Менеджмент' , 'Отпуск по семейным обстоятельствам',
           'Отпуск без сохранения ЗП', 'Отпуск оплачиваемый', 'Больничный']"
         >
         </v-select>
@@ -55,6 +55,7 @@
   <br>
   <br>
   <v-row color="#393a34" justify="center">
+    <v-card  width="200" align="center">Все работы</v-card>
     <v-card  width="200" color="#A0522D" align="center">Черновой монтаж</v-card>
     <v-card  width="200" color="#FF0000" align="center">Чистовой монтаж</v-card>
     <v-card  width="200" color="#F08080" align="center">Шефмонтаж</v-card>
@@ -65,7 +66,7 @@
     <v-card  width="100" color="#FF4500" align="center">ПНР</v-card>
     <v-card  width="100" color="#FFA500" align="center">Сервис</v-card>
     <v-card  width="200" color="#FF1493" align="center">Авторский надзор</v-card>
-    <v-card  width="200" color="#BDB76B" align="center">Другие работы</v-card>
+    <v-card  width="200" color="#BDB76B" align="center">Менеджмент</v-card>
     <v-card  width="200" color="#7FFFD4" align="center">Отпуск оплачиваемый</v-card>
     <v-card width="300" color="#7B68EE" align="center">Отпуск по семейным обстоятельствам</v-card>
     <v-card  width="300" color="#00FFFF" align="center">Отпуск без сохранения ЗП</v-card>
@@ -73,7 +74,11 @@
   </v-row>
   <br>
   <br>
-  <month :updateAllReports="updateAllReports" :reports="sortedReports" ></month>
+  <month :updateAllReports="updateAllReports"
+         :reports="sortedReports"
+         :facilityCoast="facilityCoast"
+         :role="role"
+  ></month>
 </template>
 
 <script>
@@ -101,7 +106,8 @@ export default {
       users: [],
       userNameSelected: '',
       byUser: false,
-      sortedReportsByUser: []
+      sortedReportsByUser: [],
+      facilityCoast: 0
     }
   },
   mounted: function () {
@@ -173,9 +179,23 @@ export default {
       if (this.facilityNameSelected === 'Все объекты') {
         // Выключаем фильтр по подобъекта когда выбраны Все объекты
         this.bySubFacility = false
+        this.facilityCoast = 0 // обнуляем стоимость работ объекта
 
         return this.sortedReportsByFacility = reports
       }
+
+
+       // Статистика по конкретному объекту
+      var fac = this.facilities.find(f => (f.name === this.facilityNameSelected))
+      if (!this.bySubFacility)
+      this.axios.get("api/report/facility/" + fac.id).then(result => {
+        this.facilityCoast =
+            result
+                .data
+                .map(r => r.user ? r.user.salary ? r.hoursOfWorking * r.user.salary / 8 : 0 : 0)
+                .reduce((partialSum, a) => partialSum + a, 0)
+          }
+      )
 
       if (this.byFacility) {
         return this.sortedReportsByFacility = reports.filter(r => ((r.facility ? r.facility.name : '') === this.facilityNameSelected))}
@@ -186,10 +206,23 @@ export default {
       this.bySubFacility = true
       this.subFacilityNameSelected = subFacilityNameSelected
 
+
       this.resultFilter()
     },
     sortBySubFacility: function (reports) {
       console.log('Запустил sortBySubFacility')
+
+      // Статистика по конкретному подобъекту
+      var sFac = this.subFacilities.find(f => (f.name === this.subFacilityNameSelected))
+      this.axios.get("api/report/subFacility/" + sFac.id).then(result => {
+            this.facilityCoast =
+                result
+                    .data
+                    .map(r => r.user ? r.user.salary ? r.hoursOfWorking * r.user.salary / 8 : 0 : 0)
+                    .reduce((partialSum, a) => partialSum + a, 0)
+          }
+      )
+
       // Если выбраны все подобъекты
       if (this.bySubFacility && this.subFacilityNameSelected === 'Все подобъекты') {
         return this.sortedReportsBySubFacility = reports
@@ -219,7 +252,6 @@ export default {
       if (this.byUser) {
         return this.sortedReportsByUser = reports.filter(r => r.user.name === this.userNameSelected)
       }
-
     },
     selectWork: function (workNameSelected) {
       console.log('Запустил selectWork')
@@ -258,9 +290,10 @@ export default {
       this.subFacilities = []
       if (this.facilities.find(f => f.name === this.facilityNameSelected))
         this.facilities.find(f => f.name === this.facilityNameSelected)
-            .subFacilities.forEach(s => this.subFacilities.push(s.name))
-      this.subFacilities.unshift('Все подобъекты')
+            .subFacilities.forEach(s => this.subFacilities.push(s))
+      this.subFacilities.unshift({name : 'Все подобъекты'}) // так как в subFacilities объекты а не имена, все подобъекты тоже добавил как фальш подобьект
     },
+
     updateAllReports: function (month) {
       this.reports = []
       console.log('Запустил mounted')

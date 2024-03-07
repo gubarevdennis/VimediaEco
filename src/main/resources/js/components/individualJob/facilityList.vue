@@ -4,7 +4,6 @@
   >
     <v-col>
       <v-card rounded="lg" :profile="profile" :role="role" :profileId="profileId"
-
               v-bind:color="facility.color"
               v-for="(facility, i) in sortedFacilities"
               :key="i"
@@ -16,7 +15,7 @@
                        :profile="profile"
                        :profileId="profileId"
                        :jobs="jobs.filter(j => j.facility ?  j.facility.id === facility.id : false)"
-
+                       :bonuses="bonuses"
         />
       </v-card>
     </v-col>
@@ -49,6 +48,8 @@ export default {
       editFacilityStatus: false,
       overlay: false,
       jobs: [],
+      bonuses: [],
+
 
     }
   },
@@ -85,7 +86,14 @@ export default {
               this.jobs.push(j)
 
             }))
-    console.log(this.jobs)
+
+    // Запрашиваем бонусы
+    this.axios.get( "api/bonus/user/" + this.profileId).then(result => {
+          result.data.forEach(t => {
+            this.bonuses.push(t)
+          })
+        }
+    )
 
   },
   methods: {

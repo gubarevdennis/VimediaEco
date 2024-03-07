@@ -36,6 +36,7 @@ public class SubFacility {
     @ManyToOne
     @OnDelete(action = OnDeleteAction.SET_NULL)
     @JsonIgnoreProperties("subFacilities")
+    @JsonView(Views.IdName.class)
     private Facility facility;
 
     @OneToMany(mappedBy = "subFacility")
@@ -47,6 +48,13 @@ public class SubFacility {
 //    @JsonView(Views.IdName.class)
     @JsonIgnoreProperties("subFacility")
     private List<Job> jobs;
+
+    @ManyToOne
+    @OnDelete(action = OnDeleteAction.SET_NULL)
+    @JsonView(Views.IdName.class)
+    @JsonIgnoreProperties("subFacility")
+    private User user;
+
 
     public void addReport(Report report){
         this.reports.add(report);
@@ -119,5 +127,13 @@ public class SubFacility {
 
     public void setJobs(List<Job> jobs) {
         this.jobs = jobs;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

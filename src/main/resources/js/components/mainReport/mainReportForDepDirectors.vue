@@ -45,7 +45,7 @@
             label="Вид работ"
             :items="['Все работы','Черновой монтаж', 'Чистовой монтаж','Шефмонтаж',  'Сборка щитов',
           'Концептуальное проектирование', 'Рабочее проектирование', 'Расключение шкафов',
-          'ПНР', 'Сервис','Авторский надзор', 'Другие работы' , 'Отпуск по семейным обстоятельствам',
+          'ПНР', 'Сервис','Авторский надзор', 'Менеджмент' , 'Отпуск по семейным обстоятельствам',
           'Отпуск без сохранения ЗП', 'Отпуск оплачиваемый', 'Больничный']"
         >
         </v-select>
@@ -65,7 +65,7 @@
     <v-card  width="100" color="#FF4500" align="center">ПНР</v-card>
     <v-card  width="100" color="#FFA500" align="center">Сервис</v-card>
     <v-card  width="200" color="#FF1493" align="center">Авторский надзор</v-card>
-    <v-card  width="200" color="#BDB76B" align="center">Другие работы</v-card>
+    <v-card  width="200" color="#BDB76B" align="center">Менеджмент</v-card>
     <v-card  width="200" color="#7FFFD4" align="center">Отпуск оплачиваемый</v-card>
     <v-card width="300" color="#7B68EE" align="center">Отпуск по семейным обстоятельствам</v-card>
     <v-card  width="300" color="#00FFFF" align="center">Отпуск без сохранения ЗП</v-card>
@@ -73,7 +73,10 @@
   </v-row>
   <br>
   <br>
-  <month :role="role" :updateAllReports="updateAllReports" :reports="sortedReports" ></month>
+  <month :role="role"
+         :updateAllReports="updateAllReports"
+         :reports="sortedReports"
+  ></month>
 </template>
 
 <script>

@@ -4,16 +4,37 @@
       {{subFacility.name}}
     </v-card-title>
     <v-card-text v-for="job in jobs">
-
-      <div v-if=" this.role.split(' ')[0] !== 'Руководитель'">
-        <div style="color: #006600; font-weight: bold; font-size: 20px">  {{calculateIndividualHours(job) !== 0 ? Math.round(calculateAllBonusMoney(job) * 0.8 * calculateIndividualHours(job) / calculateAllHours(job)) : 0 }} р </div>
-        <div style="color: red; font-size: 18px"> {{ job.name }} </div>
-        за {{calculateIndividualHours(job)}} ч из {{calculateAllHours(job)}} ч
+      <div v-if="job.autoBonus">
+        <div  v-if=" this.role.split(' ')[0] !== 'Руководитель'">
+          <div style="color: #006600; font-weight: bold; font-size: 20px"> {{ calculateIndividualHours(job) !== 0 ?
+              Math.round(calculateAllBonusMoney(job) * (job.workerBonus /100) * calculateIndividualHours(job) / calculateAllHours(job)) : 0 }} р </div>
+          <div style="color: red; font-size: 18px"> {{ job.name }} </div>
+          за {{calculateIndividualHours(job)}} ч из {{calculateAllHours(job)}} ч
+        </div>
+        <div style="font-size: 25px" v-if=" this.role.split(' ')[0] === 'Руководитель'">
+          <div style="color: #006600; font-weight: bold; font-size: 20px"> {{ Math.round(calculateAllBonusMoney(job) * ((100 - job.workerBonus) /100)) }} р </div>
+          <div style="color: red; font-size: 18px"> {{ job.name }} </div>
+          за {{calculateIndividualHours(job)}} ч из {{calculateAllHours(job)}} ч
+        </div>
       </div>
-      <div v-if=" this.role.split(' ')[0] === 'Руководитель'">
-        <div style="color: #006600; font-weight: bold; font-size: 20px"> {{ Math.round(calculateAllBonusMoney(job) * 0.1) }} р </div>
-        <div style="color: red; font-size: 18px"> {{ job.name }} </div>
-        за {{calculateIndividualHours(job) }} ч из {{calculateAllHours(job)}} ч
+      <div v-if="!job.autoBonus">
+        <div v-if=" this.role.split(' ')[0] !== 'Руководитель'">
+          <div style="color: #006600; font-weight: bold; font-size: 20px">
+            {{this.bonuses.find(b => b.job.id === job.id) ?
+              Math.round((this.bonuses.find(b => b.job.id === job.id).value / 100) * calculateAllBonusMoney(job) * (job.workerBonus /100))
+              : '0'}} р
+          </div>
+          <div style="color: red; font-size: 18px"> {{ job.name }} </div>
+          за {{calculateIndividualHours(job)}} ч из {{calculateAllHours(job)}} ч
+        </div>
+        <div v-if=" this.role.split(' ')[0] === 'Руководитель'">
+          <div style="color: #006600; font-weight: bold; font-size: 20px"> {{ Math.round(calculateAllBonusMoney(job) * 0.1) }} р </div>
+          {{this.bonuses.find(b => b.job.id === job.id) ?
+            Math.round((this.bonuses.find(b => b.job.id === job.id).value / 100) * calculateAllBonusMoney(job) * (job.workerBonus /100))
+            : '0'}} р
+          <div style="color: red; font-size: 18px"> {{ job.name }} </div>
+          за {{calculateIndividualHours(job) }} ч из {{calculateAllHours(job)}} ч
+        </div>
       </div>
     </v-card-text>
     <v-spacer></v-spacer>
@@ -37,7 +58,7 @@
 
 export default {
   props: ['subFacility','facility', 'editSubFacility','facilities', 'role', 'subFacilities',
-    'deleteSubFacility', 'jobs', 'profileId' ,'profile', 'assignedUsers'], // получаем переменную facility
+    'deleteSubFacility', 'jobs', 'profileId' ,'profile', 'assignedUsers', 'bonuses'], // получаем переменную facility
   data() {
     return {
       reports: [],

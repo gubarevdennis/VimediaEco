@@ -1,7 +1,7 @@
 <template>
   <v-sheet width="320px" border>
     <div style="color: #0B0B0B" align="center" >
-      <v-autocomplete
+      <v-combobox
           density="compact"
           label="Название работ"
           variant="solo"
@@ -10,7 +10,7 @@
           :items="jobNames"
           :item-value="jobNameSelected"
       >
-      </v-autocomplete>
+      </v-combobox>
       <div style="font-weight: bold;color: #0B0B0B"> Стоимость работ: &nbsp</div>
       <input size="5" style="text-align:center"  type="text" @change="showConfirmBtnFunc" v-model="job.budget" /> р
       <div style="font-weight: bold;color: #0B0B0B"> Маржинальность: &nbsp</div>
@@ -18,24 +18,58 @@
       <div style="font-weight: bold;color: #0B0B0B"> Бонусная база: &nbsp</div>
       <input size="1" style="text-align:center" type="text" @change="showConfirmBtnFunc" v-model="job.bonus" /> %
       <div style="font-weight: bold;color: #0B0B0B"> Текущий бонус за объект: &nbsp</div>
-      {{ calculateAllBonusMoney() }} р
+      {{ Math.round(calculateAllBonusMoney()) }} р
+
+      <v-checkbox
+          label="Автоматический расчет бонусов"
+          :model-value="this.autoBonus = Boolean(job.autoBonus)"
+          @update:model-value="manualBonusInvertFunc"
+      ></v-checkbox>
+
       <div v-if="assignedUsers[0]" style="font-weight: bold;color: #0B0B0B"> Ответственные сотрудники: &nbsp</div>
-      <div v-for="(assignedUser, i) in assignedUsers"
-           :key="i">
-        <div v-if=" assignedUser.role.split(' ')[0] !== 'Руководитель'">
-        {{ i+1 }}) {{ assignedUser.name }} -
-          {{ calculateAllHours() === 0 ?  0 : Math.round(calculateAllBonusMoney()  * calculateIndividualHours(assignedUser) * 0.8 / calculateAllHours())}} р
-        за {{calculateIndividualHours(assignedUser)}} ч из {{calculateAllHours()}} ч
-          <v-btn
-                  @click="del(assignedUser)" icon="mdi-delete">  </v-btn>
-        </div>
-        <div v-if=" assignedUser.role.split(' ')[0] === 'Руководитель'">
-          {{ i+1 }}) {{ assignedUser.name }} - {{ Math.round(calculateAllBonusMoney() * 0.1) }} р
-          за {{calculateIndividualHours(assignedUser)}} ч из {{calculateAllHours()}} ч
-          <v-btn
-                  @click="del(assignedUser)" icon="mdi-delete">  </v-btn>
+
+      <div v-if="autoBonus">
+        <div v-for="(assignedUser, i) in usersForBonuses"
+             :key="i">
+          <div>
+            {{ i+1 }}) {{ assignedUser.name }} -
+            {{ calculateAllHours() === 0 ?  0 : Math.round(calculateAllBonusMoney()  * calculateIndividualHours(assignedUser) / ( calculateAllHours()))}} р
+            за {{calculateIndividualHours(assignedUser)}} ч из {{calculateAllHours()}} ч
+            <v-btn
+                @click="del(assignedUser, i)" icon="mdi-delete">  </v-btn>
+          </div>
         </div>
       </div>
+
+      <div v-if="!autoBonus">
+       Всего: {{
+          bonusValue
+              .map(v => Number(v))
+              .reduce((partialSum, a) => partialSum + a, 0)
+        }} %
+        /
+        {{Math.round(calculateAllBonusMoney() * bonusValue
+          .map(v => Number(v))
+          .reduce((partialSum, a) => partialSum + a, 0)  / (100 ) )}} р
+
+        <div v-for="(assignedUser, i) in usersForBonuses"
+             :key="i">
+          <div>
+            {{ i+1 }}) {{ assignedUser.name }} -
+            {{Math.round(calculateAllBonusMoney() * bonusValue[i]  / (100))}} р
+            <input size="1" style="text-align:center" type="text" @change="showConfirmBtnFuncUserBonus(i)" v-model="bonusValue[i]" /> %
+            <v-btn
+                @click="del(assignedUser, i)" icon="mdi-delete">  </v-btn>
+          </div>
+
+          <div style="margin-top: 5px">
+            <v-btn v-show="showConfirmBtnUserBonus[i]" color="green"  @click="editUserBonus(assignedUser, bonuses.find(b => b.user.id === assignedUser.id), i)" > Применить </v-btn>
+            <v-btn v-show="showConfirmBtnUserBonus[i]" color="red"  @click="hideConfirmBtnFuncUserBonus(i)" > Отмена </v-btn>
+          </div>
+        </div>
+
+      </div>
+
       <v-autocomplete
           density="compact"
           label="Добавить сотрудника"
@@ -45,11 +79,12 @@
           :item-value="userNameSelected"
       >
       </v-autocomplete>
-      <div style="margin-top: 5px">
-        <v-btn v-if="showConfirmBtn" color="green"  @click="edit" > Применить </v-btn>
-        <v-btn v-if="showConfirmBtn" color="red"  @click="hideConfirmBtnFunc" > Отмена </v-btn>
+      <div v-show="showConfirmBtn" style="margin-top: 5px">
+        <v-btn  color="green"  @click="editJob" > Применить </v-btn>
+        <v-btn color="red"  @click="hideConfirmBtnFunc" > Отмена </v-btn>
       </div>
     </div>
+    <br>
   </v-sheet>
 </template>
 
@@ -62,23 +97,33 @@ export default {
       imageEditButton: false,
       facilityNameSelected: '',
       showConfirmBtn: false,
+      showConfirmBtnUserBonus: [],
       toolInfo: '',
       toolEdit: '',
       jobNameSelected:'',
       jobNames: ['Черновой монтаж', 'Чистовой монтаж','Шефмонтаж',  'Сборка щитов',
         'Концептуальное проектирование', 'Рабочее проектирование', 'Расключение шкафов',
-        'ПНР', 'Авторский надзор', 'Другие работы' ],
+        'ПНР', 'Авторский надзор', 'Менеджмент' ],
       userNameSelected: '',
       assignedUsers: [],
       bonusMoney: '',
       allHours: 0,
       individualHours: 0,
-      reportCoast: 0
+      reportCoast: 0,
+      autoBonus: false,
+      bonuses: [],
+      bonus: {},
+      bonusValue: [],
+      allBonusPercFoWorkers: 0,
+      bonusValueToDeleteId: 'nothing',
+      usersForBonuses: []
     }
   },
   mounted() {
     this.toolInfo = this.rowInputText
     console.log(this.rowInputText)
+
+    this.updateBonuses();
 
     this.updateAssignedUsers(this.job)
 
@@ -86,6 +131,15 @@ export default {
   methods: {
     showConfirmBtnFunc: function () {
       this.showConfirmBtn=true
+    },
+    manualBonusInvertFunc: function () {
+      this.autoBonus = !this.autoBonus
+      this.showConfirmBtn=true
+
+      this.job.autoBonus = this.autoBonus + 0 // присваиваем выбранный бонус
+    },
+    showConfirmBtnFuncUserBonus: function (i) {
+      this.showConfirmBtnUserBonus[i] = true;
     },
     jobNameSelect: function (jobNameSelected) {
       this.jobNameSelected = jobNameSelected;
@@ -100,7 +154,44 @@ export default {
     },
     hideConfirmBtnFunc: function () {
       this.showConfirmBtn = false
-      this.toolInfo = this.rowInputText
+    },
+    hideConfirmBtnFuncUserBonus: function (i) {
+      this.showConfirmBtnUserBonus[i] = false
+    },
+    editUserBonus: function (assignedUser, bonus, i) {
+      this.bonus = bonus
+
+      if (bonus ? bonus.value : false) { // если бонус есть уже, то редактируем, нет - создаем новый
+        this.bonus.value = this.bonusValue[i]
+
+        this.axios.put(`api/bonus/${this.bonus.id}`, this.bonus).then(result => {
+          if (result.status === 200) {
+
+            // this.editBonus(result.data)
+            this.showConfirmBtnUserBonus[i] = false
+          }
+        })
+      } else {
+        // создаем новый
+        this.bonus = {
+          value: this.bonusValue[i],
+          job: {
+            id: this.job.id
+          },
+          user: {
+            id: assignedUser.id
+          }
+        }
+
+        this.axios.post(`api/bonus`, this.bonus).then(result => {
+          if (result.status === 200) {
+            this.bonuses.push(result.data)
+            // this.bonusValue.push(result.data.value)
+            // this.editBonus(result.data)
+            this.showConfirmBtnUserBonus[i] = false
+          }
+        })
+      }
     },
     updateAssignedUsers: function (job) {
       if (job) {
@@ -112,6 +203,9 @@ export default {
             })
           }
       }
+    },
+    bonusSelectFunc: function(assignedUser) {
+      this.bonuses.find(b => b.user.id === assignedUser.id)
     },
     calculateAllBonusMoney: function () {
       this.reportCoast = this.reports
@@ -128,14 +222,23 @@ export default {
           * (this.job.marginPercentage/100)
           * (this.job.bonus/100);
     },
-    edit: function () {
+    editJob: function () {
+
+      this.job.autoBonus = this.autoBonus + 0 // присваиваем выбранный бонус
+
       this.axios.put(`api/job/${this.job.id}`, this.job).then(result => {
         if (result.status === 200) {
           this.editJob(result.data)
-          this.showConfirmBtn = false
-        } else {
-          this.toolInfo = this.rowInputText
-          this.showConfirmBtn = false
+          this.hideConfirmBtnFunc()
+
+          if (this.bonusValueToDeleteId !== 'nothing') {
+            this.bonusValue.splice(
+                this.bonusValueToDeleteId,
+                1
+            )
+            this.bonusValueToDeleteId = 'nothing'
+          }
+         // this.updateBonuses()
         }
       })
     },
@@ -146,7 +249,7 @@ export default {
           this.reports
               .filter(r => r.user) // только те отчеты которые принадлежат хоть какому-то пользователю
               .filter(r => this.assignedUsers.find(u => (u.id === r.user.id)))  // учитываем только время закрепленных за объектом сотрудников
-              .filter(r => r.user ? r.user.role.split(' ')[0] !== 'Руководитель' : false) // часы руководителей не входят
+              // .filter(r => r.user ? r.user.role.split(' ')[0] !== 'Руководитель' : false) // часы руководителей не входят
               .map(r => r.hoursOfWorking)
               .reduce((partialSum, a) => partialSum + a, 0))
     },
@@ -160,7 +263,33 @@ export default {
               .map(r => r.hoursOfWorking)
               .reduce((partialSum, a) => partialSum + a, 0))
     },
-    del: function (assignedUser) {
+    updateBonuses: function () {
+      this.bonuses = []
+      this.bonusValue = []
+      this.usersForBonuses = []
+
+      // Запрашиваем бонусы
+      this.axios.get( "api/bonus/job/" + this.job.id).then(result => {
+            result.data.forEach(t => {
+              this.bonuses.push(t)
+              this.bonusValue.push(t.value)
+              this.usersForBonuses.push(t.user)
+            })
+          }
+      )
+    },
+    del: function (assignedUser, i) {
+      var bonusToDelete = this.bonuses.find(b => b.user.id === assignedUser.id)
+
+      if (bonusToDelete)
+        this.axios.delete(`api/bonus/${bonusToDelete.id}`).then(result => {
+          if (result.status === 200) {
+
+          }
+        })
+
+      this.bonusValueToDeleteId = i
+
       this.job.users.splice(
           this.job.users.findIndex(u => u.id === assignedUser.id),
           1

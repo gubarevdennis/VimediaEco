@@ -128,8 +128,6 @@ export default {
   },
   // указываем связь данного компонента с полученными от сервара данными
   created: function () {
-
-
     if (this.role === 'admin' || this.role === 'Директор' || this.role === 'HR') {
       this.axios.get("/api/report/user").then(result =>
           result

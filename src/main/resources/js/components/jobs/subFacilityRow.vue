@@ -29,7 +29,8 @@
 import JobList from "./jobList.vue";
 export default {
   components: {JobList},
-  props: ['facility','subFacilityInner', 'editSubFacility','facilities', 'role', 'subFacilities', 'deleteSubFacility'], // получаем переменную facility
+  props: ['facility','subFacilityInner', 'editSubFacility','facilities', 'role', 'subFacilities',
+    'deleteSubFacility', 'users', 'userNames'], // получаем переменную facility
   computed: {
   },
   methods: {
