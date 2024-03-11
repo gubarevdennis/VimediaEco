@@ -26,10 +26,10 @@
           @update:model-value="manualBonusInvertFunc"
       ></v-checkbox>
 
-      <div v-if="assignedUsers[0]" style="font-weight: bold;color: #0B0B0B"> Ответственные сотрудники: &nbsp</div>
+      <div v-if="usersResult[0]" style="font-weight: bold;color: #0B0B0B"> Ответственные сотрудники: &nbsp</div>
 
       <div v-if="autoBonus">
-        <div v-for="(assignedUser, i) in usersForBonuses"
+        <div v-for="(assignedUser, i) in usersResult"
              :key="i">
           <div>
             {{ i+1 }}) {{ assignedUser.name }} -
@@ -42,7 +42,7 @@
       </div>
 
       <div v-if="!autoBonus">
-       Всего: {{
+        Всего: {{
           bonusValue
               .map(v => Number(v))
               .reduce((partialSum, a) => partialSum + a, 0)
@@ -52,7 +52,7 @@
           .map(v => Number(v))
           .reduce((partialSum, a) => partialSum + a, 0)  / (100 ) )}} р
 
-        <div v-for="(assignedUser, i) in usersForBonuses"
+        <div v-for="(assignedUser, i) in usersResult"
              :key="i">
           <div>
             {{ i+1 }}) {{ assignedUser.name }} -
@@ -116,14 +116,13 @@ export default {
       bonusValue: [],
       allBonusPercFoWorkers: 0,
       bonusValueToDeleteId: 'nothing',
-      usersForBonuses: []
+      usersForBonuses: [],
+      usersResult: []
     }
   },
   mounted() {
     this.toolInfo = this.rowInputText
     console.log(this.rowInputText)
-
-    this.updateBonuses();
 
     this.updateAssignedUsers(this.job)
 
@@ -196,12 +195,15 @@ export default {
     updateAssignedUsers: function (job) {
       if (job) {
         this.assignedUsers = []
-        if (job.users)
+        if (job.users) {
           if (job.users[0]) {
             job.users.forEach(u => {
               this.assignedUsers.push(u)
             })
           }
+
+           this.updateBonuses()
+        }
       }
     },
     bonusSelectFunc: function(assignedUser) {
@@ -238,7 +240,7 @@ export default {
             )
             this.bonusValueToDeleteId = 'nothing'
           }
-         // this.updateBonuses()
+          // this.updateBonuses()
         }
       })
     },
@@ -248,7 +250,7 @@ export default {
       return (
           this.reports
               .filter(r => r.user) // только те отчеты которые принадлежат хоть какому-то пользователю
-              .filter(r => this.assignedUsers.find(u => (u.id === r.user.id)))  // учитываем только время закрепленных за объектом сотрудников
+              .filter(r => this.usersResult.find(u => (u.id === r.user.id)))  // учитываем только время закрепленных за объектом сотрудников
               // .filter(r => r.user ? r.user.role.split(' ')[0] !== 'Руководитель' : false) // часы руководителей не входят
               .map(r => r.hoursOfWorking)
               .reduce((partialSum, a) => partialSum + a, 0))
@@ -267,6 +269,7 @@ export default {
       this.bonuses = []
       this.bonusValue = []
       this.usersForBonuses = []
+      this.usersResult = []
 
       // Запрашиваем бонусы
       this.axios.get( "api/bonus/job/" + this.job.id).then(result => {
@@ -274,7 +277,23 @@ export default {
               this.bonuses.push(t)
               this.bonusValue.push(t.value)
               this.usersForBonuses.push(t.user)
+
             })
+
+            // Создаем результирующий массив в котором все пользователи: и с бонусами и без
+            this.usersResult = this.usersForBonuses
+
+        console.log("this.usersForBonuses")
+        console.log(this.usersForBonuses)
+
+            this.assignedUsers.forEach(u => {
+              if (!this.usersForBonuses.find(u1 => u.id === u1.id))
+                this.usersResult.push(u)
+            })
+
+            // if (!this.usersForBonuses[0]) {
+            //   this.usersForBonuses = this.assignedUsers
+            // }
           }
       )
     },
