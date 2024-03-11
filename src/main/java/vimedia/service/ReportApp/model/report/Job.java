@@ -1,6 +1,7 @@
 package vimedia.service.ReportApp.model.report;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
@@ -96,6 +97,7 @@ public class Job {
 //                    referencedColumnName = "id"))
     @JsonView(Views.IdName.class)
     @JsonIgnoreProperties("bonus")
+    @JsonIgnore
     private List<Report> reports;
 
     public void addBonus(Bonus bonus) {

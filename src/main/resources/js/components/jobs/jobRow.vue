@@ -1,5 +1,5 @@
 <template>
-  <v-sheet width="320px" border>
+  <v-sheet width="320px" border v-bind:color="job.color">
     <div style="color: #0B0B0B" align="center" >
       <v-combobox
           density="compact"
@@ -23,7 +23,7 @@
       </v-autocomplete>
 
       <v-row align="center" justify="center">
-        <v-color-picker hide-canvas hide-inputs v-model="job.color" ></v-color-picker>
+        <v-color-picker hide-inputs @update:model-value="showConfirmBtnFunc" v-model="job.color" ></v-color-picker>
       </v-row>
       <br>
 
@@ -148,7 +148,8 @@ export default {
       allBonusPercFoWorkers: 0,
       bonusValueToDeleteId: 'nothing',
       usersForBonuses: [],
-      usersResult: []
+      usersResult: [],
+      colorNumber: ''
     }
   },
   mounted() {
@@ -355,6 +356,12 @@ export default {
     job: function (newVal, oldVal) {
       this.updateAssignedUsers(newVal)
     },
+  colorNumber: function (colorNumber) {
+    this.colorNumber = colorNumber
+    this.showConfirmBtn = true
+    console.log("colorNumber")
+    console.log(colorNumber)
+  }
   }
 }
 </script>

@@ -58,54 +58,56 @@ export default {
   color: '',
   methods: {
     setColorByWork: function (work) {
-      switch (work) {
-        case 'Черновой монтаж' :
-          return '#A0522D'
-          break;
-        case 'Чистовой монтаж' :
-          return '#FF0000'
-          break;
-        case 'Шефмонтаж' :
-          return '#F08080'
-          break;
-        case 'Концептуальное проектирование' :
-          return '#9ACD32'
-          break;
-        case 'Рабочее проектирование' :
-          return '#00FF00'
-          break;
-        case 'Сборка щитов' :
-          return '#BC8F8F'
-          break;
-        case 'Расключение шкафов' :
-          return '#008B8B'
-          break;
-        case 'ПНР' :
-          return '#FF4500'
-          break;
-        case 'Сервис' :
-          return '#FFA500'
-          break;
-        case 'Авторский надзор' :
-          return '#FF1493'
-          break;
-        case 'Другие работы' :
-          return '#BDB76B'
-          break;
-        case 'Отпуск оплачиваемый' :
-          return '#7FFFD4'
-          break;
-        case 'Отпуск по семейным обстоятельствам' :
-          return '#7B68EE'
-          break;
-        case 'Отпуск без сохранения ЗП' :
-          return '#00FFFF'
-        case 'Больничный' :
-          return '#800080'
-          break;
-        default:
-          return '#FFFFFF'
-      }
+      if (this.report.job)
+        return this.report.job.color
+      // switch (work) {
+      //   case 'Черновой монтаж' :
+      //     return '#A0522D'
+      //     break;
+      //   case 'Чистовой монтаж' :
+      //     return '#FF0000'
+      //     break;
+      //   case 'Шефмонтаж' :
+      //     return '#F08080'
+      //     break;
+      //   case 'Концептуальное проектирование' :
+      //     return '#9ACD32'
+      //     break;
+      //   case 'Рабочее проектирование' :
+      //     return '#00FF00'
+      //     break;
+      //   case 'Сборка щитов' :
+      //     return '#BC8F8F'
+      //     break;
+      //   case 'Расключение шкафов' :
+      //     return '#008B8B'
+      //     break;
+      //   case 'ПНР' :
+      //     return '#FF4500'
+      //     break;
+      //   case 'Сервис' :
+      //     return '#FFA500'
+      //     break;
+      //   case 'Авторский надзор' :
+      //     return '#FF1493'
+      //     break;
+      //   case 'Другие работы' :
+      //     return '#BDB76B'
+      //     break;
+      //   case 'Отпуск оплачиваемый' :
+      //     return '#7FFFD4'
+      //     break;
+      //   case 'Отпуск по семейным обстоятельствам' :
+      //     return '#7B68EE'
+      //     break;
+      //   case 'Отпуск без сохранения ЗП' :
+      //     return '#00FFFF'
+      //   case 'Больничный' :
+      //     return '#800080'
+      //     break;
+      //   default:
+      //     return '#FFFFFF'
+      // }
     }
   }
 }
