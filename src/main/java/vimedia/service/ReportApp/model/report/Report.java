@@ -50,7 +50,8 @@ public class Report {
     @JsonView(Views.IdName.class)
     @ManyToOne
     @OnDelete(action = OnDeleteAction.SET_NULL)
-    @JsonIgnoreProperties({"reports","jobs"})
+//    @JsonIgnore
+//    @JsonIgnoreProperties({"reports","jobs"})
     private User user;
 
     @JsonView(Views.IdName.class)
@@ -63,10 +64,11 @@ public class Report {
     private int hoursOfWorking;
 
     @JsonView(Views.IdName.class)
-    @ManyToMany(mappedBy = "reports")
+    @ManyToOne
     @OnDelete(action = OnDeleteAction.SET_NULL)
-    @JsonIgnore
-    private List<Job> jobs;
+//    @JsonIgnore
+    @JsonIgnoreProperties({"reports","jobs","users"})
+    private Job job;
 
     public int getId() {
         return id;
@@ -139,12 +141,12 @@ public class Report {
         this.hoursOfWorking = hoursOfWorking;
     }
 
-    public List<Job> getBonuses() {
-        return jobs;
+    public Job getJob() {
+        return job;
     }
 
-    public void setBonuses(List<Job> jobs) {
-        this.jobs = jobs;
+    public void setJob(Job job) {
+        this.job = job;
     }
 }
 

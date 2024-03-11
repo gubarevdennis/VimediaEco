@@ -11,6 +11,22 @@
           :item-value="jobNameSelected"
       >
       </v-combobox>
+      <v-autocomplete
+          density="compact"
+          label="Виды работ"
+          variant="solo"
+          @update:model-value="jobNameSelect"
+          v-model="job.type"
+          :items="jobTypes"
+          :item-value="jobTypeSelected"
+      >
+      </v-autocomplete>
+
+      <v-row align="center" justify="center">
+        <v-color-picker hide-canvas hide-inputs v-model="job.color" ></v-color-picker>
+      </v-row>
+      <br>
+
       <div style="font-weight: bold;color: #0B0B0B"> Стоимость работ: &nbsp</div>
       <input size="5" style="text-align:center"  type="text" @change="showConfirmBtnFunc" v-model="job.budget" /> р
       <div style="font-weight: bold;color: #0B0B0B"> Маржинальность: &nbsp</div>
@@ -89,6 +105,17 @@
 </template>
 
 <script>
+
+// Функция удаления дубликатов
+function removeDuplicates(arr) {
+  return arr.filter((value, index, self) =>
+      index === self.findIndex((t) => (
+          t.place === value.place && t.id === value.id
+      ))
+  )
+}
+
+
 export default {
   name: "jobRow",
   props: ['profile', 'role', 'tool', 'rowInputText' , 'editJob', 'rowInputType', 'job', 'users', 'reports', 'profileId'],
@@ -101,7 +128,11 @@ export default {
       toolInfo: '',
       toolEdit: '',
       jobNameSelected:'',
+      jobTypeSelected:'',
       jobNames: ['Черновой монтаж', 'Чистовой монтаж','Шефмонтаж',  'Сборка щитов',
+        'Концептуальное проектирование', 'Рабочее проектирование', 'Расключение шкафов',
+        'ПНР', 'Авторский надзор', 'Менеджмент' ],
+      jobTypes: ['Черновой монтаж', 'Чистовой монтаж','Шефмонтаж',  'Сборка щитов',
         'Концептуальное проектирование', 'Рабочее проектирование', 'Расключение шкафов',
         'ПНР', 'Авторский надзор', 'Менеджмент' ],
       userNameSelected: '',
@@ -143,6 +174,10 @@ export default {
     jobNameSelect: function (jobNameSelected) {
       this.jobNameSelected = jobNameSelected;
       this.showConfirmBtn=true
+    },
+    jobTypeSelect: function (jobTypeSelected) {
+      this.jobTypeSelected = jobTypeSelected;
+      this.showConfirmBtn = true
     },
     userNameSelect: function (userNameSelected) {
       this.userNameSelected = userNameSelected;
@@ -202,7 +237,7 @@ export default {
             })
           }
 
-           this.updateBonuses()
+          this.updateBonuses()
         }
       }
     },
@@ -283,8 +318,8 @@ export default {
             // Создаем результирующий массив в котором все пользователи: и с бонусами и без
             this.usersResult = this.usersForBonuses
 
-        console.log("this.usersForBonuses")
-        console.log(this.usersForBonuses)
+            console.log("this.usersForBonuses")
+            console.log(this.usersForBonuses)
 
             this.assignedUsers.forEach(u => {
               if (!this.usersForBonuses.find(u1 => u.id === u1.id))

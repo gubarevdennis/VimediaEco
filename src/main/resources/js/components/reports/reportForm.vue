@@ -222,16 +222,29 @@ export default {
                 formId: 1
               }
         }
-        if (report.typeOfWork) { this.workingTypes.push(
+        // if (report.typeOfWork) { this.workingTypes.push(
+        //     {
+        //       name: report.typeOfWork,
+        //       formId: 1
+        //     }
+        // )
+
+        // this.workingType =
+        //     {
+        //       name: report.typeOfWork,
+        //       formId: 1
+        //     }
+
+        if (report.job) { this.workingTypes.push(
             {
-              name: report.typeOfWork,
+              name: report.job,
               formId: 1
             }
         )
 
           this.workingType =
               {
-                name: report.typeOfWork,
+                name: report.job,
                 formId: 1
               }
         }
@@ -316,7 +329,8 @@ export default {
                     id: this.id ? this.id : undefined,
                     facility: {id: getIdByName(this.facilities, f.name), name: f.name},
                     subFacility: {name: this.subFacilityNames[f.formId - 1] ? this.subFacilityNames[f.formId - 1].name : ''},
-                    typeOfWork: this.workingTypes[f.formId - 1].name,
+                    typeOfWork: this.workingTypes[f.formId - 1].name.name,
+                    job: {id : this.workingTypes[f.formId - 1].name.id},
                     text: this.text,
                     hoursOfWorking: this.workingTimes[f.formId - 1].name,
                     reportDay: this.reportDay
@@ -331,7 +345,7 @@ export default {
               console.log(r)
 
               // Если все поля заполнены, то делаем запрос - нет ошибка
-              if (r.facility && r.hoursOfWorking && r.typeOfWork
+              if (r.facility && r.hoursOfWorking && r.job
                   && ((this.sumHoursPerDay <= 8) ? true : this.editReportStatus)) {
 
                 ///////// если есть id редактируем старую позицию /////////
@@ -370,7 +384,7 @@ export default {
                     } else {
                       this.reportSendConfirmField = true // выводим сообщение об успешной отправке
                     }
-                      this.reports.push(data.data)
+                    this.reports.push(data.data)
 
                     // Очищаем поля
                     this.clearForm() // очищение формы

@@ -50,7 +50,7 @@
             v-model="this.workingType"
             variant="outlined"
             @update:modelValue="clicked3"
-            label="Вид работ"
+            label="Название работы"
             :items="workingTypes"
             :item-value="workingType"
             hide-no-data="true"
@@ -113,7 +113,9 @@ export default {
       subFacilityName: '',
       filteredSubFacilities: [],
       clickSubFac: false,
-      clickFac: false
+      clickFac: false,
+      job: '',
+      jobs: []
     }
   },
   methods: {
@@ -143,8 +145,16 @@ export default {
       this.editSelect()
     },
     clicked3: function (workingType) {
-      this.clickSel3(workingType)
       this.workingType = workingType
+      this.job = this.jobs.find(j => (j.name === workingType))
+
+      console.log("this.workingTypeArray")
+      console.log(this.workingTypeArray)
+
+      console.log("this.job")
+      console.log(this.job)
+
+      this.clickSel3(this.job)
 
       this.editSelect()
     },
@@ -176,28 +186,32 @@ export default {
     },
     workingTypes: function () {
       this.workingTypeArray = [];
+      this.jobs = [];
+
       if (this.subAttrVisible) {
         if (this.clickSubFac)
-        this.axios.get('api/job/subFacility/' + this.subFacility.id).then(result =>
-            result
-                .data
-                .forEach(j => {
-                      if (j.name)
+          this.axios.get('api/job/subFacility/' + this.subFacility.id).then(result =>
+              result
+                  .data
+                  .forEach(j => {
+                        if (j.name)
+                          this.jobs.push(j)
                         this.workingTypeArray.push(j.name)
-                    }
-                )
-        )
+                      }
+                  )
+          )
       } else {
         if (this.clickFac)
-        this.axios.get('api/job/facility/' + this.facility.id).then(result =>
-            result
-                .data
-                .forEach(j => {
-                      if (j.name)
-                        this.workingTypeArray.push(j.name)
-                    }
-                )
-        )
+          this.axios.get('api/job/facility/' + this.facility.id).then(result =>
+              result
+                  .data
+                  .forEach(j => {
+                        this.jobs.push(j)
+                        if (j.name)
+                          this.workingTypeArray.push(j.name)
+                      }
+                  )
+          )
       }
       // this.workingTypeArray = ['Черновой монтаж', 'Чистовой монтаж','Шефмонтаж',  'Сборка щитов',
       //   'Концептуальное проектирование', 'Рабочее проектирование', 'Расключение шкафов',

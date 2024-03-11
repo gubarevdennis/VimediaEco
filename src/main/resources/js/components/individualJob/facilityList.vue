@@ -32,6 +32,15 @@ import facilityRow from "./facilityRow.vue";
 // const url = 'http://reports.vimedia.ru/'
 // const port = ''
 
+// Функция удаления дубликатов
+function removeDuplicates(arr) {
+  return arr.filter((value, index, self) =>
+      index === self.findIndex((t) => (
+          t.place === value.place && t.id === value.id
+      ))
+  )
+}
+
 export default {
   props: [ 'profile', 'role', 'profileId', 'addSubFacility'],
   components: {
@@ -79,13 +88,18 @@ export default {
     )
 
     // Получаем работы текущего пользователя назначен ответственным
-    this.axios.get("api/job/user/" + this.profileId).then(result =>
-        result
-            .data
-            .forEach(j => {
-              this.jobs.push(j)
+    this.axios.get("api/job/user/" + this.profileId).then(result => {
+          result
+              .data
+              .forEach(j => {
+                    this.jobs.push(j)
+                  }
+              )
 
-            }))
+          this.jobs = removeDuplicates(this.jobs)
+
+        }
+    )
 
     // Запрашиваем бонусы
     this.axios.get( "api/bonus/user/" + this.profileId).then(result => {

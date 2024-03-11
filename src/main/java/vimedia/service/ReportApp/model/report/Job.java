@@ -28,6 +28,12 @@ public class Job {
     @JsonView(Views.IdName.class)
     private String name;
 
+    @JsonView(Views.IdName.class)
+    private String type;
+
+    @JsonView(Views.IdName.class)
+    private String color;
+
     // Планируемый процент маржинальности
     @JsonView(Views.IdName.class)
     private Float marginPercentage;
@@ -82,17 +88,17 @@ public class Job {
     @JsonIgnoreProperties("job")
     private List<Bonus> bonuses;
 
-    @ManyToMany
+    @OneToMany(mappedBy = "job")
     @OnDelete(action = OnDeleteAction.SET_NULL)
-    @JoinTable(name = "job_report",
-            joinColumns = @JoinColumn(name = "job_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "report_id",
-                    referencedColumnName = "id"))
+//    @JoinTable(name = "job_report",
+//            joinColumns = @JoinColumn(name = "job_id", referencedColumnName = "id"),
+//            inverseJoinColumns = @JoinColumn(name = "report_id",
+//                    referencedColumnName = "id"))
     @JsonView(Views.IdName.class)
     @JsonIgnoreProperties("bonus")
     private List<Report> reports;
 
-    public void addBonus(Bonus bonus){
+    public void addBonus(Bonus bonus) {
         this.bonuses.add(bonus);
         bonus.setJob(this);
     }
@@ -216,5 +222,21 @@ public class Job {
 
     public void setReports(List<Report> reports) {
         this.reports = reports;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
     }
 }

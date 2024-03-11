@@ -43,7 +43,8 @@ import SubFacilityRow from "./subFacilityRow.vue";
 export default {
   data() {
     return {
-      subFacilities: []
+      subFacilities: [],
+      colorNumber: ''
     }
   },
   components: {SubFacilityRow},

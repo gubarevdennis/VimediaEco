@@ -159,7 +159,7 @@ export default {
               .forEach(u => {
                 this.users.push(u.name) // все пользователи
               })
-      this.users.unshift('Все сотрудники')
+          this.users.unshift('Все сотрудники')
         }
     )
     console.log('Прогрузил user')
@@ -185,17 +185,17 @@ export default {
       }
 
 
-       // Статистика по конкретному объекту
+      // Статистика по конкретному объекту
       var fac = this.facilities.find(f => (f.name === this.facilityNameSelected))
       if (!this.bySubFacility)
-      this.axios.get("api/report/facility/" + fac.id).then(result => {
-        this.facilityCoast =
-            result
-                .data
-                .map(r => r.user ? r.user.salary ? r.hoursOfWorking * r.user.salary / 8 : 0 : 0)
-                .reduce((partialSum, a) => partialSum + a, 0)
-          }
-      )
+        this.axios.get("api/report/facility/" + fac.id).then(result => {
+              this.facilityCoast =
+                  result
+                      .data
+                      .map(r => r.user ? r.user.salary ? r.hoursOfWorking * r.user.salary / 8 : 0 : 0)
+                      .reduce((partialSum, a) => partialSum + a, 0)
+            }
+        )
 
       if (this.byFacility) {
         return this.sortedReportsByFacility = reports.filter(r => ((r.facility ? r.facility.name : '') === this.facilityNameSelected))}
@@ -267,7 +267,7 @@ export default {
         return this.sortedReportsByWork = reports}
 
       if (this.byWork) {
-        return this.sortedReportsByWork = reports.filter(r => r.typeOfWork === this.workNameSelected)}
+        return this.sortedReportsByWork = reports.filter(r => r.job).filter(r => r.job.type === this.workNameSelected)}
 
     },
     resultFilter: function () {
