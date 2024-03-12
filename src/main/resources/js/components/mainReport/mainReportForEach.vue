@@ -211,7 +211,7 @@ export default {
         return this.sortedReportsByWork = reports}
 
       if (this.byWork) {
-        return this.sortedReportsByWork = reports.filter(r => r.typeOfWork === this.workNameSelected)}
+        return this.sortedReportsByWork = reports.filter(r => r.job).filter(r => r.job.type === this.workNameSelected)}
 
     },
     resultFilter: function () {

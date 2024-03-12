@@ -1,5 +1,5 @@
 <template>
-  <v-sheet>
+  <v-sheet v-bind:color="facility.color">
     <div>
       <v-row>
         <v-col cols="10">

@@ -1,5 +1,5 @@
 <template>
-  <v-sheet>
+  <v-sheet v-bind:color="facility.color">
     <div v-if="subFacilities[0]">
       <v-row>
         <v-col cols="10">
@@ -9,10 +9,9 @@
         </v-col>
         <v-col cols="10" v-if="subFacilities">
           <div v-for="subFacilityInner in subFacilities" :key="subFacilityInner.id">
-            <v-card-text>
-              Ответственный: {{ subFacilityInner.user && subFacilityInner.user.role ? subFacilityInner.user.name + ", " +  subFacilityInner.user.role.toLowerCase(): ''}}
-            </v-card-text>
-            <v-card @click="turnOverlayAndSetSubFacilityToJobList(overlay, subFacilityInner)" color="#F9F9F9" height="65px" rounded="xl"  class="pa-2 ma-2" >
+            <v-card
+                @click="turnOverlayAndSetSubFacilityToJobList(overlay, subFacilityInner)"
+                color="#F9F9F9" height="65px"  class="pa-2 ma-2" >
               <sub-facility-row
                   :deleteSubFacility="deleteSubFacility"
                   :subFacilityAttr="subFacility"
@@ -24,11 +23,18 @@
                   :userNames="userNames"
               />
             </v-card>
+            <v-card-text>
+              Ответственный:
+              <div style="font-weight: bold">
+              {{ subFacilityInner.user && subFacilityInner.user.role ? subFacilityInner.user.name + ", " +  subFacilityInner.user.role.toLowerCase(): ''}}
+              </div>
+            </v-card-text>
+            <br>
             <v-autocomplete
                 v-if="this.role === 'Директор'"
-                density="compact"
+                density=0
                 label="Выбрать ответственного"
-                variant="solo"
+                variant="underlined"
                 @update:model-value="userNameSelect"
                 :items="users.map(u => u.name)"
                 :item-value="userNameSelected"
@@ -52,19 +58,22 @@
             <v-card-title primary-title>
               {{facility.name}}
             </v-card-title>
+            <v-card-text>
+              Ответственный:
+              <div style="font-weight: bold">
+              {{ facility.user && facility.user.role ? facility.user.name + ", " +  facility.user.role.toLowerCase(): ''}}
+              </div>
+            </v-card-text>
           </v-col>
-          <v-card-text>
-            Ответственный: {{ facility.user && facility.user.role ? facility.user.name + ", " +  facility.user.role.toLowerCase(): ''}}
-          </v-card-text>
           <v-spacer></v-spacer>
         </v-row>
-
       </v-card>
+      <br>
       <v-autocomplete
           v-if="this.role === 'Директор'"
-          density="compact"
+          density=0
           label="Выбрать ответственного"
-          variant="solo"
+          variant="underlined"
           @update:model-value="userNameSelect"
           :items="users.map(u => u.name)"
           :item-value="userNameSelected"
