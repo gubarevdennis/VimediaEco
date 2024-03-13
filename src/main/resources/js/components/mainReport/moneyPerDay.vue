@@ -39,7 +39,7 @@ export default {
       this.money = 0;
       var calcMoney = 0;
 
-      var filteredByDayReports = this.reports.filter(r => (new Date(
+      var filteredByDayReports = this.reports.filter(r => r.user).filter(r => (new Date(
           r.reportDay.substr(6, 4),
           r.reportDay.substr(3, 2) - 1,
           r.reportDay.substr(0, 2))).toString() === day.toString())

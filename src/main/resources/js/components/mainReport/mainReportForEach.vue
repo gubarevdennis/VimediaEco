@@ -104,7 +104,7 @@ export default {
               .forEach(r => {
                 this.reports.push(r) // все отчеты
               })
-          this.sortedReports = this.reports;
+          this.sortedReports = this.reports.filter(r => r.user);
           console.log(this.reports)
         }
     )

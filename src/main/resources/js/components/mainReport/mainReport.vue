@@ -109,7 +109,7 @@ export default {
               .forEach(r => {
                 this.reports.push(r) // все отчеты
               })
-          this.sortedReports = this.reports // без сортировки
+          this.sortedReports = this.reports.filter(r => r.user) // без сортировки
         }
     )
 
@@ -229,7 +229,7 @@ export default {
       }
 
       if (this.byUser) {
-        return this.sortedReportsByUser = reports.filter(r => r.user.name === this.userNameSelected)
+        return this.sortedReportsByUser = reports.filter(r => r.user).filter(r => r.user.name === this.userNameSelected)
       }
     },
     selectWork: function (workNameSelected) {
@@ -272,7 +272,6 @@ export default {
             .subFacilities.forEach(s => this.subFacilities.push(s))
       this.subFacilities.unshift({name : 'Все подобъекты'}) // так как в subFacilities объекты а не имена, все подобъекты тоже добавил как фальш подобьект
     },
-
     updateAllReports: function (month) {
       this.reports = []
       console.log('Запустил mounted')
@@ -283,7 +282,7 @@ export default {
                 .forEach(r => {
                   this.reports.push(r) // все отчеты
                 })
-            this.sortedReports = this.reports // без сортировки
+            this.sortedReports = this.reports.filter(r => r.user) // без сортировки
             this.resultFilter()
           }
       )
