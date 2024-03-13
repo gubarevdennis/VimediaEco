@@ -81,11 +81,11 @@ export default {
                     fac.subFacilities.forEach(s => {
                       this.subFacilities.push(s)
                     })
-                    console.log(this.facilities)
                   }
                 }
             )
     )
+
 
     // Получаем работы текущего пользователя назначен ответственным
     this.axios.get("api/job/user/" + this.profileId).then(result => {

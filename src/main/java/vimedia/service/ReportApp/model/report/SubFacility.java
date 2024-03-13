@@ -1,6 +1,7 @@
 package vimedia.service.ReportApp.model.report;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
@@ -35,18 +36,18 @@ public class SubFacility {
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.SET_NULL)
-    @JsonIgnoreProperties("subFacilities")
+    @JsonIgnoreProperties({"subFacilities", "user"})
     @JsonView(Views.IdName.class)
     private Facility facility;
 
     @OneToMany(mappedBy = "subFacility")
     @OnDelete(action = OnDeleteAction.SET_NULL)
-    @JsonIgnoreProperties("subFacility")
+    @JsonIgnore
     private List<Report> reports;
 
     @OneToMany(mappedBy = "subFacility")
 //    @JsonView(Views.IdName.class)
-    @JsonIgnoreProperties("subFacility")
+    @JsonIgnore
     private List<Job> jobs;
 
     @ManyToOne

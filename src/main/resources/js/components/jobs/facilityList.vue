@@ -93,7 +93,7 @@ export default {
 
     // Добавление объектов
     if (this.role === 'admin' || this.role === 'Директор' || this.role === 'HR' || this.role === 'Диспетчер'
-        || this.role === 'Руководитель отдела ведения проектов') {
+        || this.role === 'Руководитель отдела ведения проектов' || this.role.split(' ')[0] === 'Руководитель') {
       this.axios.get( "api/facility").then(result =>
           result
               .data

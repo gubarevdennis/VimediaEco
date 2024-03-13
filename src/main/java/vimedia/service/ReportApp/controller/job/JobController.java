@@ -122,6 +122,10 @@ public class JobController {
 
         BeanUtils.copyProperties(job,jobFromDB,"id"); // заменяет поля кроме id
 
+
+        System.out.println("job");
+        System.out.println(job);
+
         //Отправка в чат
         // Находим пользователя
         User user = userRepo.findByName(myUserDetails.getUsername()).orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден!"));
@@ -153,7 +157,7 @@ public class JobController {
             if (chatId != null) {
                 outMess.setChatId(chatId);
             }
-            if (job.getSubFacility() != null) {
+            if (job.getSubFacility() != null && job.getBudget() != null && job.getBonus() != null && job.getMarginPercentage() != null && job.getFacility() != null ) {
                 outMess.setText(user.getRole() + " " + user.getName() + " назначил вас ответственным за проведение работы " + job.getName().toLowerCase() + " на объекте " + job.getFacility().getName() + ", " + String.valueOf(job.getSubFacility().getName()) +
                         ". Бонусная база за данную работу составляет " + Math.round(job.getBudget() * (job.getBonus() / 100) * (job.getMarginPercentage() / 100) * 0.8) + "р. Удачи, бро!" + "http://reports.vimedia.ru/bonus");
             } else {

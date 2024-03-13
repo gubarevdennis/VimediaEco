@@ -71,7 +71,7 @@ public class Job {
     @JsonView(Views.IdName.class)
     @ManyToOne
     @OnDelete(action = OnDeleteAction.SET_NULL)
-    @JsonIgnoreProperties("reports")
+    @JsonIgnoreProperties({"jobs"})
     private SubFacility subFacility;
 
     @ManyToMany
@@ -96,7 +96,6 @@ public class Job {
 //            inverseJoinColumns = @JoinColumn(name = "report_id",
 //                    referencedColumnName = "id"))
     @JsonView(Views.IdName.class)
-    @JsonIgnoreProperties("bonus")
     @JsonIgnore
     private List<Report> reports;
 

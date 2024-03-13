@@ -20,6 +20,8 @@
                     :profile="profile" :role="role" :profileId="profileId"
                 >
                 </job-row>
+            <br>
+            <br>
             <v-row justify="center" align-content="center" style="margin-bottom: 5px">
               <v-btn v-if="showConfirmBtn" color="green"  @click="edit" > Применить </v-btn>
 

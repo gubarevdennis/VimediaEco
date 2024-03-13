@@ -5,35 +5,22 @@
     </v-card-title>
     <v-card-text v-for="job in jobs">
       <div v-if="job.autoBonus">
-        <div  v-if=" this.role.split(' ')[0] !== 'Руководитель'">
+        <div >
           <div style="color: #006600; font-weight: bold; font-size: 20px"> {{ calculateIndividualHours(job) !== 0 ?
-              Math.round(calculateAllBonusMoney(job) * (job.workerBonus /100) * calculateIndividualHours(job) / calculateAllHours(job)) : 0 }} р </div>
-          <div style="color: red; font-size: 18px"> {{ job.name }} </div>
-          за {{calculateIndividualHours(job)}} ч из {{calculateAllHours(job)}} ч
-        </div>
-        <div style="font-size: 25px" v-if=" this.role.split(' ')[0] === 'Руководитель'">
-          <div style="color: #006600; font-weight: bold; font-size: 20px"> {{ Math.round(calculateAllBonusMoney(job) * ((100 - job.workerBonus) /100)) }} р </div>
+              Math.round(calculateAllBonusMoney(job)  * calculateIndividualHours(job) / calculateAllHours(job)) : 0 }} р </div>
           <div style="color: red; font-size: 18px"> {{ job.name }} </div>
           за {{calculateIndividualHours(job)}} ч из {{calculateAllHours(job)}} ч
         </div>
       </div>
       <div v-if="!job.autoBonus">
-        <div v-if=" this.role.split(' ')[0] !== 'Руководитель'">
+        <div>
           <div style="color: #006600; font-weight: bold; font-size: 20px">
             {{this.bonuses.find(b => b.job.id === job.id) ?
-              Math.round((this.bonuses.find(b => b.job.id === job.id).value / 100) * calculateAllBonusMoney(job) * (job.workerBonus /100))
+              Math.round((this.bonuses.find(b => b.job.id === job.id).value / 100) * calculateAllBonusMoney(job))
               : '0'}} р
           </div>
           <div style="color: red; font-size: 18px"> {{ job.name }} </div>
           за {{calculateIndividualHours(job)}} ч из {{calculateAllHours(job)}} ч
-        </div>
-        <div v-if=" this.role.split(' ')[0] === 'Руководитель'">
-          <div style="color: #006600; font-weight: bold; font-size: 20px"> {{ Math.round(calculateAllBonusMoney(job) * 0.1) }} р </div>
-          {{this.bonuses.find(b => b.job.id === job.id) ?
-            Math.round((this.bonuses.find(b => b.job.id === job.id).value / 100) * calculateAllBonusMoney(job) * (job.workerBonus /100))
-            : '0'}} р
-          <div style="color: red; font-size: 18px"> {{ job.name }} </div>
-          за {{calculateIndividualHours(job) }} ч из {{calculateAllHours(job)}} ч
         </div>
       </div>
     </v-card-text>
@@ -87,7 +74,8 @@ export default {
       this.reportCoast = this.reports
           .filter(r => r.user)
           .filter(r => r.user.salary !== null)
-          .filter(r => (r.typeOfWork === job.name))
+          .filter(r => r.job)
+          .filter(r => (r.job.id === job.id))
           .map(r => r.hoursOfWorking * r.user.salary/8)
           .reduce((partialSum, a) => partialSum + a, 0)
 
@@ -107,7 +95,8 @@ export default {
               .filter(r => r.user)
               .filter(r => job.users ? job.users.find(u => (u.id === r.user.id)) : false) // учитываем только время закрепленных за объектом сотрудников
               .filter(r => r.user ? r.user.role.split(' ')[0] !== 'Руководитель' : false)
-              .filter(r => (r.typeOfWork === job.name))
+              .filter(r => r.job)
+              .filter(r => (r.job.id === job.id))
               .map(r => r.hoursOfWorking)
               .reduce((partialSum, a) => partialSum + a, 0))
     },
@@ -118,7 +107,8 @@ export default {
           this.reports
               .filter(r => r.user)
               .filter(r => r.user.id === this.profileId)
-              .filter(r => (r.typeOfWork === job.name))
+              .filter(r => r.job)
+              .filter(r => (r.job.id === job.id))
               .map(r => r.hoursOfWorking)
               .reduce((partialSum, a) => partialSum + a, 0))
 

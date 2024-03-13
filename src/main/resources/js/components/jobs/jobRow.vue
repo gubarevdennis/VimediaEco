@@ -248,6 +248,7 @@ export default {
     calculateAllBonusMoney: function () {
       this.reportCoast = this.reports
           .filter(r => r.user)
+          .filter(r => r.job)
           .filter(r => r.user.salary !== null)
           .map(r => r.hoursOfWorking * r.user.salary/8)
           .reduce((partialSum, a) => partialSum + a, 0)
@@ -286,6 +287,7 @@ export default {
       return (
           this.reports
               .filter(r => r.user) // только те отчеты которые принадлежат хоть какому-то пользователю
+              .filter(r => r.job)
               .filter(r => this.usersResult.find(u => (u.id === r.user.id)))  // учитываем только время закрепленных за объектом сотрудников
               // .filter(r => r.user ? r.user.role.split(' ')[0] !== 'Руководитель' : false) // часы руководителей не входят
               .map(r => r.hoursOfWorking)
@@ -297,6 +299,7 @@ export default {
       return  (
           this.reports
               .filter(r => r.user)
+              .filter(r => r.job)
               .filter(r => r.user.id === assignedUser.id)
               .map(r => r.hoursOfWorking)
               .reduce((partialSum, a) => partialSum + a, 0))

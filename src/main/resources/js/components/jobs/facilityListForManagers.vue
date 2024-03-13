@@ -103,6 +103,20 @@ export default {
                 }
             ))
 
+
+    // // Получаем подобьектом в которых текущий пользователь назначен ответственным
+    // this.axios.get("api/subFacility/user/" + this.profileId).then(result =>
+    //     result
+    //         .data
+    //         .forEach(fac => {
+    //               if (!this.subFacilities.find((f) => f.id === fac.id)) {
+    //                 this.subFacilities.push(fac)
+    //                 this.facilities.push(fac.facility)
+    //               }
+    //             }
+    //         )
+    // )
+
     // Запрашиваем пользователей
     this.axios.get( "api/user").then(tools => {
           tools.data.forEach(t => {

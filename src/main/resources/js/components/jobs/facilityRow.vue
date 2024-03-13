@@ -31,7 +31,6 @@
             </v-card-text>
             <br>
             <v-autocomplete
-                v-if="this.role === 'Директор'"
                 density=0
                 label="Выбрать ответственного"
                 variant="underlined"
@@ -70,7 +69,6 @@
       </v-card>
       <br>
       <v-autocomplete
-          v-if="this.role === 'Директор'"
           density=0
           label="Выбрать ответственного"
           variant="underlined"

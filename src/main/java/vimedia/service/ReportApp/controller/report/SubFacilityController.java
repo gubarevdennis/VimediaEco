@@ -6,15 +6,15 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
-import vimedia.service.ReportApp.model.report.Facility;
-import vimedia.service.ReportApp.model.report.SubFacility;
-import vimedia.service.ReportApp.model.report.Views;
+import vimedia.service.ReportApp.model.report.*;
 import vimedia.service.ReportApp.repo.report.FacilityRepo;
 import vimedia.service.ReportApp.repo.report.SubFacilityRepo;
+import vimedia.service.ReportApp.repo.report.UserRepo;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -22,11 +22,13 @@ import java.util.stream.Collectors;
 public class SubFacilityController {
     private final SubFacilityRepo subFacilityRepo;
     private final FacilityRepo facilityRepo;
+    private final UserRepo userRepo;
 
     @Autowired
-    public SubFacilityController(SubFacilityRepo subFacilityRepo, FacilityRepo facilityRepo) {
+    public SubFacilityController(SubFacilityRepo subFacilityRepo, FacilityRepo facilityRepo, UserRepo userRepo) {
         this.subFacilityRepo = subFacilityRepo;
         this.facilityRepo = facilityRepo;
+        this.userRepo = userRepo;
     }
 
     @GetMapping
@@ -38,6 +40,13 @@ public class SubFacilityController {
                 return o1.getName().toUpperCase().compareTo(o2.getName().toUpperCase());
             }
         }).collect(Collectors.toList()); // сортировка
+    }
+
+    // Получаем прикрепленные к пользователю подобьекты
+    @GetMapping("/user/{id}")
+    @JsonView(Views.IdName.class)
+    public List<SubFacility> getByUser(@PathVariable("id") User user) {
+        return user.getSubFacilities();
     }
 
     @GetMapping("/sumTime/{id}")
@@ -102,9 +111,21 @@ public class SubFacilityController {
 
     @PutMapping("{id}")
     public SubFacility update(@PathVariable("id") SubFacility subFacilityFromDB, // из базы данных
-                           @RequestBody SubFacility subFacility) { // от пользователя
+                              @RequestBody SubFacility subFacility) { // от пользователя
 
         BeanUtils.copyProperties(subFacility,subFacilityFromDB,"id"); // заменяет поля кроме id
+
+        User user = subFacility.getUser();
+
+        Optional<User> userFromDB = userRepo.findById(user.getId().intValue());
+
+        System.out.println(userFromDB);
+
+        if (userFromDB.isPresent()) {
+            userFromDB.get().addFacility(subFacility.getFacility());
+
+            userRepo.save(userFromDB.get());
+        }
 
         return subFacilityRepo.save(subFacilityFromDB);
     }
