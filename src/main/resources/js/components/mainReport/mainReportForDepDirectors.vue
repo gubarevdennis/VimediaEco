@@ -135,24 +135,25 @@ export default {
                     this.reports.push(r) // все отчеты
                   }
 
-                      if (r.facility && (this.role !== 'Руководитель проектов'))
-                        if (!(this.facilities.find(f => (f.name === r.facility.name)))
-                            && ((this.role === 'Руководитель проектов') ? (r.user.name === this.profile) : true)) {
-                          if (r.facility) {
-                            this.facilities.push({
-                              id: r.facility.id,
-                              name: r.facility.name,
-                              subFacilities: r.facility.subFacilities
-                            }) // все по которым отчитывался руководитель
-                            this.facilityNames.push(r.facility.name) // все по которым отчитывался руководитель
-                          }
-                        }
+                if (r.facility && (this.role !== 'Руководитель проектов'))
+                  if (!(this.facilities.find(f => (f.name === r.facility.name)))
+                      && ((this.role === 'Руководитель проектов') ? (r.user.name === this.profile) : true)) {
+                    if (r.facility) {
+                      this.facilities.push({
+                        id: r.facility.id,
+                        name: r.facility.name,
+                        subFacilities: r.facility.subFacilities
+                      }) // все по которым отчитывался руководитель
+                      this.facilityNames.push(r.facility.name) // все по которым отчитывался руководитель
+                    }
+                  }
               })
           //
           //if (this.role === 'Руководитель проектов')
           //   this.reports = this.reports.filter(r => (this.facilities.find(f => ((r.facility ? r.facility.name : '') === f.name)))) // сортировка по объектам менеджеров
           // }
-          this.sortedReports = this.reports.filter(r => r.user)
+          this.reports = this.reports.filter(r => r.user)
+          this.sortedReports = this.reports
           // this.facilityNames.unshift('Все объекты')
 
         }
@@ -345,7 +346,8 @@ export default {
                       }
                     })
                 this.reports = this.reports.filter(r => (this.facilities.find(f => (r.facility.name === f.name)))) // без сортировки
-                this.sortedReports = this.reports.filter(r => r.user)
+                this.reports = this.reports.filter(r => r.user)
+                this.sortedReports = this.reports
                 this.facilityNames.unshift('Все объекты')
                 this.resultFilter()
               }

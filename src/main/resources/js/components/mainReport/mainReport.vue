@@ -109,7 +109,8 @@ export default {
               .forEach(r => {
                 this.reports.push(r) // все отчеты
               })
-          this.sortedReports = this.reports.filter(r => r.user) // без сортировки
+      this.reports = this.reports.filter(r => r.user)
+          this.sortedReports = this.reports // без сортировки
         }
     )
 
@@ -282,7 +283,10 @@ export default {
                 .forEach(r => {
                   this.reports.push(r) // все отчеты
                 })
-            this.sortedReports = this.reports.filter(r => r.user) // без сортировки
+
+            this.reports = this.reports.filter(r => r.user)
+
+            this.sortedReports = this.reports // без сортировки
             this.resultFilter()
           }
       )
