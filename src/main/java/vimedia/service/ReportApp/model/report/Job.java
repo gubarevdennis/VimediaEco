@@ -35,11 +35,27 @@ public class Job {
     @JsonView(Views.IdName.class)
     private String color;
 
-    // Планируемый процент маржинальности
+    // Процент перевода в маржу
     @JsonView(Views.IdName.class)
     private Float marginPercentage;
 
-    // Бонусная база
+    // Налоги
+    @JsonView(Views.IdName.class)
+    private Float taxes;
+
+    // Возврат
+    @JsonView(Views.IdName.class)
+    private Float refund;
+
+    // Расходы
+    @JsonView(Views.IdName.class)
+    private Float expenses;
+
+    // С НДС или без НДС
+    @JsonView(Views.IdName.class)
+    private Integer nds;
+
+    // Процент от маржи на бонусы
     @JsonView(Views.IdName.class)
     private Float bonus;
 
@@ -217,6 +233,30 @@ public class Job {
 //    UNIQUE (usr_id, job_id);
 
 
+    public Float getTaxes() {
+        return taxes;
+    }
+
+    public void setTaxes(Float taxes) {
+        this.taxes = taxes;
+    }
+
+    public Float getRefund() {
+        return refund;
+    }
+
+    public void setRefund(Float refund) {
+        this.refund = refund;
+    }
+
+    public Float getExpenses() {
+        return expenses;
+    }
+
+    public void setExpenses(Float expenses) {
+        this.expenses = expenses;
+    }
+
     public List<Report> getReports() {
         return reports;
     }
@@ -239,5 +279,13 @@ public class Job {
 
     public void setColor(String color) {
         this.color = color;
+    }
+
+    public Integer getNds() {
+        return nds;
+    }
+
+    public void setNds(Integer nds) {
+        this.nds = nds;
     }
 }

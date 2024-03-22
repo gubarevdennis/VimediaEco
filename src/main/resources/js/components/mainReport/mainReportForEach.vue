@@ -159,7 +159,6 @@ export default {
 
       if (this.byFacility) {
         return this.sortedReportsByFacility = reports.filter(r => (r.facility ? r.facility.name : '') === this.facilityNameSelected)}
-
     },
     selectSubFacility: function (subFacilityNameSelected) {
       console.log('Запустил selectSubFacility')

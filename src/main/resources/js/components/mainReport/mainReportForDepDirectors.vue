@@ -158,6 +158,7 @@ export default {
 
         }
     )
+
     // Добавление объектов
     if (this.role === 'Руководитель проектов') {
       this.axios.get("api/facility/user/" + this.profileId).then(result => {
@@ -319,36 +320,39 @@ export default {
         ,
         updateAllReports: function (month) {
           this.reports = []
-          this.facilityNames = []
-          this.facilities = []
+//          this.facilityNames = []
+//          this.facilities = []
           console.log('Запустил mounted')
-          this.axios.get("api/report").then(result => {
+          this.axios.get( `api/report/month/${month}`).then(result => {
                 result
                     .data
                     .forEach(r => {
 
-                      if ((r.user.role === departmentNameFromDepDirectorReturn(this.role)[0])
-                          || (r.user.role === departmentNameFromDepDirectorReturn(this.role)[1])
-                          || (r.user.role === departmentNameFromDepDirectorReturn(this.role)[2])
-                          || (r.user.role === departmentNameFromDepDirectorReturn(this.role)[3])
-                          || (r.user.role === departmentNameFromDepDirectorReturn(this.role)[4])) {
-                        this.reports.push(r) // все отчеты
-                      }
+                      if (r.user)
+                        if ((r.user.role === departmentNameFromDepDirectorReturn(this.role)[0])
+                            || (r.user.role === departmentNameFromDepDirectorReturn(this.role)[1])
+                            || (r.user.role === departmentNameFromDepDirectorReturn(this.role)[2])
+                            || (r.user.role === departmentNameFromDepDirectorReturn(this.role)[3])
+                            || (r.user.role === departmentNameFromDepDirectorReturn(this.role)[4])) {
+                          this.reports.push(r) // все отчеты
+                        }
 
-                      if (!(this.facilities.find(f => (f.name === r.facility.name)))
-                          && ((this.role === 'Руководитель проектов') ? (r.user.name === this.profile) : true)) {
-                        this.facilities.push({
-                          id: r.facility.id,
-                          name: r.facility.name,
-                          subFacilities: r.facility.subFacilities
-                        }) // все по которым отчитывался руководитель
-                        this.facilityNames.push(r.facility.name) // все по которым отчитывался руководитель
-                      }
+                        if (r.facility && r.user)
+                        if (!(this.facilities.find(f => (f.name === r.facility.name)))
+                            && ((this.role === 'Руководитель проектов') ? (r.user.name === this.profile) : true)) {
+                          // this.facilities.push({
+                          //   id: r.facility.id,
+                          //   name: r.facility.name,
+                          //   subFacilities: r.facility.subFacilities
+                          // }) // все по которым отчитывался руководитель
+                          // this.facilityNames.push(r.facility.name) // все по которым отчитывался руководитель
+                        }
+
                     })
                 this.reports = this.reports.filter(r => (this.facilities.find(f => (r.facility.name === f.name)))) // без сортировки
                 this.reports = this.reports.filter(r => r.user)
                 this.sortedReports = this.reports
-                this.facilityNames.unshift('Все объекты')
+                // this.facilityNames.unshift('Все объекты')
                 this.resultFilter()
               }
           )
