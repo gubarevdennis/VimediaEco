@@ -89,16 +89,21 @@ export default {
                 ))
     } else {
 // фильтруем под человека
-      this.axios.get("api/user/" + this.profileId).then(result =>
+      // Добавление объектов
+        this.axios.get("api/facility/user/" + this.profileId).then(result => {
           result
               .data
-              .reports.forEach(r => {
-                if (!this.facilities.find((f) => f.id === r.facility.id)) {
-                  this.facilities.push(r.facility)
-                }
-              }
-          )
-      )
+              .forEach(fac => {
+                    if (!this.facilities.find((f) => f.id === fac.id)) {
+                      this.facilities.push({
+                        id: fac.id,
+                        name: fac.name,
+                        subFacilities: fac.subFacilities
+                      }) // все за которыми закреплен
+                    }
+                  }
+              )
+        })
     }
 
   },

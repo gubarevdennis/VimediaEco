@@ -83,8 +83,8 @@ export default {
       console.log(this.reportCoast)
 
 
-      return (job.budget -this.reportCoast)
-          * (job.marginPercentage/100)
+      return (job.budget - this.reportCoast - job.taxes
+          - job.refund - job.expenses)
           * (job.bonus/100);
     },
     calculateAllHours: function (job) {

@@ -30,7 +30,7 @@
         </v-col>
         <v-col cols="10">
           <v-card v-if="subFacilities" color="#F9F9F9" rounded="xl" v-for="subFacility in subFacilities.filter(s => jobs.filter(j => (j.subFacility ? (j.subFacility.id === s.id) : false))[0])" :key="subFacility.id" class="pa-2 ma-2" >
-            <div >
+            <div>
               <sub-facility-row
                   :deleteSubFacility="deleteSubFacility"
                   :subFacility="subFacility"
@@ -98,7 +98,7 @@ export default {
   },
   methods: {
     calculateAllBonusMoney: function (job) {
-      console.log("this.bonusMoney")
+      console.log("this.bonusMoney" + job.name)
       console.log(this.bonusMoney)
 
       this.reportCoast = this.reports
@@ -109,16 +109,16 @@ export default {
           .map(r => r.hoursOfWorking * r.user.salary/8)
           .reduce((partialSum, a) => partialSum + a, 0)
 
-      console.log("reportCoast")
+      console.log("reportCoast" + job.name)
       console.log(this.reportCoast)
 
-      return (job.budget - this.reportCoast)
-          * (job.marginPercentage/100)
+      return (job.budget - this.reportCoast - job.taxes
+          - job.refund - job.expenses)
           * (job.bonus/100);
 
     },
     calculateAllHours: function (job) {
-      console.log("this.allHours")
+      console.log("this.allHours" + job.name)
       console.log(this.allHours)
       return (
           this.reports
@@ -129,12 +129,10 @@ export default {
               .filter(r => (r.job.id === job.id))
               .map(r => r.hoursOfWorking)
               .reduce((partialSum, a) => partialSum + a, 0))
-
-
     },
     calculateIndividualHours: function (job) {
-      console.log("this.individualHours")
-      console.log(this.individualHours)
+      console.log("this.individualHours" + job.name)
+      console.log(this.individualHours )
       return  (
           this.reports
               .filter(r => r.user)
@@ -143,9 +141,6 @@ export default {
               .filter(r => (r.job.id === job.id))
               .map(r => r.hoursOfWorking)
               .reduce((partialSum, a) => partialSum + a, 0))
-
-
-
     }
   },
   watch: {

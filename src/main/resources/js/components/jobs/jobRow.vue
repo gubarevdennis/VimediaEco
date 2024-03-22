@@ -28,15 +28,26 @@
       <br>
 
       <div style="font-weight: bold;color: #0B0B0B"> Стоимость работ: &nbsp</div>
-      <input size="5" style="text-align:center"  type="text" @change="showConfirmBtnFunc" v-model="job.budget" /> р
-      <div style="font-weight: bold;color: #0B0B0B"> Маржинальность: &nbsp</div>
-      <input size="1" style="text-align:center"  type="text" @change="showConfirmBtnFunc" v-model="job.marginPercentage" /> %
-      <div style="font-weight: bold;color: #0B0B0B"> Бонусная база: &nbsp</div>
-      <input size="1" style="text-align:center" type="text" @change="showConfirmBtnFunc" v-model="job.bonus" /> %
+      <input size="5" style="text-align:center"  type="text" @input="showConfirmBtnFunc" v-model="job.budget" /> р
+      <div style="font-weight: bold;color: #0B0B0B"> Налоги: &nbsp</div>
+      <input size="5" style="text-align:center"  type="text" @input="showConfirmBtnFunc" v-model="job.taxes" /> р
+      <div style="font-weight: bold;color: #0B0B0B"> Возврат: &nbsp</div>
+      <input size="5" style="text-align:center"  type="text" @input="showConfirmBtnFunc" v-model="job.refund" /> р
+      <div style="font-weight: bold;color: #0B0B0B"> Расходы: &nbsp</div>
+      <input size="5" style="text-align:center"  type="text" @input="showConfirmBtnFunc" v-model="job.expenses" /> р
+      <div style="font-weight: bold;color: #0B0B0B"> Процент от маржи на бонусы: &nbsp</div>
+      <input size="5" style="text-align:center" type="text" @input="showConfirmBtnFunc" v-model="job.bonus" /> %
       <div style="font-weight: bold;color: #0B0B0B"> Текущий бонус за объект: &nbsp</div>
-      {{ Math.round(calculateAllBonusMoney()) }} р
+      {{ this.calculateAllBonusMoney() }} р
 
       <v-checkbox
+          density="0"
+          label="С НДС"
+          :model-value="this.nds = Boolean(job.nds)"
+          @update:model-value="manualNDSInvertFunc"
+      ></v-checkbox>
+      <v-checkbox
+          density="0"
           label="Автоматический расчет бонусов"
           :model-value="this.autoBonus = Boolean(job.autoBonus)"
           @update:model-value="manualBonusInvertFunc"
@@ -49,7 +60,7 @@
              :key="i">
           <div>
             {{ i+1 }}) {{ assignedUser.name }} -
-            {{ calculateAllHours() === 0 ?  0 : Math.round(calculateAllBonusMoney()  * calculateIndividualHours(assignedUser) / ( calculateAllHours()))}} р
+            {{ calculateAllHours() === 0 ?  0 : Math.round(this.calculateAllBonusMoney()  * calculateIndividualHours(assignedUser) / ( calculateAllHours()))}} р
             за {{calculateIndividualHours(assignedUser)}} ч из {{calculateAllHours()}} ч
             <v-btn
                 @click="del(assignedUser, i)" icon="mdi-delete">  </v-btn>
@@ -142,6 +153,7 @@ export default {
       individualHours: 0,
       reportCoast: 0,
       autoBonus: false,
+      nds: false,
       bonuses: [],
       bonus: {},
       bonusValue: [],
@@ -168,6 +180,12 @@ export default {
       this.showConfirmBtn=true
 
       this.job.autoBonus = this.autoBonus + 0 // присваиваем выбранный бонус
+    },
+    manualNDSInvertFunc: function () {
+      this.nds = !this.nds
+      this.showConfirmBtn=true
+
+      this.job.nds = this.nds + 0 //
     },
     showConfirmBtnFuncUserBonus: function (i) {
       this.showConfirmBtnUserBonus[i] = true;
@@ -246,6 +264,9 @@ export default {
       this.bonuses.find(b => b.user.id === assignedUser.id)
     },
     calculateAllBonusMoney: function () {
+      console.log("reports")
+      console.log(this.reports)
+
       this.reportCoast = this.reports
           .filter(r => r.user)
           .filter(r => r.job)
@@ -256,10 +277,9 @@ export default {
       console.log("reportCoast")
       console.log(this.reportCoast)
 
-      return Math.round(this.job.budget - this.reportCoast
-          )
-          * (this.job.marginPercentage/100)
-          * (this.job.bonus/100);
+      return Math.round(this.job.budget - this.reportCoast - this.job.taxes
+          - this.job.refund - this.job.expenses)
+          * (this.job.bonus/100)
     },
     editJob: function () {
 
@@ -359,12 +379,12 @@ export default {
     job: function (newVal, oldVal) {
       this.updateAssignedUsers(newVal)
     },
-  colorNumber: function (colorNumber) {
-    this.colorNumber = colorNumber
-    this.showConfirmBtn = true
-    console.log("colorNumber")
-    console.log(colorNumber)
-  }
+    colorNumber: function (colorNumber) {
+      this.colorNumber = colorNumber
+      this.showConfirmBtn = true
+      console.log("colorNumber")
+      console.log(colorNumber)
+    }
   }
 }
 </script>

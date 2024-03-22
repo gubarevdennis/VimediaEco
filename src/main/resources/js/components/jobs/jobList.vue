@@ -12,7 +12,7 @@
       <v-row justify="center" align="start">
           <div v-for="job in this.jobs" :key="job.id">
                 <job-row
-                    :reports="reports.filter(r => r.typeOfWork === job.name)"
+                    :reports="reports.filter(r => r.job).filter(r => r.job.id === job.id)"
                     :job="job"
                     :editJob="editJob"
                     :users="users"
