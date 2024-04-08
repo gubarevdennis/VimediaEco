@@ -157,12 +157,12 @@ public class JobController {
             if (chatId != null) {
                 outMess.setChatId(chatId);
             }
-            if (job.getSubFacility() != null && job.getBudget() != null && job.getBonus() != null && job.getMarginPercentage() != null && job.getFacility() != null ) {
+            if (job.getSubFacility() != null && job.getBudget() != null && job.getBonus() != null && job.getFacility() != null ) {
                 outMess.setText(user.getRole() + " " + user.getName() + " назначил вас ответственным за проведение работы " + job.getName().toLowerCase() + " на объекте " + job.getFacility().getName() + ", " + String.valueOf(job.getSubFacility().getName()) +
-                        ". Бонусная база за данную работу составляет " + Math.round(job.getBudget() * (job.getBonus() / 100) * (job.getMarginPercentage() / 100) * 0.8) + "р. Удачи, бро!" + "http://reports.vimedia.ru/bonus");
+                        ". Бонусная база за данную работу составляет " + Math.round(job.getBudget() * (job.getBonus() / 100)) + "р. Удачи, бро!" + "http://reports.vimedia.ru/bonus");
             } else {
                 outMess.setText(user.getRole() + " " + user.getName() + " назначил вас ответственным за проведение работы " + job.getName().toLowerCase() + " на объекте " + job.getFacility().getName() +
-                        ". Бонусная база за данную работу составляет " + Math.round(job.getBudget() * (job.getBonus() / 100) * (job.getMarginPercentage() / 100) * 0.8) + "р. Удачи, бро!" + "http://reports.vimedia.ru/bonus");
+                        ". Бонусная база за данную работу составляет " + Math.round(job.getBudget() * (job.getBonus() / 100)) + "р. Удачи, бро!" + "http://reports.vimedia.ru/bonus");
             }
             try {
                 if (chatId != null && !chatId.equals(""))

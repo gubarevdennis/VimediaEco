@@ -327,7 +327,6 @@ export default {
                 result
                     .data
                     .forEach(r => {
-
                       if (r.user)
                         if ((r.user.role === departmentNameFromDepDirectorReturn(this.role)[0])
                             || (r.user.role === departmentNameFromDepDirectorReturn(this.role)[1])
@@ -337,7 +336,7 @@ export default {
                           this.reports.push(r) // все отчеты
                         }
 
-                        if (r.facility && r.user)
+                      if (r.facility && r.user)
                         if (!(this.facilities.find(f => (f.name === r.facility.name)))
                             && ((this.role === 'Руководитель проектов') ? (r.user.name === this.profile) : true)) {
                           // this.facilities.push({
@@ -349,7 +348,8 @@ export default {
                         }
 
                     })
-                this.reports = this.reports.filter(r => (this.facilities.find(f => (r.facility.name === f.name)))) // без сортировки
+                this.reports = this.reports.filter(r => (this.facilities
+                    .find(f => (r.facility ? r.facility.name === f.name : false)))) // без сортировки
                 this.reports = this.reports.filter(r => r.user)
                 this.sortedReports = this.reports
                 // this.facilityNames.unshift('Все объекты')

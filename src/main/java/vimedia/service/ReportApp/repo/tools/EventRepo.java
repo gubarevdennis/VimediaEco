@@ -27,7 +27,7 @@ public interface EventRepo extends JpaRepository<Event, Integer> {
             "LIMIT 1", nativeQuery = true)
     Optional<Event> findLastByTool(Tool tool);
 
-    @Query(value = "SELECT * FROM EVENT WHERE EVENT.NAME = 'Направлен на передачу' ORDER BY ID DESC \n" +
+    @Query(value = "SELECT * FROM EVENT WHERE EVENT.NAME = 'Направлен на передачу' AND EVENT.TOOL_ID = ?1 ORDER BY ID DESC \n" +
             "LIMIT 1", nativeQuery = true)
-    Optional<Event> findLastMovingByTool(Tool tool);
+    Optional<Event> findLastMovingByTool(Integer toolId);
 }

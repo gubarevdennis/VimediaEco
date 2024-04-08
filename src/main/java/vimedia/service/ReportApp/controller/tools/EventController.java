@@ -159,7 +159,7 @@ public class EventController {
         System.out.println("toooool ->   " + toolRepo.findByUser(user).toString());
 
         // Проверяем есть ли с таким id уже направление на передачу
-        Optional<Event> lastEvent = eventRepo.findLastMovingByTool(event.getTool());
+        Optional<Event> lastEvent = eventRepo.findLastMovingByTool(event.getTool().getId());
 
         System.out.println("tool " + tool);
 
@@ -183,7 +183,7 @@ public class EventController {
                 event.setUser(user);
             }
 
-            boolean alreadyDone = false; // Переменная обозначающая есть ли уже перемещение
+            boolean alreadyDone = false; // Переменная обозначающая есть ли уже направление
 
             if (lastEvent.isPresent()) {
                 if (lastEvent.get().getTool() != null)
@@ -283,7 +283,7 @@ public class EventController {
         }
 
         // Находим последнее событие "Направлен на передачу"
-        Event eventFromDB = eventRepo.findLastMovingByTool(tool).orElse(null);
+        Event eventFromDB = eventRepo.findLastMovingByTool(tool.getId()).orElse(null);
 
         if (eventFromDB != null) {
             BeanUtils.copyProperties(event, eventFromDB, "id", "image",

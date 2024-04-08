@@ -35,6 +35,9 @@
                 <div style="font-weight: bold;color: #0B0B0B">
                   {{report.subFacility ? report.subFacility.name : ''}}
                 </div>
+                <div style="color: #0B0B0B;">
+                  {{ report.job ? report.job.name : ''}}
+                </div>
                 <div style="color: #0B0B0B">
                   {{ report.hoursOfWorking }} ч
                 </div>
