@@ -5,8 +5,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
-import vimedia.service.ReportApp.model.User;
-import vimedia.service.ReportApp.repo.UserRepo;
+import vimedia.service.ReportApp.model.report.User;
+import vimedia.service.ReportApp.repo.report.UserRepo;
 
 import java.util.Optional;
 

@@ -9,7 +9,7 @@ module.exports = merge(common, {
     compress: true,
     port: 8000,
     allowedHosts: [
-      '192.168.100.100:6552'
+      'localhost:9000'
     ]
   },
 });

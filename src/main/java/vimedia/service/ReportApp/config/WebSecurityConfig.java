@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractAuthenticationFilterConfigurer;
 import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -52,12 +53,19 @@ public class WebSecurityConfig {
                         .requestMatchers( "/api/**").permitAll()
                         .anyRequest().authenticated()
                 )
-//                .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
+                .sessionManagement((session) -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+                        .invalidSessionUrl("/logout")
+                        .maximumSessions(1500)
+                        .maxSessionsPreventsLogin(false)
+                )
                 .formLogin(formLogin -> formLogin
                         .loginPage("/login")
                         .permitAll().defaultSuccessUrl("/reports"))
-                .logout(LogoutConfigurer::permitAll);
-
+                .logout(LogoutConfigurer::permitAll)
+                .logout(logout -> logout.deleteCookies("JSESSIONID")
+                        .invalidateHttpSession(true)
+                );
         return http.build();
     }
 
