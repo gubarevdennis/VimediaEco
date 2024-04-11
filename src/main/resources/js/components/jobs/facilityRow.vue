@@ -11,7 +11,7 @@
           <div v-for="subFacilityInner in subFacilities" :key="subFacilityInner.id">
             <v-card
                 @click="turnOverlayAndSetSubFacilityToJobList(overlay, subFacilityInner)"
-                color="#F9F9F9" height="65px"  class="pa-2 ma-2" >
+                color="#F9F9F9" :height="heightSubFacilityCard" id="subFacilityCard" class=" ma-2" style="background-color: rgba(255,255,255, 0.7)">
               <sub-facility-row
                   :deleteSubFacility="deleteSubFacility"
                   :subFacilityAttr="subFacility"
@@ -23,23 +23,25 @@
                   :userNames="userNames"
               />
             </v-card>
-            <v-card-text>
-              Ответственный:
-              <div style="font-weight: bold">
-              {{ subFacilityInner.user && subFacilityInner.user.role ? subFacilityInner.user.name + ", " +  subFacilityInner.user.role.toLowerCase(): ''}}
-              </div>
-            </v-card-text>
+<!--            <v-card-text>-->
+<!--              Ответственный:-->
+<!--              <div style="font-weight: bold">-->
+<!--              {{ subFacilityInner.user && subFacilityInner.user.role ? subFacilityInner.user.name + ", " +  subFacilityInner.user.role.toLowerCase(): ''}}-->
+<!--              </div>-->
+<!--            </v-card-text>-->
+<!--            <br>-->
             <br>
             <v-autocomplete
                 density=0
                 label="Выбрать ответственного"
                 variant="underlined"
+                @click="setIndexSubFacilityClicked(subFacilityInner.id)"
                 @update:model-value="userNameSelect"
                 :items="users.map(u => u.name)"
                 :item-value="userNameSelected"
             >
             </v-autocomplete>
-            <div v-show="showConfirmBtnSubFacility" style="margin-top: 5px">
+            <div v-if="subFacilityIndex === subFacilityInner.id" v-show="showConfirmBtnSubFacility" style="margin-top: 5px">
               <v-btn  color="green"  @click="editSubFacility(subFacilityInner)" > Назначить </v-btn>
               <v-btn color="red"  @click="hideConfirmBtnFunctionSubFacility" > Отмена </v-btn>
             </div>
@@ -60,7 +62,7 @@
             <v-card-text>
               Ответственный:
               <div style="font-weight: bold">
-              {{ facility.user && facility.user.role ? facility.user.name + ", " +  facility.user.role.toLowerCase(): ''}}
+              {{ currentFacilityUser && currentFacilityUser.role ? currentFacilityUser.name + ", " +  currentFacilityUser.role.toLowerCase(): ''}}
               </div>
             </v-card-text>
           </v-col>
@@ -102,7 +104,12 @@ export default {
       showConfirmBtnSubFacility: '',
       showConfirmBtnFacility: '',
       user: '',
-      userId: ''
+      userId: '',
+
+      currentFacilityUser: this.facility.user,
+
+      heightSubFacilityCard: '110px',
+      subFacilityIndex: ''
     }
   },
   components: {SubFacilityRow},
@@ -112,6 +119,9 @@ export default {
     'users', 'userNames','url', 'port'], // получаем переменную facility
   computed: {
   },
+  mounted() {
+    this.currentFacilityUser = this.facility.user
+  },
   created: function () {
     this.facility.subFacilities ? this.facility.subFacilities.forEach( s => this.subFacilities.push(s)) : []
   },
@@ -120,8 +130,9 @@ export default {
       this.userNameSelected = userNameSelected;
       this.user = this.users.find(u => (u ? u.name === this.userNameSelected : false));
       this.userId = this.user.id
-      console.log(this.user)
+
       this.showConfirmBtnSubFacility = true
+
       this.showConfirmBtnFacility = true
     },
     hideConfirmBtnFunctionFacility: function () {
@@ -129,6 +140,8 @@ export default {
     },
     hideConfirmBtnFunctionSubFacility: function () {
       this.showConfirmBtnSubFacility=false
+      this.heightSubFacilityCard = '110px'
+
     },
     editFacility: function (facilityOrSubFacilityObject) {
 
@@ -142,10 +155,16 @@ export default {
 
       facility.user = {id: this.user.id}
 
+     this.currentFacilityUser = this.user
+      console.log('dd' + facility.user.name)
+      console.log('ddf' + this.currentFacilityUser.name)
+
       // Назначаем отвественного сотрудника
       this.axios.put(`api/facility/${facility.id}`, facility).then(result => {
         if (result.status === 200) {
           this.showConfirmBtnFacility = false
+          // console.log(result.data)
+          // this.currentFacilityUser = result.data.user
         } else {
 
         }
@@ -161,6 +180,8 @@ export default {
 
       subFacility.user = {id: this.user.id}
 
+      this.subFacilities.find(el => el.id == subFacility.id).user = this.user
+
       // Назначаем отвественного сотрудника
       this.axios.put(`api/subFacility/${subFacility.id}`, subFacility).then(result => {
         if (result.status === 200) {
@@ -170,6 +191,10 @@ export default {
         }
       })
     },
+
+    setIndexSubFacilityClicked: function (index) {
+      this.subFacilityIndex = index
+    }
   },
   watch: {
     subFacility: function (newVal, oldVal) {

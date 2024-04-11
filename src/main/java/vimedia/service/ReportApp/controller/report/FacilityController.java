@@ -4,12 +4,14 @@ package vimedia.service.ReportApp.controller.report;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import vimedia.service.ReportApp.model.report.Facility;
 import vimedia.service.ReportApp.model.report.Job;
 import vimedia.service.ReportApp.model.report.User;
 import vimedia.service.ReportApp.model.report.Views;
 import vimedia.service.ReportApp.repo.report.FacilityRepo;
+import vimedia.service.ReportApp.repo.report.UserRepo;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -21,10 +23,12 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/facility")
 public class FacilityController {
     private final FacilityRepo facilityRepo;
+    private final UserRepo userRepo;
 
     @Autowired
-    public FacilityController(FacilityRepo facilityRepo) {
+    public FacilityController(FacilityRepo facilityRepo, UserRepo userRepo) {
         this.facilityRepo = facilityRepo;
+        this.userRepo = userRepo;
     }
 
     @GetMapping
@@ -121,7 +125,13 @@ public class FacilityController {
     public Facility update(@PathVariable("id") Facility facilityFromDB, // из базы данных
                            @RequestBody Facility facility) { // от пользователя
 
+//        if(facility.getUser() != null) {
+//            facility.setUser(userRepo.findById(facility.getUser().getId().intValue()).orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден!")));
+//        }
+
         BeanUtils.copyProperties(facility,facilityFromDB,"id"); // заменяет поля кроме id
+
+
 
         //TODO Сохраним user если он прилетел вместе с объектом
 

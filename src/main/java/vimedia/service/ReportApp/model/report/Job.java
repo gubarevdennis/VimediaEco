@@ -79,7 +79,7 @@ public class Job {
     // Связь с объектами
     @ManyToOne
     @OnDelete(action = OnDeleteAction.SET_NULL)
-    @JsonIgnoreProperties({"tools", "subFacilities"})
+    @JsonIgnoreProperties({"tools", "subFacilities", "user"})
     @JsonView(Views.IdName.class)
     private Facility facility;
 
@@ -87,7 +87,7 @@ public class Job {
     @JsonView(Views.IdName.class)
     @ManyToOne
     @OnDelete(action = OnDeleteAction.SET_NULL)
-    @JsonIgnoreProperties({"jobs"})
+    @JsonIgnoreProperties({"jobs", "user"})
     private SubFacility subFacility;
 
     @ManyToMany

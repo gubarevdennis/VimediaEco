@@ -12,10 +12,11 @@
           align="center"
           label
           rounded="lg"
-          v-bind:color="setColorByWork(report.typeOfWork)"
+          v-bind:color="this.color"
           v-bind:width="report.hoursOfWorking * 22.5"
       >
         <v-row align="center" justify="center"
+               @click = "getCurrentJob"
                style="background-color: rgba(0,0,0,0); width: 200px;  font-size: 15px; vertical-align: center">
           {{report.user ? report.user.name : ''}}
           <v-overlay
@@ -26,7 +27,7 @@
             <v-card
                 rounded="lg"
                 width="200px"
-                v-bind:color="setColorByWork(report.typeOfWork)"
+                v-bind:color="this.color"
             >
               <v-card-text >
                 <div style="font-weight: bold;color: #0B0B0B">
@@ -36,7 +37,7 @@
                   {{report.subFacility ? report.subFacility.name : ''}}
                 </div>
                 <div style="color: #0B0B0B;">
-                  {{ report.job ? report.job.name : ''}}
+                  {{ currentJobName }}
                 </div>
                 <div style="color: #0B0B0B">
                   {{ report.hoursOfWorking }} ч
@@ -45,7 +46,27 @@
                   <br>
                   {{report.text}}
                 </div>
+
+                <div style="color: #888888; border: 1px solid; padding-left: 8px; background-color: #fff; margin-top: 1rem; border-radius: 5px">Type of work
+                  <div style="color: #0B0B0B; ">
+                    {{ report.typeOfWork ? report.typeOfWork : '' }}
+                  </div>
+                </div>
+
               </v-card-text>
+
+              <v-autocomplete
+                  label="Job name"
+                  @update:modelValue="selectWorkingType"
+                  :model-value="currentJobName"
+                  :items="jobs.map(j => j.name)"
+                  :item-value= jobType
+              ></v-autocomplete>
+
+              <v-row justify="center" align-content="center" style="margin-bottom: 5px">
+                <v-btn v-if="showConfirmBtn" color="green"  @click="editJobType" > Сохранить </v-btn>
+              </v-row>
+
             </v-card>
           </v-overlay>
         </v-row>
@@ -58,59 +79,70 @@
 
 export default {
   props: ['report'],
-  color: '',
+  //color: '',
+  data() {
+    return {
+      jobs: [],
+      jobType: '',
+      showConfirmBtn: false,
+      reportForSend: {},
+      color: '',
+      currentJobName: ''
+    }
+  },
+  mounted: function () {
+    this.color = this.report.job ? this.report.job.color : '#fff'
+    this.currentJobName = this.report.job ? this.report.job.name : ''
+
+  },
   methods: {
-    setColorByWork: function (work) {
-      if (this.report.job)
-        return this.report.job.color
-      // switch (work) {
-      //   case 'Черновой монтаж' :
-      //     return '#A0522D'
-      //     break;
-      //   case 'Чистовой монтаж' :
-      //     return '#FF0000'
-      //     break;
-      //   case 'Шефмонтаж' :
-      //     return '#F08080'
-      //     break;
-      //   case 'Концептуальное проектирование' :
-      //     return '#9ACD32'
-      //     break;
-      //   case 'Рабочее проектирование' :
-      //     return '#00FF00'
-      //     break;
-      //   case 'Сборка щитов' :
-      //     return '#BC8F8F'
-      //     break;
-      //   case 'Расключение шкафов' :
-      //     return '#008B8B'
-      //     break;
-      //   case 'ПНР' :
-      //     return '#FF4500'
-      //     break;
-      //   case 'Сервис' :
-      //     return '#FFA500'
-      //     break;
-      //   case 'Авторский надзор' :
-      //     return '#FF1493'
-      //     break;
-      //   case 'Другие работы' :
-      //     return '#BDB76B'
-      //     break;
-      //   case 'Отпуск оплачиваемый' :
-      //     return '#7FFFD4'
-      //     break;
-      //   case 'Отпуск по семейным обстоятельствам' :
-      //     return '#7B68EE'
-      //     break;
-      //   case 'Отпуск без сохранения ЗП' :
-      //     return '#00FFFF'
-      //   case 'Больничный' :
-      //     return '#800080'
-      //     break;
-      //   default:
-      //     return '#FFFFFF'
-      // }
+    selectWorkingType: function (jobType) {
+
+      this.jobType = jobType
+      this.showConfirmBtn = true
+    },
+    editJobType: function () {
+      var foundJob = this.jobs.find(job => job.name === this.jobType)
+
+
+      Object.assign(this.reportForSend, this.report)
+      this.reportForSend.job = {id: foundJob.id }
+      console.log(this.reportForSend);
+
+      this.axios.post("api/report/" + this.report.id, this.reportForSend).then(data => {
+        console.log(data)
+        this.color = data.data.job ? data.data.job.color : '#ffffff'
+        this.currentJobName = data.data.job ? data.data.job.name : ''
+        this.showConfirmBtn = false
+        //this.report = data.data
+      })
+
+    },
+    getCurrentJob: function () {
+      this.jobs = []
+      if (this.report.subFacility) {
+        this.axios.get('api/job/subFacility/' + this.report.subFacility.id).then(result => {
+          if(result.data)
+              result
+                  .data
+                  .forEach(j => {
+                        this.jobs.push(j);
+                      }
+                  )
+            }
+        )
+      } else {
+        this.axios.get('api/job/facility/' + this.report.facility.id).then(result => {
+          if(result.data)
+              result
+                  .data
+                  .forEach(j => {
+                        this.jobs.push(j)
+                      }
+                  )
+            }
+        )
+      }
     }
   }
 }

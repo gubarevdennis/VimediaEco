@@ -51,7 +51,7 @@ public class Report {
     @ManyToOne
     @OnDelete(action = OnDeleteAction.SET_NULL)
 //    @JsonIgnore
-//    @JsonIgnoreProperties({"reports","jobs"})
+    @JsonIgnoreProperties({"reports","jobs"})
     private User user;
 
     @JsonView(Views.IdName.class)

@@ -285,6 +285,8 @@ export default {
 
       this.job.autoBonus = this.autoBonus + 0 // присваиваем выбранный бонус
 
+
+
       this.axios.put(`api/job/${this.job.id}`, this.job).then(result => {
         if (result.status === 200) {
           this.editJob(result.data)

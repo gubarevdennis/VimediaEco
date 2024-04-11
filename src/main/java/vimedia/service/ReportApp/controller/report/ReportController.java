@@ -7,6 +7,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import vimedia.service.ReportApp.model.report.*;
+import vimedia.service.ReportApp.repo.job.JobRepo;
 import vimedia.service.ReportApp.repo.report.ReportRepo;
 import vimedia.service.ReportApp.repo.report.SubFacilityRepo;
 import vimedia.service.ReportApp.repo.report.UserRepo;
@@ -23,13 +24,15 @@ public class ReportController {
     private final ReportRepo reportRepo;
     private final SubFacilityRepo subFacilityRepo;
     private final UserRepo userRepo;
+    private final JobRepo jobRepo;
     private int hours;
 
     @Autowired
-    public ReportController(ReportRepo reportRepo, UserRepo userRepo, SubFacilityRepo subFacilityRepo) {
+    public ReportController(ReportRepo reportRepo, UserRepo userRepo, SubFacilityRepo subFacilityRepo, JobRepo jobRepo) {
         this.reportRepo = reportRepo;
         this.userRepo = userRepo;
         this.subFacilityRepo = subFacilityRepo;
+        this.jobRepo = jobRepo;
     }
 
     @GetMapping()
@@ -39,6 +42,7 @@ public class ReportController {
     }
 
     @GetMapping("{id}")
+    @JsonView(Views.IdName.class)
     public Report getOne(@PathVariable("id") Report report) {
         return report;
     }
@@ -142,14 +146,26 @@ public class ReportController {
 
         List<User> users = new ArrayList<>();
 
+
         // Находим пользователя
-        User user = userRepo.findByName(myUserDetails.getUsername()).orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден!"));
+
+        Integer userId = reportFromDB.getUser().getId().intValue();
+
+        User user = userRepo.findById(userId).orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден!"));
 
         // Вставляем его id в пользователя для отчета
         user.setId(user.getId());
 
         users.add(user);
         report.setUser(user);
+
+        // Находим работу
+        Job job = jobRepo.findById(report.getJob().getId()).orElseThrow(() -> new UsernameNotFoundException("Работа не найдена!"));
+
+        // Вставляем его id в рабоиу для отчета
+        job.setId(job.getId());
+
+        report.setJob(job);
 
         Report reportFromDBBeforeCopy = reportFromDB;
 
@@ -165,10 +181,12 @@ public class ReportController {
 
         System.out.println("report.getHoursOfWorking() " + report.getHoursOfWorking());
         System.out.println("reportFromDB.getHoursOfWorking() " + reportFromDB.getHoursOfWorking());
-        System.out.println("this.hours " + this.hours);
-        System.out.println("Result hours " + (this.hours - report.getHoursOfWorking() + reportFromDB.getHoursOfWorking()));
+//        System.out.println("this.hours " + this.hours);
+//        System.out.println("Result hours " + (this.hours - report.getHoursOfWorking() + reportFromDB.getHoursOfWorking()));
 
-        if (this.hours + report.getHoursOfWorking() - reportFromDBBeforeCopy.getHoursOfWorking() > 8) return null;
+//        if (this.hours + report.getHoursOfWorking() - reportFromDBBeforeCopy.getHoursOfWorking() > 8) return null;
+
+//        if (report.getHoursOfWorking() - reportFromDBBeforeCopy.getHoursOfWorking() > 8) return null;
 
         return reportRepo.save(reportFromDB);
     }
