@@ -18,6 +18,7 @@
                     :users="users"
                     :assignedUsers="assignedUsers"
                     :profile="profile" :role="role" :profileId="profileId"
+                    :updateDeletedFob="updateDeletedFob"
                 >
                 </job-row>
             <br>
@@ -194,6 +195,17 @@ export default {
       )
       console.log(this.jobs)
     },
+    updateDeletedFob: function (){
+      this.jobs = []
+      this.axios.get("api/job/facility/" + this.facility.id).then(result =>
+          result
+              .data
+              .forEach(job => {
+                    this.jobs.push(job)
+                  }
+              )
+      )
+    }
   }
 }
 </script>

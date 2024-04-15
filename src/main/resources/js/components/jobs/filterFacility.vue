@@ -13,7 +13,7 @@
         >
         </v-combobox>
       </v-col>
-      <v-col>
+      <v-col v-show="withUserMask">
         <br>
         <v-autocomplete
             clearable
@@ -37,7 +37,8 @@ export default {
     'facilities',
     'users',
     'updateFacilityMask',
-    'updateUserMask'
+    'updateUserMask',
+    'withUserMask'
   ],
   data() {
     return {

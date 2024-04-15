@@ -3,23 +3,36 @@
       class="bg-surface-variant mb-6"
   >
     <v-col>
-      <v-card rounded="lg" :profile="profile" :role="role" :profileId="profileId"
-              v-bind:color="facility.color"
+      <v-div class="d-flex flex-wrap ga-4">
+    <!--    <v-card-->
+    <!--        class="bg-surface-variant mb-6"-->
+    <!--    >-->
+        <v-row>
+          <v-col
               v-for="(facility, i) in sortedFacilities"
               :key="i"
-              class="pa-2 ma-2">
-        <facility-row  v-bind:color="facility.color"
-                       :facility="facility"
-                       :facilities="facilities"
-                       :role="role"
-                       :profile="profile"
-                       :profileId="profileId"
-                       :jobs="jobs.filter(j => j.facility ?  j.facility.id === facility.id : false)"
-                       :bonuses="bonuses"
-        />
-      </v-card>
+              cols="12"
+              sm="10" lg="4" md="6">
+            <v-card rounded="lg" :profile="profile" :role="role" :profileId="profileId"
+                    v-bind:color="facility.color"
+                    width="auto" height="100%"
+                    class="pa-2 ma-2">
+              <facility-row  v-bind:color="facility.color"
+                             :facility="facility"
+                             :facilities="facilities"
+                             :role="role"
+                             :profile="profile"
+                             :profileId="profileId"
+                             :jobs="jobs.filter(j => j.facility ?  j.facility.id === facility.id : false)"
+                             :bonuses="bonuses"
+              />
+            </v-card>
+          </v-col>
+          <br>
+        </v-row>
+    <!--    </v-card>-->
+      </v-div>
     </v-col>
-    <br>
   </v-card>
 </template>
 

@@ -1,5 +1,5 @@
 <template>
-  <v-sheet  color="#F9F9F9">
+
     <v-card-title style="font-size: 20px; font-weight: lighter">
       {{subFacility.name}}
     </v-card-title>
@@ -8,7 +8,7 @@
         <div >
           <div style="color: #006600; font-weight: bold; font-size: 20px"> {{ calculateIndividualHours(job) !== 0 ?
               Math.round(calculateAllBonusMoney(job)  * calculateIndividualHours(job) / calculateAllHours(job)) : 0 }} р </div>
-          <div style="color: red; font-size: 18px"> {{ job.name }} </div>
+          <div style="color: #702323; font-size: 18px"> {{ job.name }} </div>
           за {{calculateIndividualHours(job)}} ч из {{calculateAllHours(job)}} ч
         </div>
       </div>
@@ -19,7 +19,7 @@
               Math.round((this.bonuses.find(b => b.job.id === job.id).value / 100) * calculateAllBonusMoney(job))
               : '0'}} р
           </div>
-          <div style="color: red; font-size: 18px"> {{ job.name }} </div>
+          <div style="color: #702323; font-size: 18px"> {{ job.name }} </div>
           за {{calculateIndividualHours(job)}} ч из {{calculateAllHours(job)}} ч
         </div>
       </div>
@@ -30,7 +30,7 @@
         || this.role === 'Менеджер' || this.role === 'Руководитель отдела ведения проектов' || this.role === 'Руководитель проектов'"  @click="edit" icon="mdi-file-edit">  </v-btn>
       -->
     </v-col>
-  </v-sheet>
+
 </template>
 
 <script>
@@ -73,10 +73,12 @@ export default {
 
       this.reportCoast = this.reports
           .filter(r => r.user)
-          .filter(r => r.user.salary !== null)
+          //.filter(r => r.user.salary !== null)
           .filter(r => r.job)
           .filter(r => (r.job.id === job.id))
-          .map(r => r.hoursOfWorking * r.user.salary/8)
+          //.map(r => r.hoursOfWorking * r.user.salary/8)
+          .filter(r => r.cost !== null)
+          .map(r => r.hoursOfWorking * r.cost/8)
           .reduce((partialSum, a) => partialSum + a, 0)
 
       console.log("reportCoast")

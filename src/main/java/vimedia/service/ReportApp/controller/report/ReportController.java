@@ -116,6 +116,10 @@ public class ReportController {
         users.add(user);
         report.setUser(user);
 
+        // Добавляем стоимость отчета
+        if (user.getSalary() != null)
+        report.setCost(user.getSalary().toString());
+
         // Проверка что в один день было отправлено отчетов больше 8 часов в сумме
         List<Report> reportsForHoursChek = reportRepo.findReportsByReportDayAndUser(report.getReportDay(), user);
 

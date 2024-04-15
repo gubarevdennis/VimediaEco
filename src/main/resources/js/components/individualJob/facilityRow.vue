@@ -11,7 +11,7 @@
               <div>
                 <div style="color: #006600; font-weight: bold; font-size: 20px"> {{ calculateIndividualHours(job) !== 0 ?
                     Math.round(calculateAllBonusMoney(job)  * calculateIndividualHours(job) / calculateAllHours(job)) : 0 }} р </div>
-                <div style="color: red; font-size: 18px"> {{ job.name }} </div>
+                <div style="color: #702323; font-size: 18px"> {{ job.name }} </div>
                 за {{calculateIndividualHours(job)}} ч из {{calculateAllHours(job)}} ч
               </div>
             </div>
@@ -22,14 +22,14 @@
                     Math.round((this.bonuses.filter(b => b.job).find(b => b.job.id === job.id).value / 100) * calculateAllBonusMoney(job) )
                     : '0'}} р
                 </div>
-                <div style="color: red; font-size: 18px"> {{ job.name }} </div>
+                <div style="color: #702323; font-size: 18px"> {{ job.name }} </div>
                 за {{calculateIndividualHours(job)}} ч из {{calculateAllHours(job)}} ч
               </div>
             </div>
           </v-card-text>
         </v-col>
         <v-col cols="10">
-          <v-card v-if="subFacilities" color="#F9F9F9" rounded="xl" v-for="subFacility in subFacilities.filter(s => jobs.filter(j => (j.subFacility ? (j.subFacility.id === s.id) : false))[0])" :key="subFacility.id" class="pa-2 ma-2" >
+          <v-card v-if="subFacilities" color="#F9F9F9" rounded="xl" v-for="subFacility in subFacilities.filter(s => jobs.filter(j => (j.subFacility ? (j.subFacility.id === s.id) : false))[0])" :key="subFacility.id" class="pa-2 ma-2" style="background-color: rgba(255,255,255, 0.7)">
             <div>
               <sub-facility-row
                   :deleteSubFacility="deleteSubFacility"
@@ -103,10 +103,12 @@ export default {
 
       this.reportCoast = this.reports
           .filter(r => r.user)
-          .filter(r => r.user.salary !== null)
+          //.filter(r => r.user.salary !== null)
           .filter(r => r.job)
           .filter(r => (r.job.id === job.id))
-          .map(r => r.hoursOfWorking * r.user.salary/8)
+          //.map(r => r.hoursOfWorking * r.user.salary/8)
+          .filter(r => r.cost !== null)
+          .map(r => r.hoursOfWorking * r.cost/8)
           .reduce((partialSum, a) => partialSum + a, 0)
 
       console.log("reportCoast" + job.name)

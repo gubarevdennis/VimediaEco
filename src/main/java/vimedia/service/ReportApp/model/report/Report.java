@@ -61,6 +61,9 @@ public class Report {
     private String text;
 
     @JsonView(Views.IdName.class)
+    private String cost;
+
+    @JsonView(Views.IdName.class)
     private int hoursOfWorking;
 
     @JsonView(Views.IdName.class)
@@ -147,6 +150,14 @@ public class Report {
 
     public void setJob(Job job) {
         this.job = job;
+    }
+
+    public String getCost() {
+        return cost;
+    }
+
+    public void setCost(String salary) {
+        this.cost = salary;
     }
 }
 

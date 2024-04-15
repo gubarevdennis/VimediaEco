@@ -7,7 +7,8 @@
         :facilities="facilities"
         :users="userNames"
         :updateFacilityMask = "updateFacilityMask"
-        :updateUserMask="updateUserMask">
+        :updateUserMask="updateUserMask"
+        :withUserMask="withUserMask">
     </filter-facility>
     <br>
 
@@ -106,7 +107,8 @@ export default {
 
       facilitySelected: '',
       userSelected: '',
-      isByUser: false
+      isByUser: false,
+      withUserMask: true
     }
   },
   computed: {

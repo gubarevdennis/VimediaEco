@@ -39,19 +39,27 @@
                 <div style="color: #0B0B0B;">
                   {{ currentJobName }}
                 </div>
-                <div style="color: #0B0B0B">
-                  {{ report.hoursOfWorking }} ч
+                <div v-show ="isError" style="background-color: #ca4141; padding: 4%; border-radius: 10px">
+                  <div style="font-weight: bold; color: #1a1515;">Ошибка. Не больше 8 часов.</div>
                 </div>
-                <div v-if="report.text !== 'Отчет сформирован без комментариев'">
-                  <br>
-                  {{report.text}}
-                </div>
-
+                <div style="font-weight: bold;color: #0B0B0B">Количество часов: </div>
+                <input size="5" style="text-align:center"  type="text" @input="showEditConfirmBtnFunc" v-model="report.hoursOfWorking" />ч
+                <div style="font-weight: bold;color: #0B0B0B">Стоимость:</div>
+                <input size="5" style="text-align:center"  type="text" @input="showEditConfirmBtnFunc" v-model="report.cost" />р
+                <div style="font-weight: bold;" v-if="report.text !== 'Отчет сформирован без комментариев'"> Текст отчета:</div>
+                <input size="20" style="text-align:center"  type="text" @input="showEditConfirmBtnFunc" v-model="report.text" />
                 <div style="color: #888888; border: 1px solid; padding-left: 8px; background-color: #fff; margin-top: 1rem; border-radius: 5px">Type of work
                   <div style="color: #0B0B0B; ">
                     {{ report.typeOfWork ? report.typeOfWork : '' }}
                   </div>
                 </div>
+
+              <div v-if="showEditConfirmBtn">
+                <br>
+                <v-btn color="green"  @click="editJobType" > Сохранить </v-btn>
+                <v-btn color="red"  @click="showEditConfirmBtn = !showEditConfirmBtn" > Отменить </v-btn>
+              </div>
+
 
               </v-card-text>
 
@@ -64,7 +72,7 @@
               ></v-autocomplete>
 
               <v-row justify="center" align-content="center" style="margin-bottom: 5px">
-                <v-btn v-if="showConfirmBtn" color="green"  @click="editJobType" > Сохранить </v-btn>
+                <v-btn v-if="showConfirmBtn" color="green"  @click="PostJobType" > Сохранить </v-btn>
               </v-row>
 
             </v-card>
@@ -87,7 +95,10 @@ export default {
       showConfirmBtn: false,
       reportForSend: {},
       color: '',
-      currentJobName: ''
+      currentJobName: '',
+      isError: false,
+
+      showEditConfirmBtn: false
     }
   },
   mounted: function () {
@@ -96,12 +107,15 @@ export default {
 
   },
   methods: {
+    showEditConfirmBtnFunc: function () {
+      this.showEditConfirmBtn = true
+    },
     selectWorkingType: function (jobType) {
 
       this.jobType = jobType
       this.showConfirmBtn = true
     },
-    editJobType: function () {
+    PostJobType: function () {
       var foundJob = this.jobs.find(job => job.name === this.jobType)
 
 
@@ -116,6 +130,18 @@ export default {
         this.showConfirmBtn = false
         //this.report = data.data
       })
+    },
+    editJobType: function () {
+      if (this.report.hoursOfWorking > 8)
+          this.isError = true
+      else {
+        this.axios.post("api/report/" + this.report.id, this.report).then(data => {
+          console.log(data)
+          this.showEditConfirmBtn = false
+          this.isError = false
+          //this.report = data.data
+        })
+      }
 
     },
     getCurrentJob: function () {
