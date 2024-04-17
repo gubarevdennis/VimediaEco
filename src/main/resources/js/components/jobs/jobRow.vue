@@ -36,7 +36,7 @@
       <v-col v-show="errorFields" style="color: #1a1515; background-color: #ca4141; border-radius: 10px; font-weight: bold;">
         <v-text>Ошибка</v-text>
         <br>
-        <v-text>Заполните все поля</v-text>
+        <v-text>Заполните названия и стоимость работы</v-text>
       </v-col>
 
 <!--      <v-alert v-show="errorFields"-->
@@ -57,7 +57,13 @@
       <div style="font-weight: bold;color: #0B0B0B"> Процент от маржи на бонусы: &nbsp</div>
       <input size="5" style="text-align:center" type="text" @input="showConfirmBtnFunc" v-model="job.bonus" /> %
       <div style="font-weight: bold;color: #0B0B0B"> Текущий бонус за объект: &nbsp</div>
-      {{ this.calculateAllBonusMoney() }} р
+      {{ this.calculateAllBonusMoney().toFixed(2) }} р
+
+      <div style="font-weight: bold;color: #0B0B0B"> Себестоимость: </div>
+      {{this.reportCoast}} р
+
+      <div style="font-weight: bold;color: #0B0B0B"> Общее количество часов: </div>
+      {{this.calculateAllHours()}} ч
 
       <v-checkbox
           density="0"
@@ -107,7 +113,7 @@
             :key="i"
             align="start">
           <div>
-            {{ i+1 }}) {{ user.name }} -
+            {{ i+1 }}) {{ user.name }} - {{user.value}} % /
             {{Math.round(calculateAllBonusMoney() * user.value / (100))}} р
           </div>
           <v-btn style="font-size: 8pt !important" @click="user.isShowEdit = !user.isShowEdit">Изменить</v-btn>
@@ -118,7 +124,7 @@
 
           <div v-show="user.isShowEdit">
             <div style="font-weight: bold;color: #0B0B0B; background-color: #F9F9F9"> Бонус сотрудника: &nbsp</div>
-            <input size="5" style="text-align:center"  type="text" v-model="newUserBonus" /> %
+            <input size="5" style="text-align:center"  type="text" v-model="newUserBonus"/> %
           </div>
 
           <div v-show="user.isShowEdit" style="margin-top: 5px">
@@ -363,9 +369,7 @@ export default {
       console.log(this.job.name)
       console.log(this.job.type)
 
-      if(this.job.name === null || this.job.type === null || this.job.budget == 0 ||
-           this.job.taxes == 0 || this.job.refund == 0 || this.job.expenses == 0 ||
-           this.job.bonus == 0){
+      if(this.job.name === null || this.job.type === null || this.job.budget == 0){
         this.errorFields = true
       } else {
         this.errorFields = false
@@ -502,9 +506,7 @@ export default {
       return this.usersWithBonus
     },
     addUserToJob: function () {
-      if(this.job.name === null || this.job.type === null || this.job.budget == 0 ||
-          this.job.taxes == 0 || this.job.refund == 0 || this.job.expenses == 0 ||
-          this.job.bonus == 0){
+      if(this.job.name === null || this.job.type === null || this.job.budget == 0){
         this.errorFields = true
       } else {
         this.axios.put(`api/job/${this.job.id}`, this.job).then(result => {

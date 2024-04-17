@@ -26,7 +26,7 @@
           >
             <v-card
                 rounded="lg"
-                width="200px"
+                width="300px"
                 v-bind:color="this.color"
             >
               <v-card-text >
@@ -46,8 +46,9 @@
                 <input size="5" style="text-align:center"  type="text" @input="showEditConfirmBtnFunc" v-model="report.hoursOfWorking" />ч
                 <div style="font-weight: bold;color: #0B0B0B">Стоимость:</div>
                 <input size="5" style="text-align:center"  type="text" @input="showEditConfirmBtnFunc" v-model="report.cost" />р
-                <div style="font-weight: bold;" v-if="report.text !== 'Отчет сформирован без комментариев'"> Текст отчета:</div>
-                <input size="20" style="text-align:center"  type="text" @input="showEditConfirmBtnFunc" v-model="report.text" />
+                <br>
+                <div style="width: 100%; font-weight: bold;"> Текст отчета:</div>
+                <input size="30" style="text-align:center"  type="text" @input="showEditConfirmBtnFunc" v-model="report.text" />
                 <div style="color: #888888; border: 1px solid; padding-left: 8px; background-color: #fff; margin-top: 1rem; border-radius: 5px">Type of work
                   <div style="color: #0B0B0B; ">
                     {{ report.typeOfWork ? report.typeOfWork : '' }}
@@ -123,8 +124,8 @@ export default {
       this.reportForSend.job = {id: foundJob.id }
       console.log(this.reportForSend);
 
-      this.axios.post("api/report/" + this.report.id, this.reportForSend).then(data => {
-        console.log(data)
+      this.axios.post('api/report/' + this.report.id, this.reportForSend).then(data => {
+
         this.color = data.data.job ? data.data.job.color : '#ffffff'
         this.currentJobName = data.data.job ? data.data.job.name : ''
         this.showConfirmBtn = false
@@ -135,8 +136,8 @@ export default {
       if (this.report.hoursOfWorking > 8)
           this.isError = true
       else {
-        this.axios.post("api/report/" + this.report.id, this.report).then(data => {
-          console.log(data)
+        this.axios.post('api/report/' + this.report.id, this.report).then(data => {
+
           this.showEditConfirmBtn = false
           this.isError = false
           //this.report = data.data

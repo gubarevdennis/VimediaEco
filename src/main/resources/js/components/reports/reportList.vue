@@ -76,7 +76,7 @@
         <v-card-title v-text="facility.name"></v-card-title>
         <report-row v-bind:key="report.id"
                     :report="report"
-                    :editReport="editReport" :editReportSelect="editReportSelect" :reports="reports"
+                    :reports="reports" :sortedReports="sortReportByDay()"
         />
       </v-card>
     </v-card>
@@ -149,7 +149,6 @@ export default {
           result
               .data
               .forEach(r => {
-
                 this.reports.push(r)
 
             if (r.facility) {
@@ -202,8 +201,30 @@ export default {
 
       return this.reports.filter((r) => {
         if (r.facility) {
+          // if(r.facility.id === facility.id && r.reportDay === dateForSort)
+          //   this.sortedByDay.push(r)
           return  r.facility.id === facility.id && r.reportDay === dateForSort }})   // сортировка по facility
 
+    },
+    sortReportByDay : function() {
+
+      let choosenDate = new Date()
+
+      if(this.offsetAttr) {
+        choosenDate.setDate(choosenDate.getDate() + this.offsetAttr)
+      }
+
+      if(this.datePick && this.datePickerShow) {
+        choosenDate.setFullYear(this.datePick.getFullYear())
+        choosenDate.setMonth(this.datePick.getMonth())
+        choosenDate.setDate(this.datePick.getDate())
+      }
+
+      let dateForReport = (choosenDate.getDate() < 10 ? '0' + choosenDate.getDate() : choosenDate.getDate())
+          +'-'+(choosenDate.getMonth()+1 < 10 ? '0' + (choosenDate.getMonth()+1) : (choosenDate.getMonth()+1))+'-'+choosenDate.getFullYear()
+
+      return this.reports.filter((r) => {
+        return r.reportDay === dateForReport })
     },
     clicked: function(offsetText) {
       this.offsetText = offsetText

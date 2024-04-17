@@ -11,7 +11,7 @@
             @update:modelValue="clicked1"
             label="Объект"
             :items="facilityNames"
-            :item-value="facilityName"
+            :item-value="form.facility"
 
         ></v-autocomplete>
 
@@ -25,7 +25,7 @@
             @update:modelValue="clickedSubFac"
             label="Подобъект"
             :items="filteredSubFacilities.map(s => s.name)"
-            :item-value="subFacilityName"
+            :item-value="form.subFacility"
             hide-no-data="true"
         ></v-select>
       </v-col>
@@ -38,7 +38,7 @@
             @update:modelValue="clicked2"
             label="Длительность в часах"
             :items="workingTimes"
-            :item-value="workingTime"
+            :item-value="form.hoursOfWorking"
 
         ></v-select>
       </v-col>
@@ -52,7 +52,7 @@
             @update:modelValue="clicked3"
             label="Название работы"
             :items="workingTypes"
-            :item-value="workingType"
+            :item-value="form.workingType"
             hide-no-data="true"
         ></v-select>
       </v-col>
@@ -93,7 +93,9 @@ export default {
   props: ['reports', 'reportAttr','facilities',
     'facilityId', 'workingTime', 'workingType','facilityName', 'subFacilityName',
     'clickSel1', 'clickSel2', 'clickSel3', 'clickSelSubFac', 'url', 'port', 'editSelect' ,'clearFormAttr', 'refreshFormAttr',
-    'editFormFunction'
+    'editFormFunction',
+
+    'form'
   ], // чтобы рабоать с данной переменной и передавать ее выше в корень
   // функция нужна для того чтобы у каждого компонента было свое уникальное хранилище
   data() {
@@ -121,6 +123,7 @@ export default {
   methods: {
     clicked1: function (facilityName) {
       this.filteredSubFacilities = [] // обнуление перед выбором следующего объекта
+      this.workingTypeArray = [] /////
       this.clickSel1(facilityName)
       this.facilityName = facilityName
 

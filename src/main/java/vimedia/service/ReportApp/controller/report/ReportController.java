@@ -163,13 +163,19 @@ public class ReportController {
         users.add(user);
         report.setUser(user);
 
-        // Находим работу
-        Job job = jobRepo.findById(report.getJob().getId()).orElseThrow(() -> new UsernameNotFoundException("Работа не найдена!"));
 
-        // Вставляем его id в рабоиу для отчета
-        job.setId(job.getId());
+        Job job;
 
-        report.setJob(job);
+        if(report.getJob() != null) { // проверка страых отчетов на привязку к job
+            // Находим работу
+
+            job = jobRepo.findById(report.getJob().getId()).orElseThrow(() -> new UsernameNotFoundException("Работа не найдена!"));
+
+            // Вставляем его id в рабоиу для отчета
+            job.setId(job.getId());
+
+            report.setJob(job);
+        }
 
         Report reportFromDBBeforeCopy = reportFromDB;
 

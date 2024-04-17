@@ -1,36 +1,49 @@
 <template>
   <v-container align="center">
 
-    <v-row >
-      <report-select
-          :clearFormAttr="clearFormAttr"
-          :refreshFormAttr="refreshFormAttr"
 
-          v-for="form in reportForms" v-bind:key="form"
+<!--      <report-select-->
+<!--          :clearFormAttr="clearFormAttr"-->
+<!--          :refreshFormAttr="refreshFormAttr"-->
 
-          @click="clickOnSelect(form)"
-          :reports="reports"
-          :reportAttr="reportAttr"
-          :facilities="facilities"
-          :subFacilityName="subFacilityName"
-          :workingType="workingType"
-          :workingTime="workingTime"
-          :facilityId="facilityId"
-          :clickSel1="clickSel1"
-          :clickSel2="clickSel2"
-          :clickSel3="clickSel3"
-          :clickSelSubFac="clickSelSubFac"
-          :editSelect="editSelect"
-          :editFormFunction="editFormFunction"
-      ></report-select>
+<!--          v-for="form in reportForms" v-bind:key="form"-->
+
+<!--          @click="clickOnSelect(form)"-->
+<!--          :reports="reports"-->
+<!--          :reportAttr="reportAttr"-->
+<!--          :facilities="facilities"-->
+<!--          :subFacilityName="subFacilityName"-->
+<!--          :workingType="workingType"-->
+<!--          :workingTime="workingTime"-->
+<!--          :facilityId="facilityId"-->
+<!--          :clickSel1="clickSel1"-->
+<!--          :clickSel2="clickSel2"-->
+<!--          :clickSel3="clickSel3"-->
+<!--          :clickSelSubFac="clickSelSubFac"-->
+<!--          :editSelect="editSelect"-->
+<!--          :editFormFunction="editFormFunction"-->
+<!--          -->
+<!--          :reportFormsWithData="reportFormsWithData"-->
+<!--      ></report-select>-->
+    <v-row v-for="formData in reportFormsWithData" v-bind:key="formData">
+        <v-col>
+          <report-selected v-if="facilities"
+                           :formData="formData"
+                            @click="reportSendConfirmField = false">
+          </report-selected>
+        </v-col>
     </v-row>
-    <v-btn width="180" align="center" @click="addReportForm">
-      +
-    </v-btn>
 
-    <v-btn v-if="deleteFormVisual" width="180" align="center" @click="deleteReportForm">
-      -
-    </v-btn>
+    <div class="justify-center">
+        <v-btn class="ma-2" width="180" align="center" @click="addReportFormWithData">
+          +
+        </v-btn>
+        <v-btn v-if="deleteFormWithData" class="ma2" width="180" align="center" @click="deleteReportFormWithData">
+          -
+        </v-btn>
+    </div>
+
+
 
     <br>
     <br>
@@ -63,7 +76,7 @@
 
 
     <v-row justify="center">
-      <v-text v-if="errorFields" style="color: red; text-align: center" >
+      <v-text v-if="isErrorMessage" style="color: red; text-align: center" >
         Отчет не отправлен. Укажите все необходимые поля для отправки отчета!
         <br>
         Отчетный день в компании Vimedia Group составляет 8 часов
@@ -93,7 +106,7 @@
 
     <v-row justify="center" >
       <!--// v-model для того чтобы с input пробросить в data в поле text -->
-      <v-btn color="#EBB652"  style="font-size: 20px" height="50" width="260" @click="save">
+      <v-btn color="#EBB652"  style="font-size: 20px" height="50" width="260" @click="postReports">
         Отправить отчет
       </v-btn>
     </v-row>
@@ -105,6 +118,7 @@
 
 // Функция для определения id объекта по имени
 import ReportSelect from "./reportSelect.vue";
+import ReportSelected from "./reportSelected.vue"
 
 // const url = 'http://localhost:'
 // const port = '9000/'
@@ -148,11 +162,12 @@ function getIndex(list, id) {
   }
   return -1;
 }
+
 export default {
-  components: {ReportSelect},
   props: ['reports', 'reportAttr', 'facilities', 'subFacilities',
     'editReportStatus', 'addFacilityFromForm', 'url', 'port', 'editSelect', 'report'], // чтобы рабоать с данной переменной и передавать ее выше в корень
   // функция нужна для того чтобы у каждого компонента было свое уникальное хранилище
+  components: {ReportSelect, ReportSelected},
   data() {
     return {
       facilityName: {},
@@ -179,6 +194,12 @@ export default {
       datePickerShow: false,
       clearFormAttr: false,
       deleteFormVisual: false,
+
+      reportFormsWithData: [],
+      reportsForSendWithData: [],
+
+      deleteFormWithData: false,
+      isErrorMessage: false
     }
   },
   // указываем связь данного компонента с полученными от сервара данными
@@ -192,7 +213,24 @@ export default {
         }
     )
   },
+  mounted() {
+    this.createReportFormWithData(this.countReportForms)
+  },
+
   methods: {
+    createReportFormWithData: function(id){
+      let ReportForm = {
+        'id': id,
+        'facility': '',
+        'subFacility': '',
+        'hoursOfWorking': '',
+        'workingType': '',
+        'facility_id': '',
+        'subFacility_id': '',
+        'job_id': ''
+      }
+      this.reportFormsWithData.push(ReportForm)
+    },
     editSelect: function () {
 
     },
@@ -282,30 +320,88 @@ export default {
 
       }
     },
-    save: function () {
-      this.defaultFacilityName = ''
-      // Обнуляем счетчик времени наработки в день
-      this.sumHoursPerDay = 0
+    checkFieldsInReport: function (report) {
+      if(report.facility == '') {
+        console.log('no facility')
+        return false
+      }
 
-      // Проверка на null заполненных полей
-      if ( this.facilityNames[0] === undefined
-          || this.workingTypes[0] === undefined
-          || this.workingTimes[0] === undefined )
-      {
-        // Если null - выводим ошибку
-        this.errorFields = true
+      let facilitySelected = this.facilities.find(el=> el.name == report.facility)
+
+      if(facilitySelected.subFacilities.length > 0){
+        if(report.subFacility == '') {
+          console.log('no subfacility')
+          return false
+        }
+      }
+
+      if(report.hoursOfWorking == '') {
+        console.log('no hours')
+        return false
+      }
+
+      if(report.workingType == '') {
+        console.log('no working type')
+        return false
+      }
+
+      return true
+    },
+    getHoursOfWorkingInReports: function (reports) {
+      let hoursOfWorkingSum = 0
+      reports.forEach(report=> {
+        hoursOfWorkingSum += parseInt(report.hoursOfWorking)
+      })
+
+      return hoursOfWorkingSum
+    },
+    sortReportByDay : function() {
+
+      let choosenDate = new Date()
+
+      if(this.offsetAttr) {
+        choosenDate.setDate(choosenDate.getDate() + this.offsetAttr)
+      }
+
+      if(this.datePick && this.datePickerShow) {
+        choosenDate.setFullYear(this.datePick.getFullYear())
+        choosenDate.setMonth(this.datePick.getMonth())
+        choosenDate.setDate(this.datePick.getDate())
+      }
+
+      let dateForReport = (choosenDate.getDate() < 10 ? '0' + choosenDate.getDate() : choosenDate.getDate())
+          +'-'+(choosenDate.getMonth()+1 < 10 ? '0' + (choosenDate.getMonth()+1) : (choosenDate.getMonth()+1))+'-'+choosenDate.getFullYear()
+
+      return this.reports.filter((r) => {
+        return r.reportDay === dateForReport })
+    },
+    postReports: function () {
+      this.reportFormsWithData.forEach(report=> {
+        if(!this.checkFieldsInReport(report))
+          this.isErrorMessage = true
+        else
+          this.isErrorMessage = false
+      })
+
+      let hoursOfWorkingSum = this.getHoursOfWorkingInReports(this.reportFormsWithData)
+      let reportsByDay = this.sortReportByDay()
+      let hoursOfReportsSum = this.getHoursOfWorkingInReports(reportsByDay)
+
+      if(!this.isErrorMessage){
+        if(hoursOfWorkingSum + hoursOfReportsSum > 8)
+          this.isErrorMessage = true
+        else
+          this.isErrorMessage = false
+      }
+
+      if(this.isErrorMessage) {
+        console.log('no')
       } else {
-
         if (this.text === '') {
           this.text = 'Отчет сформирован без комментариев'
         }
 
-        // Обнуляем массив отчетов для отправки
-        this.reportsForSend = []
-
-        // Выводим текущую дату
-        var date = new Date()
-
+        let date = new Date()
         if (this.offsetAttr) {
           date.setDate(date.getDate() + this.offsetAttr)
         }
@@ -316,102 +412,175 @@ export default {
           date.setDate(this.datePick.getDate())
         }
 
-        // Форматируем текущую дату (добавляем нули, гду нужно и когда нужно)
         this.reportDay = (date.getDate() < 10 ? '0' + date.getDate() : date.getDate())
-            + '-' + (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1)) + '-' + date.getFullYear();
+            + '-' + (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1))
+            + '-' + date.getFullYear();
 
-        // Готовим массив отчетов для последующей отправки
-        this.facilityNames.forEach(f => {
-              this.sumHoursPerDay = this.sumHoursPerDay + this.workingTimes[f.formId - 1].name
-
-              this.reportsForSend.push(
-                  {
-                    id: this.id ? this.id : undefined,
-                    facility: {id: getIdByName(this.facilities, f.name), name: f.name},
-                    subFacility: {name: this.subFacilityNames[f.formId - 1] ? this.subFacilityNames[f.formId - 1].name : ''},
-                    typeOfWork: this.workingTypes[f.formId - 1].name.name,
-                    job: {id : this.workingTypes[f.formId - 1].name.id},
-                    text: this.text,
-                    hoursOfWorking: this.workingTimes[f.formId - 1].name,
-                    reportDay: this.reportDay
-                  }
-              )
-            }
-        )
-        ////////////////////////////////////////////////////
-        // Отправка в базу данных всех заполненных отчетов//
-        ////////////////////////////////////////////////////
-        this.reportsForSend.forEach(r => {
-              console.log(r)
-
-              // Если все поля заполнены, то делаем запрос - нет ошибка
-              if (r.facility && r.hoursOfWorking && r.job
-                  && ((this.sumHoursPerDay <= 8) ? true : this.editReportStatus)) {
-
-                ///////// если есть id редактируем старую позицию /////////
-                if (r.id) {
-                  this.axios.post('api/report/' + r.id, r).then(data => {
-                    if (data.data === '') {
-                      this.errorFields = true
-                    } else {
-                      this.reportSendConfirmField = true // выводим сообщение об успешной отправке
-
-                      let index = getIndexForPost(this.reports, data.data.id) // получеам индекс коллекции
-                      this.reports.splice(index, 1, data.data);
-                      console.log('index -> ' + index)
-                    }
-
-                    // Очищаем поля
-                    this.clearForm() // очищение формы
-
-                    this.facilityNames = []
-                    this.subFacilityNames = []
-                    this.workingTypes = []
-                    this.workingTimes = []
-
-                    this.reportsForSend = []
-
-                    this.text = ''
-                    this.id = ''
-
-
-                  })
-                } else {
-                  ////////// если нет id создаем новую позицию ////////
-                  this.axios.post('api/report', r).then(data => {
-                    if (data.data === '') {
-                      this.errorFields = true
-                    } else {
-                      this.reportSendConfirmField = true // выводим сообщение об успешной отправке
-                    }
-                    this.reports.push(data.data)
-
-                    // Очищаем поля
-                    this.clearForm() // очищение формы
-
-                    this.facilityNames = []
-                    this.subFacilityNames = []
-                    this.workingTypes = []
-                    this.workingTimes = []
-
-                    this.reportsForSend = []
-
-                    this.text = ''
-                    this.id = ''
-                  })
-                }
-                this.errorFields = false
-              }
-              else
+        this.reportFormsWithData.forEach(report => {
+          this.reportsForSendWithData.push(
               {
-                this.errorFields = true
+                facility: {id: report.facility_id, name: report.facility},
+                subFacility: {id: report.subFacility_id ,name: report.subFacility},
+                job: {name: report.workingType, id: report.job_id},
+                text: this.text,
+                hoursOfWorking: report.hoursOfWorking,
+                reportDay: this.reportDay,
+                typeOfWork: report.workingType
               }
+          )
+        })
 
-            }
-        )
+        if(this.reportsForSendWithData){
+          this.reportsForSendWithData.forEach(report => {
+            this.axios.post('api/report', report).then(data => {
+              if(data.data) {
+                this.reportSendConfirmField = true
+                this.reports.push(data.data)
+                console.log('post new report')
+                console.log(data.data)
+              }
+            })
+          })
 
+        }
+        this.reportsForSendWithData = []
+        this.countReportForms = 1
+        this.reportFormsWithData = []
+        this.createReportFormWithData(this.countReportForms)
+        this.deleteFormWithData = false
       }
     },
+
+    // save: function () {
+    //   this.defaultFacilityName = ''
+    //   // Обнуляем счетчик времени наработки в день
+    //   this.sumHoursPerDay = 0
+    //
+    //   // Проверка на null заполненных полей
+    //   if ( this.facilityNames[0] === undefined
+    //       || this.workingTypes[0] === undefined
+    //       || this.workingTimes[0] === undefined )
+    //   {
+    //     // Если null - выводим ошибку
+    //     this.errorFields = true
+    //   } else {
+    //
+    //     if (this.text === '') {
+    //       this.text = 'Отчет сформирован без комментариев'
+    //     }
+    //
+    //     // Обнуляем массив отчетов для отправки
+    //     this.reportsForSend = []
+    //
+    //     // Выводим текущую дату
+    //     var date = new Date()
+    //
+    //     if (this.offsetAttr) {
+    //       date.setDate(date.getDate() + this.offsetAttr)
+    //     }
+    //
+    //     if (this.datePick && this.datePickerShow) {
+    //       date.setFullYear(this.datePick.getFullYear())
+    //       date.setMonth(this.datePick.getMonth())
+    //       date.setDate(this.datePick.getDate())
+    //     }
+    //
+    //     // Форматируем текущую дату (добавляем нули, гду нужно и когда нужно)
+    //     this.reportDay = (date.getDate() < 10 ? '0' + date.getDate() : date.getDate())
+    //         + '-' + (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1)) + '-' + date.getFullYear();
+    //
+    //     // Готовим массив отчетов для последующей отправки
+    //     this.facilityNames.forEach(f => {
+    //           this.sumHoursPerDay = this.sumHoursPerDay + this.workingTimes[f.formId - 1].name
+    //
+    //           this.reportsForSend.push(
+    //               {
+    //                 id: this.id ? this.id : undefined,
+    //                 facility: {id: getIdByName(this.facilities, f.name), name: f.name},
+    //                 subFacility: {name: this.subFacilityNames[f.formId - 1] ? this.subFacilityNames[f.formId - 1].name : ''},
+    //                 typeOfWork: this.workingTypes[f.formId - 1].name.name,
+    //                 job: {id : this.workingTypes[f.formId - 1].name.id},
+    //                 text: this.text,
+    //                 hoursOfWorking: this.workingTimes[f.formId - 1].name,
+    //                 reportDay: this.reportDay
+    //               }
+    //           )
+    //         }
+    //     )
+    //     ////////////////////////////////////////////////////
+    //     // Отправка в базу данных всех заполненных отчетов//
+    //     ////////////////////////////////////////////////////
+    //     this.reportsForSend.forEach(r => {
+    //           console.log(r)
+    //
+    //           // Если все поля заполнены, то делаем запрос - нет ошибка
+    //           if (r.facility && r.hoursOfWorking && r.job
+    //               && ((this.sumHoursPerDay <= 8) ? true : this.editReportStatus)) {
+    //
+    //             ///////// если есть id редактируем старую позицию /////////
+    //             if (r.id) {
+    //               this.axios.post('api/report/' + r.id, r).then(data => {
+    //                 if (data.data === '') {
+    //                   this.errorFields = true
+    //                 } else {
+    //                   this.reportSendConfirmField = true // выводим сообщение об успешной отправке
+    //
+    //                   let index = getIndexForPost(this.reports, data.data.id) // получеам индекс коллекции
+    //                   this.reports.splice(index, 1, data.data);
+    //                   console.log('index -> ' + index)
+    //                 }
+    //
+    //                 // Очищаем поля
+    //                 this.clearForm() // очищение формы
+    //
+    //                 this.facilityNames = []
+    //                 this.subFacilityNames = []
+    //                 this.workingTypes = []
+    //                 this.workingTimes = []
+    //
+    //                 this.reportsForSend = []
+    //
+    //                 this.text = ''
+    //                 this.id = ''
+    //
+    //
+    //               })
+    //             } else {
+    //               ////////// если нет id создаем новую позицию ////////
+    //               this.axios.post('api/report', r).then(data => {
+    //                 if (data.data === '') {
+    //                   this.errorFields = true
+    //                 } else {
+    //                   this.reportSendConfirmField = true // выводим сообщение об успешной отправке
+    //                 }
+    //                 this.reports.push(data.data)
+    //
+    //                 // Очищаем поля
+    //                 this.clearForm() // очищение формы
+    //
+    //                 this.facilityNames = []
+    //                 this.subFacilityNames = []
+    //                 this.workingTypes = []
+    //                 this.workingTimes = []
+    //
+    //                 this.reportsForSend = []
+    //
+    //                 this.text = ''
+    //                 this.id = ''
+    //               })
+    //             }
+    //             this.errorFields = false
+    //           }
+    //           else
+    //           {
+    //             this.errorFields = true
+    //           }
+    //
+    //         }
+    //     )
+    //
+    //   }
+    // },
     clickOnSelect: function (form) {
       this.reportSendConfirmField = false // убираем сообщение при редактировании полей
       this.form = form
@@ -517,24 +686,37 @@ export default {
         this.subFacilityNames.push(this.subFacilityName)
       }
     },
-    addReportForm: function (){
+    // addReportForm: function (){
+    //   this.countReportForms++
+    //   this.reportForms.push(this.countReportForms)
+    //   this.deleteFormVisual = true
+    // },
+    addReportFormWithData: function () {
       this.countReportForms++
-      this.reportForms.push(this.countReportForms)
-      this.deleteFormVisual = true
+      this.createReportFormWithData(this.countReportForms)
+      this.deleteFormWithData = true
     },
-    deleteReportForm: function () {
-      this.countReportForms--
-      this.reportForms.pop()
-      this.facilityNames.pop()
-      this.subFacilityNames.pop()
-      this.workingTypes.pop()
-      this.workingTimes.pop()
-      this.reportsForSend.pop()
-
-      if (this.reportForms[1] === undefined) {
-        this.deleteFormVisual = false
+    deleteReportFormWithData: function () {
+      if(this.countReportForms > 1) {
+        this.countReportForms--
+        this.reportFormsWithData.pop()
+      } else {
+        this.deleteFormWithData = false
       }
     },
+    // deleteReportForm: function () {
+    //   this.countReportForms--
+    //   this.reportForms.pop()
+    //   this.facilityNames.pop()
+    //   this.subFacilityNames.pop()
+    //   this.workingTypes.pop()
+    //   this.workingTimes.pop()
+    //   this.reportsForSend.pop()
+    //
+    //   if (this.reportForms[1] === undefined) {
+    //     this.deleteFormVisual = false
+    //   }
+    // },
     clicked: function(offsetText) {
       this.offsetText = offsetText
       switch (offsetText) {
