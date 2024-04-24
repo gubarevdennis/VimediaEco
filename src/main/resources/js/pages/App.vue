@@ -46,7 +46,7 @@
 
       <v-toolbar-title style="color: #F9F9F9">{{appBoardName}}</v-toolbar-title>
 
-      <v-btn style="color: #F9F9F9" href="http://reports.vimedia.ru/logout" variant="text" icon="mdi-logout"></v-btn>
+      <v-btn style="color: #F9F9F9" href="http://localhost:9000/logout" variant="text" icon="mdi-logout"></v-btn>
     </v-app-bar>
 
     <v-main style="background: #0B0B0B">

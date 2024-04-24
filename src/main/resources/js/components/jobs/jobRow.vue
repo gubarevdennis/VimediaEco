@@ -406,7 +406,7 @@ export default {
           this.reports
               .filter(r => r.user) // только те отчеты которые принадлежат хоть какому-то пользователю
               .filter(r => r.job)
-              .filter(r => this.usersResult.find(u => (u.id === r.user.id)))  // учитываем только время закрепленных за объектом сотрудников
+              // .filter(r => this.usersResult.find(u => (u.id === r.user.id)))  // учитываем только время закрепленных за объектом сотрудников
               // .filter(r => r.user ? r.user.role.split(' ')[0] !== 'Руководитель' : false) // часы руководителей не входят
               .map(r => r.hoursOfWorking)
               .reduce((partialSum, a) => partialSum + a, 0))

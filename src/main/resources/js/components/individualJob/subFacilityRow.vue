@@ -95,7 +95,7 @@ export default {
       return (
           this.reports
               .filter(r => r.user)
-              .filter(r => job.users ? job.users.find(u => (u.id === r.user.id)) : false) // учитываем только время закрепленных за объектом сотрудников
+              //.filter(r => job.users ? job.users.find(u => (u.id === r.user.id)) : false) // учитываем только время закрепленных за объектом сотрудников
               .filter(r => r.user ? r.user.role.split(' ')[0] !== 'Руководитель' : false)
               .filter(r => r.job)
               .filter(r => (r.job.id === job.id))

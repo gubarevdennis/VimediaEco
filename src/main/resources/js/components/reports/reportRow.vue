@@ -6,7 +6,7 @@
           {{report.subFacility ? report.subFacility.name + ' - ' : ''}} {{report.hoursOfWorking}} ч
         </v-card-title>
         <v-card-text>
-          {{report.job ? report.job.name : report.typeOfWork}} - {{report.text}}
+          {{report.job && report.job.name ? report.job.name : report.typeOfWork}} - {{report.text}}
         </v-card-text>
       </v-col>
       <v-spacer></v-spacer>
