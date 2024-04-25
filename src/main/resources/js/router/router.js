@@ -15,6 +15,7 @@ import test from "../components/tools/test.vue";
 import jobs from "../components/jobs/facilityList.vue";
 import bonus from "../components/individualJob/facilityList.vue";
 import bonusByMyObjects from "../components/jobs/facilityListForManagers.vue";
+import bonusByUser from "../components/bonusByUser/bonusByUser.vue";
 
 const router = createRouter({
   routes: [
@@ -66,6 +67,9 @@ const router = createRouter({
     },
     {
       path: '/bonusByMyObjects', component: bonusByMyObjects
+    },
+    {
+      path: '/bonusByUser', component: bonusByUser
     },
     {
       path: '/test', component: test

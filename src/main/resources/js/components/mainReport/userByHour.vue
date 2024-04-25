@@ -57,8 +57,8 @@
 
               <div v-if="showEditConfirmBtn">
                 <br>
-                <v-btn color="green"  @click="editJobType" > Сохранить </v-btn>
-                <v-btn color="red"  @click="showEditConfirmBtn = !showEditConfirmBtn" > Отменить </v-btn>
+                <v-btn v-show="report.job.nds < 1" color="green"  @click="editJobType" > Сохранить </v-btn>
+                <v-btn v-show="report.job.nds < 1" color="red"  @click="showEditConfirmBtn = !showEditConfirmBtn" > Отменить </v-btn>
               </div>
 
 
@@ -73,7 +73,7 @@
               ></v-autocomplete>
 
               <v-row justify="center" align-content="center" style="margin-bottom: 5px">
-                <v-btn v-if="showConfirmBtn" color="green"  @click="PostJobType" > Сохранить </v-btn>
+                <v-btn v-show="report.job.nds < 1" v-if="showConfirmBtn" color="green"  @click="PostJobType" > Сохранить </v-btn>
               </v-row>
 
             </v-card>

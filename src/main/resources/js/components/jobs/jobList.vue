@@ -23,11 +23,11 @@
                 </job-row>
             <br>
             <br>
-            <v-row justify="center" align-content="center" style="margin-bottom: 5px">
-              <v-btn v-if="showConfirmBtn" color="green"  @click="edit" > Применить </v-btn>
+<!--            <v-row justify="center" align-content="center" style="margin-bottom: 5px">-->
+<!--              <v-btn v-if="showConfirmBtn" color="green"  @click="edit" > Применить </v-btn>-->
 
-              <v-btn v-if="showConfirmBtn" color="red"  @click="hideConfirmBtnFunc" > Отмена </v-btn>
-            </v-row>
+<!--              <v-btn v-if="showConfirmBtn" color="red"  @click="hideConfirmBtnFunc" > Отмена </v-btn>-->
+<!--            </v-row>-->
           </div>
       </v-row>
     </v-col>

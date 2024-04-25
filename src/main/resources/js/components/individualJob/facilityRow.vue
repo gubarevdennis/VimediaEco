@@ -1,12 +1,16 @@
 <template>
-  <v-sheet v-bind:color="facility.color">
+  <v-sheet v-bind:color="object.facility.color">
     <div>
       <v-row>
         <v-col cols="10">
           <v-card-title style="font-size: 20px; font-weight: lighter" primary-title>
-            {{facility.name}}
+            {{object.facility.name}}
           </v-card-title>
-          <v-card-text v-if="subFacilities ? !subFacilities[0] : false" v-for="job in jobs">
+          <v-card-text v-if="object.subFacilities.length == 0" v-for="job in jobs">
+            <div v-if="job.nds == 2" style="margin-bottom: 10px">
+              <span style="background-color: rgba(147,252,114, 0.4); padding: 5px">Выплачено</span>
+            </div>
+
             <div v-if="job.autoBonus">
               <div>
                 <div style="color: #006600; font-weight: bold; font-size: 20px"> {{ calculateIndividualHours(job) !== 0 ?
@@ -29,19 +33,18 @@
           </v-card-text>
         </v-col>
         <v-col cols="10">
-          <v-card v-if="subFacilities" color="#F9F9F9" rounded="xl" v-for="subFacility in subFacilities.filter(s => jobs.filter(j => (j.subFacility ? (j.subFacility.id === s.id) : false))[0])" :key="subFacility.id" class="pa-2 ma-2" style="background-color: rgba(255,255,255, 0.7)">
+          <v-card v-if="object.subFacilities.length > 0" color="#F9F9F9" rounded="xl" v-for="subFacility in object.subFacilities" :key="subFacility.id" class="pa-2 ma-2" style="background-color: rgba(255,255,255, 0.7)">
             <div>
               <sub-facility-row
                   :deleteSubFacility="deleteSubFacility"
                   :subFacility="subFacility"
-                  :subFacilities="subFacilities"
-                  :facility="facility"
-                  :facilities="facilities"
+                  :facility="object.facility"
                   :role="role"
                   :profile="profile"
                   :profileId="profileId"
                   :jobs="jobs.filter(j => (j.subFacility ? (j.subFacility.id === subFacility.id) : false))"
                   :bonuses="bonuses"
+                  :isDirector="isDirector"
               />
             </div>
           </v-card>
@@ -67,23 +70,24 @@ export default {
   data() {
     return {
       subFacilities: [],
-      jobs: [],
       reports: [],
       bonusMoney: '',
       allHours: '',
       individualHours: '',
-      assignedUsers: [],
+      assignedUsers: []
     }
   },
   components: {SubFacilityRow},
-  props: ['facility', 'editFacility','facilities', 'role', 'deleteSubFacility', 'setSubFacility', 'jobs',
-    'url', 'port', 'profileId' ,'profile', 'bonuses'], // получаем переменную facility
+  props: ['object', 'editFacility', 'role', 'deleteSubFacility', 'setSubFacility', 'jobs',
+    'url', 'port', 'profileId' ,'profile', 'bonuses', 'isDirector'], // получаем переменную facility
 
   mounted() {
-    this.facility.subFacilities ? this.facility.subFacilities.forEach( s => this.subFacilities.push(s)) : []
+    this.object.subFacilities ? this.object.subFacilities.forEach( s => this.subFacilities.push(s)) : []
+    console.log('OBJECT  ' + this.object.facility.name)
+    console.log(this.object)
+    console.log(this.object.jobs)
 
-
-    this.axios.get("api/report/facility/" + this.facility.id).then(result => {
+    this.axios.get("api/report/facility/" + this.object.facility.id).then(result => {
           result
               .data
               .forEach(r => {
@@ -98,8 +102,8 @@ export default {
   },
   methods: {
     calculateAllBonusMoney: function (job) {
-      console.log("this.bonusMoney" + job.name)
-      console.log(this.bonusMoney)
+      //console.log("this.bonusMoney" + job.name)
+      //console.log(this.bonusMoney)
 
       this.reportCoast = this.reports
           .filter(r => r.user)
@@ -111,8 +115,8 @@ export default {
           .map(r => r.hoursOfWorking * r.cost/8)
           .reduce((partialSum, a) => partialSum + a, 0)
 
-      console.log("reportCoast" + job.name)
-      console.log(this.reportCoast)
+      //console.log("reportCoast" + job.name)
+      //console.log(this.reportCoast)
 
       return (job.budget - this.reportCoast - job.taxes
           - job.refund - job.expenses)
@@ -120,8 +124,8 @@ export default {
 
     },
     calculateAllHours: function (job) {
-      console.log("this.allHours" + job.name)
-      console.log(this.allHours)
+      //console.log("this.allHours" + job.name)
+      //console.log(this.allHours)
       return (
           this.reports
               .filter(r => r.user)
@@ -133,8 +137,8 @@ export default {
               .reduce((partialSum, a) => partialSum + a, 0))
     },
     calculateIndividualHours: function (job) {
-      console.log("this.individualHours" + job.name)
-      console.log(this.individualHours )
+      //console.log("this.individualHours" + job.name)
+      //console.log(this.individualHours )
       return  (
           this.reports
               .filter(r => r.user)

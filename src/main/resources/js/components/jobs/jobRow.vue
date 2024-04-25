@@ -47,15 +47,15 @@
 <!--      </v-alert>-->
 
       <div style="font-weight: bold;color: #0B0B0B"> Стоимость работ: &nbsp</div>
-      <input size="5" style="text-align:center" type="text" @input="showConfirmBtnFunc" v-model="job.budget"/> р
+      <input id="isOpen_budget" size="5" style="text-align:center" type="text" @input="showConfirmBtnFunc" v-model="job.budget"/> р
       <div style="font-weight: bold;color: #0B0B0B"> Налоги: &nbsp</div>
-      <input size="5" style="text-align:center"  type="text" @input="showConfirmBtnFunc" v-model="job.taxes" /> р
+      <input id="isOpen_taxes" size="5" style="text-align:center"  type="text" @input="showConfirmBtnFunc" v-model="job.taxes" /> р
       <div style="font-weight: bold;color: #0B0B0B"> Возврат: &nbsp</div>
-      <input size="5" style="text-align:center"  type="text" @input="showConfirmBtnFunc" v-model="job.refund" /> р
+      <input id="isOpen_refund" size="5" style="text-align:center"  type="text" @input="showConfirmBtnFunc" v-model="job.refund" /> р
       <div style="font-weight: bold;color: #0B0B0B"> Расходы: &nbsp</div>
-      <input size="5" style="text-align:center"  type="text" @input="showConfirmBtnFunc" v-model="job.expenses" /> р
+      <input id="isOpen_expenses" size="5" style="text-align:center"  type="text" @input="showConfirmBtnFunc" v-model="job.expenses" /> р
       <div style="font-weight: bold;color: #0B0B0B"> Процент от маржи на бонусы: &nbsp</div>
-      <input size="5" style="text-align:center" type="text" @input="showConfirmBtnFunc" v-model="job.bonus" /> %
+      <input id="isOpen_bonus" size="5" style="text-align:center" type="text" @input="showConfirmBtnFunc" v-model="job.bonus" /> %
       <div style="font-weight: bold;color: #0B0B0B"> Текущий бонус за объект: &nbsp</div>
       {{ this.calculateAllBonusMoney().toFixed(2) }} р
 
@@ -65,13 +65,15 @@
       <div style="font-weight: bold;color: #0B0B0B"> Общее количество часов: </div>
       {{this.calculateAllHours()}} ч
 
+
+<!--      <v-checkbox-->
+<!--          density="0"-->
+<!--          label="С НДС"-->
+<!--          :model-value="this.nds = Boolean(job.nds)"-->
+<!--          @update:model-value="manualNDSInvertFunc"-->
+<!--      ></v-checkbox>-->
       <v-checkbox
-          density="0"
-          label="С НДС"
-          :model-value="this.nds = Boolean(job.nds)"
-          @update:model-value="manualNDSInvertFunc"
-      ></v-checkbox>
-      <v-checkbox
+          v-show="isOpenJob(job)"
           density="0"
           label="Автоматический расчет бонусов"
           :model-value="this.autoBonus = Boolean(job.autoBonus)"
@@ -79,8 +81,22 @@
       ></v-checkbox>
 
       <div v-show="showConfirmBtn" style="margin-top: 5px">
-        <v-btn  color="green"  @click="editJob" > Принять </v-btn>
-        <v-btn color="red"  @click="hideConfirmBtnFunc" > Отмена </v-btn>
+        <v-btn v-show="isOpenJob(job)" color="green"  @click="editJob" > Принять </v-btn>
+        <v-btn v-show="isOpenJob(job)" color="red"  @click="hideConfirmBtnFunc" > Отмена </v-btn>
+      </div>
+
+
+      <div class="ma-2 pa-2">
+        <v-btn class="pa-2" @click="showUserByReports()">Сотрудники, написавшие отчет</v-btn>
+        <v-autocomplete
+            v-show="showUsersByReport"
+            density="compact"
+            label="Сотрудники по отчетам"
+            variant="solo"
+            :items="allUsersByReport"
+        >
+        </v-autocomplete>
+
       </div>
 
       <div v-if="usersResult[0]" style="font-weight: bold;color: #0B0B0B"> Ответственные сотрудники: &nbsp</div>
@@ -116,8 +132,8 @@
             {{ i+1 }}) {{ user.name }} - {{user.value}} % /
             {{Math.round(calculateAllBonusMoney() * user.value / (100))}} р
           </div>
-          <v-btn style="font-size: 8pt !important" @click="user.isShowEdit = !user.isShowEdit">Изменить</v-btn>
-          <v-btn color="red" style="font-size: 8pt !important" @click="user.isConfirmDelete = !user.isConfirmDelete">Удалить</v-btn>
+          <v-btn v-show="isOpenJob(job)" style="font-size: 8pt !important" @click="user.isShowEdit = !user.isShowEdit">Изменить</v-btn>
+          <v-btn v-show="isOpenJob(job)" color="red" style="font-size: 8pt !important" @click="user.isConfirmDelete = !user.isConfirmDelete">Удалить</v-btn>
           <v-btn v-show="user.isConfirmDelete" color="green" style="font-size: 8pt !important" @click="deleteUserFromJob(user)">Подвердить удаление</v-btn>
           <v-btn v-show="user.isConfirmDelete" color="red" style="font-size: 8pt !important" @click="user.isConfirmDelete = !user.isConfirmDelete">Отмена</v-btn>
           <br>
@@ -128,7 +144,7 @@
           </div>
 
           <div v-show="user.isShowEdit" style="margin-top: 5px">
-            <v-btn  color="green"  @click="editUserBonus(user)" > Применить </v-btn>
+            <v-btn color="green"  @click="editUserBonus(user)" > Применить </v-btn>
             <v-btn color="red"  @click="user.isShowEdit = !user.isShowEdit" > Отмена </v-btn>
           </div>
           <br>
@@ -138,6 +154,7 @@
       </div>
 
       <v-autocomplete
+          v-show="isOpenJob(job)"
           density="compact"
           label="Добавить сотрудника"
           variant="solo"
@@ -163,6 +180,11 @@
       </div>
       <br>
       <br>
+    </div>
+
+    <div v-if="role == 'Директор' || role == 'Руководитель проектов'" >
+      <v-btn @click="closeJob" class="ma-2 pa-2" :color="closeJobColor(job)">{{closeJobText(job)}}</v-btn>
+      <v-btn @click="payJob" class="ma-2 pa-2" :color="payJobColor(job)" v-if="role == 'Директор'" >{{payJobText(job)}}</v-btn>
     </div>
 
 
@@ -231,7 +253,10 @@ export default {
 
       isColorPicker: false,
 
-      errorFields: false
+      errorFields: false,
+
+      allUsersByReport: [],
+      showUsersByReport: false
     }
   },
   mounted() {
@@ -422,6 +447,19 @@ export default {
               .map(r => r.hoursOfWorking)
               .reduce((partialSum, a) => partialSum + a, 0))
     },
+    getAllUsers: function () {
+      this.allUsersByReport = []
+      this.allUsersByReport = this.reports.filter(r => r.user).filter(r => r.job).map(u=>u.user.name)
+      let set = new Set(this.allUsersByReport)
+      this.allUsersByReport = [...set]
+      console.log('uuuuuusssssser')
+      console.log(this.allUsersByReport)
+      return this.reports.filter(r => r.user).filter(r => r.job)
+    },
+    showUserByReports: function () {
+      this.getAllUsers()
+      this.showUsersByReport = !this.showUsersByReport
+    },
     updateBonuses: function () {
       this.bonuses = []
       this.bonusValue = []
@@ -571,6 +609,71 @@ export default {
           this.getUsersWithBonus()
         }
       })
+    },
+
+    isOpenJob: function(job) {
+      return job.nds < 1 ? true : false
+    },
+    closeJobColor: function (job) {
+      return job.nds < 1 ? 'amber' : 'grey'
+    },
+    closeJobText: function (job) {
+      return job.nds < 1 ? 'Закрыть работу' : 'Работа закрыта'
+    },
+    closeJob: function () {
+      if (this.job.name === null || this.job.type === null || this.job.budget == 0) {
+        this.errorFields = true
+      } else {
+        if (this.job.nds != 2) {
+
+          if (this.isOpenJob(this.job)) {
+            this.job.nds = 1
+          } else {
+            this.job.nds = 0
+          }
+          this.errorFields = false
+
+          this.axios.put(`api/job/${this.job.id}`, this.job).then(result => {
+            if (result.status === 200) {
+              this.editJob(result.data)
+              this.job.nds = result.data.nds
+              console.log('THE JOB ' + result.data.name + ' IS CLOSED/OPENED')
+            }
+
+          })
+        }
+      }
+    },
+
+    isPaidJob: function (job) {
+      return job.nds == 2 ? true : false
+    },
+    payJobColor: function (job) {
+      return job.nds < 2 ? 'light-green' : 'grey'
+    },
+    payJobText: function (job) {
+      return job.nds < 2 ? 'Выплатить' : 'Выплачено'
+    },
+    payJob: function () {
+      if (this.job.name === null || this.job.type === null || this.job.budget == 0) {
+        this.errorFields = true
+      } else {
+        if (this.isPaidJob(this.job)) {
+          this.job.nds = 1
+        } else {
+          this.job.nds = 2
+        }
+        this.errorFields = false
+
+        this.axios.put(`api/job/${this.job.id}`, this.job).then(result => {
+          if (result.status === 200) {
+            this.editJob(result.data)
+            this.job.nds = result.data.nds
+            console.log('THE JOB ' + result.data.name + ' IS PAID/NOT PAID')
+          }
+
+        })
+      }
     }
   },
   watch: {
@@ -580,8 +683,7 @@ export default {
     colorNumber: function (colorNumber) {
       this.colorNumber = colorNumber
       this.showConfirmBtn = true
-      console.log("colorNumber")
-      console.log(colorNumber)
+
     }
   }
 }

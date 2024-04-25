@@ -34,8 +34,8 @@
       </v-overlay>
 
       <v-col cols="auto" align="end" align-self="center">
-        <v-btn @click="showReportEdit = !showReportEdit" icon="mdi-file-edit">  </v-btn>
-        <v-btn @click="del" icon="mdi-delete">  </v-btn>
+        <v-btn v-show="report.job.nds < 1" @click="showReportEdit = !showReportEdit" icon="mdi-file-edit">  </v-btn>
+        <v-btn v-show="report.job.nds < 1" @click="del" icon="mdi-delete">  </v-btn>
       </v-col>
     </v-row>
   </v-sheet>

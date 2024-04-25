@@ -69,7 +69,6 @@ export default {
     }
   },
   mounted() {
-    console.log('there')
     this.axios.get("api/facility").then(result => {
           return result.data.forEach(facility => {
             this.facilities.push(facility)
@@ -90,7 +89,7 @@ export default {
       this.formData.job_id = ''
 
       let foundFacility = this.facilities.find(el => el.name == this.formData.facility)
-      console.log(foundFacility)
+
       if(foundFacility) {
         if (foundFacility.subFacilities.length > 0) {
           foundFacility.subFacilities.forEach(el => {
@@ -104,7 +103,8 @@ export default {
         if(!this.isSubFacility) {
           this.axios.get("api/job/facility/" + foundFacility.id).then(result => {
                 return result.data.forEach(job => {
-                  this.workingTypes.push(job)
+                  if(job.nds < 1 && job.name)
+                    this.workingTypes.push(job)
                 })
               }
           )
@@ -113,7 +113,6 @@ export default {
 
 
       console.log('sub')
-      console.log(this.subFacilities)
       console.log(this.workingTypes)
     },
     subFacilitySelected: function () {
@@ -124,16 +123,21 @@ export default {
       this.formData.job_id = ''
 
       let foundSubFacility = this.subFacilities.find(el => el.name == this.formData.subFacility)
-      console.log('found sub')
-      console.log(foundSubFacility)
+
       if(foundSubFacility) {
         this.axios.get("api/job/subFacility/" + foundSubFacility.id).then(result => {
               return result.data.forEach(job => {
-                this.workingTypes.push(job)
+                if(job.nds < 1 && job.name) {
+                  console.log(job.name + ' ' + job.nds)
+                  this.workingTypes.push(job)
+                }
               })
             }
         )
       }
+
+      console.log('sub')
+      console.log(this.workingTypes)
     },
     workingTypeSelected: function () {
       let foundFacility = this.facilities.find(el => el.name == this.formData.facility)

@@ -4,6 +4,10 @@
       {{subFacility.name}}
     </v-card-title>
     <v-card-text v-for="job in jobs">
+      <div v-if="job.nds == 2" style="margin-bottom: 10px">
+        <span style="background-color: rgba(147,252,114, 0.4); padding: 5px">Выплачено</span>
+      </div>
+
       <div v-if="job.autoBonus">
         <div >
           <div style="color: #006600; font-weight: bold; font-size: 20px"> {{ calculateIndividualHours(job) !== 0 ?
@@ -44,8 +48,9 @@
 
 
 export default {
-  props: ['subFacility','facility', 'editSubFacility','facilities', 'role', 'subFacilities',
-    'deleteSubFacility', 'jobs', 'profileId' ,'profile', 'assignedUsers', 'bonuses'], // получаем переменную facility
+  props: ['subFacility','facility', 'editSubFacility', 'role',
+    'deleteSubFacility', 'jobs', 'profileId' ,'profile', 'assignedUsers', 'bonuses',
+    'isDirector'], // получаем переменную facility
   data() {
     return {
       reports: [],
@@ -55,7 +60,9 @@ export default {
     }
   },
   mounted() {
-    console.log("recursion!!!")
+    //console.log('JOBS')
+    //console.log(this.jobs)
+    //console.log("recursion!!!")
     this.axios.get("api/report/subFacility/" + this.subFacility.id).then(result => {
           result
               .data
@@ -68,8 +75,8 @@ export default {
   },
   methods: {
     calculateAllBonusMoney: function (job) {
-      console.log("this.bonusMoney")
-      console.log(this.bonusMoney)
+      //console.log("this.bonusMoney")
+      //console.log(this.bonusMoney)
 
       this.reportCoast = this.reports
           .filter(r => r.user)
@@ -81,8 +88,8 @@ export default {
           .map(r => r.hoursOfWorking * r.cost/8)
           .reduce((partialSum, a) => partialSum + a, 0)
 
-      console.log("reportCoast")
-      console.log(this.reportCoast)
+      //console.log("reportCoast")
+      //console.log(this.reportCoast)
 
 
       return (job.budget - this.reportCoast - job.taxes
@@ -90,8 +97,8 @@ export default {
           * (job.bonus/100);
     },
     calculateAllHours: function (job) {
-      console.log("this.allHours")
-      console.log(this.allHours)
+      //console.log("this.allHours")
+      //console.log(this.allHours)
       return (
           this.reports
               .filter(r => r.user)
@@ -103,8 +110,8 @@ export default {
               .reduce((partialSum, a) => partialSum + a, 0))
     },
     calculateIndividualHours: function (job) {
-      console.log("this.individualHours")
-      console.log(this.individualHours)
+      //console.log("this.individualHours")
+      //console.log(this.individualHours)
       return  (
           this.reports
               .filter(r => r.user)

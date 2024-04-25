@@ -208,7 +208,7 @@ export default {
         reportForSend = {
           id: this.report.id,
           facility: {id: this.report.facility.id, name: this.report.facility.name},
-          subFacility: {name: newSubFacility.name},
+          subFacility: {name: newSubFacility ? newSubFacility.name : ''},
           typeOfWork: newJob.name,
           job: {id: parseInt(newJob.id) },
           text: this.report.text,
