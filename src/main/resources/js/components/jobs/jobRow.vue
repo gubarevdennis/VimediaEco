@@ -88,14 +88,20 @@
 
       <div class="ma-2 pa-2">
         <v-btn class="pa-2" @click="showUserByReports()">Сотрудники, написавшие отчет</v-btn>
-        <v-autocomplete
-            v-show="showUsersByReport"
-            density="compact"
-            label="Сотрудники по отчетам"
-            variant="solo"
-            :items="allUsersByReport"
-        >
-        </v-autocomplete>
+<!--        <v-autocomplete-->
+<!--            v-show="showUsersByReport"-->
+<!--            density="compact"-->
+<!--            label="Сотрудники по отчетам"-->
+<!--            variant="solo"-->
+<!--            :items="allUsersByReport"-->
+<!--        >-->
+<!--        </v-autocomplete>-->
+        <v-list v-show="showUsersByReport" style="background-color:transparent;">
+          <v-list-item
+              v-for="user in allUsersByReport">
+            <v-list-item-title>{{user.name}} - {{user.hours}} ч</v-list-item-title>
+          </v-list-item>
+        </v-list>
 
       </div>
 
@@ -211,7 +217,7 @@ function removeDuplicates(arr) {
 
 export default {
   name: "jobRow",
-  props: ['profile', 'role', 'tool', 'rowInputText' , 'editJob', 'rowInputType', 'job', 'users', 'reports', 'profileId', 'updateDeletedFob'],
+  props: ['profile', 'role', 'tool', 'rowInputText' , 'editJob', 'rowInputType', 'job', 'users', 'reports', 'profileId', 'updateDeletedJob'],
   data() {
     return {
       imageEditButton: false,
@@ -420,9 +426,12 @@ export default {
     },
     deleteJob: function (){
       this.axios.delete( "api/job/" + this.job.id).then(result => {
-        console.log('deleted' + result.data.id)
-        this.updateDeletedFob()
+        if (result.status === 200) {
+          console.log('deleted' + result.data.id)
+          this.showDeleteBtn = false
+        }
       })
+      this.updateDeletedJob()
     },
     calculateAllHours: function () {
       console.log("this.allHours")
@@ -449,12 +458,25 @@ export default {
     },
     getAllUsers: function () {
       this.allUsersByReport = []
-      this.allUsersByReport = this.reports.filter(r => r.user).filter(r => r.job).map(u=>u.user.name)
-      let set = new Set(this.allUsersByReport)
-      this.allUsersByReport = [...set]
-      console.log('uuuuuusssssser')
-      console.log(this.allUsersByReport)
-      return this.reports.filter(r => r.user).filter(r => r.job)
+
+      let map = new Map()
+      this.reports.filter(r => r.user).filter(r => r.job).forEach(el => {
+        if(map.has(el.user.id)) {
+
+          map.get(el.user.id).hours += parseInt(el.hoursOfWorking)
+        } else {
+          let obj = {}
+          obj.name = el.user.name
+          obj.hours = parseInt(el.hoursOfWorking)
+          map.set(el.user.id, obj)
+        }
+      })
+      map.forEach((value, key, map) => {
+        let obj = {}
+        obj.name = value.name
+        obj.hours = value.hours
+        this.allUsersByReport.push(obj)
+      })
     },
     showUserByReports: function () {
       this.getAllUsers()

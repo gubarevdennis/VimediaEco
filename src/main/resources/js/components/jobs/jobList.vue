@@ -1,5 +1,5 @@
 <template>
-  <html style="max-height: 80vh; max-width: 100vh">
+  <html style="max-height: 80vh;">
   <v-sheet
       rounded="lg"
       contained
@@ -8,32 +8,65 @@
     <v-card-title>
       {{facility.name}} {{subFacility.name}}
     </v-card-title>
-    <v-col >
-      <v-row justify="center" align="start">
-          <div v-for="job in this.jobs" :key="job.id">
-                <job-row
-                    :reports="reports.filter(r => r.job).filter(r => r.job.id === job.id)"
-                    :job="job"
-                    :editJob="editJob"
-                    :users="users"
-                    :assignedUsers="assignedUsers"
-                    :profile="profile" :role="role" :profileId="profileId"
-                    :updateDeletedFob="updateDeletedFob"
-                >
-                </job-row>
-            <br>
-            <br>
-<!--            <v-row justify="center" align-content="center" style="margin-bottom: 5px">-->
-<!--              <v-btn v-if="showConfirmBtn" color="green"  @click="edit" > Применить </v-btn>-->
 
-<!--              <v-btn v-if="showConfirmBtn" color="red"  @click="hideConfirmBtnFunc" > Отмена </v-btn>-->
-<!--            </v-row>-->
+    <v-container>
+      <v-row>
+        <v-col cols="12" sm="4">
+          <v-list>
+            <v-list-item
+            v-for="job in this.jobs"
+            :key="job.id"
+            @click="selectJob(job)">
+              <v-card :color="job.color" class="pa-2">{{job.name}}</v-card>
+            </v-list-item>
+          </v-list>
+          <br>
+          <v-btn color="yellow" @click="turnOverlayCopyAndAddNewJob(overlayCopy)" :showConfirmCopyTool="showConfirmCopyTool"
+          > Добавить работы</v-btn>
+        </v-col>
+        <v-col cols="12" sm="8">
+          <div v-if="selectedJob">
+            <job-row
+                :reports="reports.filter(r => r.job).filter(r => r.job.id === selectedJob.id)"
+                :job="selectedJob"
+                :editJob="editJob"
+                :users="users"
+                :assignedUsers="assignedUsers"
+                :profile="profile" :role="role" :profileId="profileId"
+                :updateDeletedJob="updateDeletedJob"
+            >
+            </job-row>
           </div>
+        </v-col>
       </v-row>
-    </v-col>
-    <br>
-    <v-btn color="yellow" @click="turnOverlayCopyAndAddNewJob(overlayCopy)" :showConfirmCopyTool="showConfirmCopyTool"
-    > Добавить работы</v-btn>
+    </v-container>
+
+<!--    <v-col >-->
+<!--      <v-row justify="center" align="start">-->
+<!--          <div v-for="job in this.jobs" :key="job.id">-->
+<!--                <job-row-->
+<!--                    :reports="reports.filter(r => r.job).filter(r => r.job.id === job.id)"-->
+<!--                    :job="job"-->
+<!--                    :editJob="editJob"-->
+<!--                    :users="users"-->
+<!--                    :assignedUsers="assignedUsers"-->
+<!--                    :profile="profile" :role="role" :profileId="profileId"-->
+<!--                    :updateDeletedFob="updateDeletedFob"-->
+<!--                >-->
+<!--                </job-row>-->
+<!--            <br>-->
+<!--            <br>-->
+<!--&lt;!&ndash;            <v-row justify="center" align-content="center" style="margin-bottom: 5px">&ndash;&gt;-->
+<!--&lt;!&ndash;              <v-btn v-if="showConfirmBtn" color="green"  @click="edit" > Применить </v-btn>&ndash;&gt;-->
+
+<!--&lt;!&ndash;              <v-btn v-if="showConfirmBtn" color="red"  @click="hideConfirmBtnFunc" > Отмена </v-btn>&ndash;&gt;-->
+<!--&lt;!&ndash;            </v-row>&ndash;&gt;-->
+<!--          </div>-->
+<!--      </v-row>-->
+<!--    </v-col>-->
+<!--    <br>-->
+<!--    <v-btn color="yellow" @click="turnOverlayCopyAndAddNewJob(overlayCopy)" :showConfirmCopyTool="showConfirmCopyTool"-->
+<!--    > Добавить работы</v-btn>-->
 
     <br>
     <br>
@@ -68,7 +101,9 @@ export default {
       assignedUsers: [],
       job: '',
       reports: [],
-      userNameSelected: ''
+      userNameSelected: '',
+
+      selectedJob: ''
     }
   },
   mounted() {
@@ -77,13 +112,15 @@ export default {
     // console.log(this.toolSetNameSelected)
 
     if (this.facility) {
-      this.axios.get("api/job/facility/" + this.facility.id).then(result =>
+      this.axios.get("api/job/facility/" + this.facility.id).then(result => {
           result
               .data
               .forEach(job => {
                     this.jobs.push(job)
                   }
               )
+          this.selectedJob = this.jobs ? this.jobs[0] : ''
+        }
       )
 
       this.axios.get("api/report/facility/" + this.facility.id).then(result =>
@@ -95,13 +132,15 @@ export default {
               )
       )
     } else if (this.subFacility) {
-      this.axios.get("api/job/subFacility/" + this.subFacility.id).then(result =>
+      this.axios.get("api/job/subFacility/" + this.subFacility.id).then(result => {
           result
               .data
               .forEach(job => {
                     this.jobs.push(job)
                   }
               )
+          this.selectedJob = this.jobs ? this.jobs[0] : ''
+        }
       )
 
       this.axios.get("api/report/subFacility/" + this.subFacility.id).then(result =>
@@ -117,21 +156,25 @@ export default {
   },
   methods: {
     addNewJobByFacility: function (facility) {
-            this.axios.post("api/job", { facility: {id : facility.id}}).then(result => {
-        if (result.status === 200) {
-          this.jobs.push(result.data)
-        } else {
+      this.axios.post("api/job", {name: 'Пустая работа', type: 'Пустая работа',
+          budget: 0,
+          facility: {id : facility.id}}).then(result => {
+      if (result.status === 200) {
+        this.jobs.push(result.data)
+      } else {
 
         }
       })
     },
     addNewJobBySubFacility: function (subFacility) {
-      this.axios.post("api/job", { subFacility: {id : subFacility.id}}).then(result => {
-        if (result.status === 200) {
-          this.jobs.push(result.data)
-        } else {
+      this.axios.post("api/job", {name: 'Пустая работа', type: 'Пустая работа',
+        budget: 0,
+        suFacility: {id : subFacility.id}}).then(result => {
+      if (result.status === 200) {
+        this.jobs.push(result.data)
+      } else {
 
-        }
+      }
       })
     },
     assign: function () {
@@ -193,9 +236,9 @@ export default {
           1,
           job
       )
-      console.log(this.jobs)
+      //console.log(this.jobs)
     },
-    updateDeletedFob: function (){
+    updateDeletedJob: function (){
       this.jobs = []
       this.axios.get("api/job/facility/" + this.facility.id).then(result =>
           result
@@ -205,6 +248,10 @@ export default {
                   }
               )
       )
+      this.selectedJob = this.jobs ? this.jobs[0] : ''
+    },
+    selectJob: function (job) {
+      this.selectedJob = job
     }
   }
 }
