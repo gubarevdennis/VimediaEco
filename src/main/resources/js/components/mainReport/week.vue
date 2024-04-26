@@ -2,7 +2,7 @@
   <v-sheet color="#393a34">
     <v-row justify="center">
       <v-col align="center" cols="auto" v-for="day in daysPerOneWeek(w)" v-bind:key="day">
-        <day :reports="reports" :day="day"></day>
+        <day :reports="reports" :day="day" :role="role"></day>
       </v-col>
     </v-row>
 <br>
@@ -27,7 +27,7 @@
 
 import Day from "./day.vue";
 export default {
-  props: ['w', 'reports', 'daysPerWeek'],
+  props: ['w', 'reports', 'daysPerWeek', 'role'],
   components: {Day},
   data() {
     return {

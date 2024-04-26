@@ -14,6 +14,7 @@ import vimedia.service.ReportApp.repo.report.SubFacilityRepo;
 import vimedia.service.ReportApp.repo.report.UserRepo;
 import vimedia.service.ReportApp.service.MyUserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -81,6 +82,8 @@ public class JobController {
     @PostMapping
     @JsonView(Views.IdName.class)
     public Job create(@RequestBody Job job, @AuthenticationPrincipal MyUserDetails myUserDetails) {
+
+        job.setCreationDate(LocalDateTime.now());
 
         if (job.getAutoBonus() == null) {
             job.setAutoBonus(0);

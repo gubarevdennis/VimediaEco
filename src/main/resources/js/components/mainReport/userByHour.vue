@@ -44,8 +44,8 @@
                 </div>
                 <div style="font-weight: bold;color: #0B0B0B">Количество часов: </div>
                 <input size="5" style="text-align:center"  type="text" @input="showEditConfirmBtnFunc" v-model="report.hoursOfWorking" />ч
-                <div style="font-weight: bold;color: #0B0B0B">Стоимость:</div>
-                <input size="5" style="text-align:center"  type="text" @input="showEditConfirmBtnFunc" v-model="report.cost" />р
+                <div v-if="role == 'Директор'" style="font-weight: bold;color: #0B0B0B">Стоимость:</div>
+                <input v-if="role == 'Директор'" size="5" style="text-align:center"  type="text" @input="showEditConfirmBtnFunc" v-model="report.cost" />р
                 <br>
                 <div style="width: 100%; font-weight: bold;"> Текст отчета:</div>
                 <input size="30" style="text-align:center"  type="text" @input="showEditConfirmBtnFunc" v-model="report.text" />
@@ -87,7 +87,7 @@
 <script>
 
 export default {
-  props: ['report'],
+  props: ['report', 'role'],
   //color: '',
   data() {
     return {

@@ -11,7 +11,7 @@
       <money-per-day :reports="reports" :day="day.day"></money-per-day>
     </v-row>
     <v-row align="center" justify="center" style="" align-content="end">
-      <users-by-day :reports="reports" :day="day.day"></users-by-day>
+      <users-by-day :reports="reports" :day="day.day" :role="role"></users-by-day>
     </v-row>
     <br>
   </v-sheet>
@@ -38,7 +38,7 @@ function getIndex(list, id) {
 
 export default {
   components: {MoneyPerDay, DayNumber, UsersByDay},
-  props: ['day', 'reports'], // чтобы рабоать с данной переменной и передавать ее выше в корень
+  props: ['day', 'reports', 'role'], // чтобы рабоать с данной переменной и передавать ее выше в корень
   // функция нужна для того чтобы у каждого компонента было свое уникальное хранилище
   data() {
     return {
