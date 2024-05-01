@@ -3,6 +3,8 @@ package vimedia.service.ReportApp.controller.report;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +14,7 @@ import vimedia.service.ReportApp.repo.report.ReportRepo;
 import vimedia.service.ReportApp.repo.report.SubFacilityRepo;
 import vimedia.service.ReportApp.repo.report.UserRepo;
 import vimedia.service.ReportApp.service.MyUserDetails;
+import vimedia.service.ReportApp.service.ReplaceCoastObject;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -89,6 +92,24 @@ public class ReportController {
     @JsonView(Views.IdName.class)
     public List<Report> getReportsBySubFacility(@PathVariable("id") SubFacility subFacility) {
         return reportRepo.getReportsBySubFacility(subFacility);
+    }
+
+    @PostMapping("/get/replacecost/user/{id}")
+    @JsonView(Views.IdName.class)
+    public List<Report> getReplaceCoast(@PathVariable("id") User user, // из базы данных
+                                     @RequestBody ReplaceCoastObject replaceCoastObject,
+                                     @AuthenticationPrincipal MyUserDetails myUserDetails) { // от пользователя
+
+        System.out.println("user.getId()");
+        System.out.println(user.getId());
+        System.out.println("replaceCoastObject.getDateFrom()");
+        System.out.println(replaceCoastObject.getDateFrom());
+        System.out.println("replaceCoastObject.getDateTo()");
+        System.out.println(replaceCoastObject.getDateTo());
+
+        return reportRepo.showCoastByActualSalaryWithHoursOfWorking(user.getId(), replaceCoastObject.getDateFrom(),
+                replaceCoastObject.getDateTo(), replaceCoastObject.getSalary());
+
     }
 
     @PostMapping
@@ -200,6 +221,26 @@ public class ReportController {
 
         return reportRepo.save(reportFromDB);
     }
+
+
+    @PostMapping("/replacecost/user/{id}")
+    @JsonView(Views.IdName.class)
+    public String replaceCoast(@PathVariable("id") User user, // из базы данных
+                                       @RequestBody ReplaceCoastObject replaceCoastObject,
+                                       @AuthenticationPrincipal MyUserDetails myUserDetails) { // от пользователя
+
+        reportRepo.replaceCoastByActualSalaryWithHoursOfWorking(
+                user.getId(),
+                replaceCoastObject.getDateFrom(),
+                replaceCoastObject.getDateTo(),
+                replaceCoastObject.getSalary()
+        );
+
+        System.out.println("Cost replaced!");
+
+         return "Cost replaced!";
+    }
+
 
     @DeleteMapping("{id}")
     public void delete(@PathVariable("id") Report report) {

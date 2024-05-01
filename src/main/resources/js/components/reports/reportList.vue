@@ -95,7 +95,7 @@ import reportForm from "./reportForm.vue";
 // const port = ''
 
 export default {
-  props: [ 'users', 'appBoardName', 'profileId', 'reports', 'url', 'port'],
+  props: [ 'users', 'appBoardName', 'profileId', 'url', 'port'],
   components: {
     reportRow,
     reportForm

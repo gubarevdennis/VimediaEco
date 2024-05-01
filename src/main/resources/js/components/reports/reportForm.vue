@@ -420,8 +420,8 @@ export default {
           this.reportsForSendWithData.push(
               {
                 facility: {id: report.facility_id, name: report.facility},
-                subFacility: {id: report.subFacility_id ,name: report.subFacility},
-                job: {name: report.workingType, id: report.job_id},
+                subFacility: {id: report.subFacility_id},
+                job: {id: report.job_id },
                 text: this.text,
                 hoursOfWorking: report.hoursOfWorking,
                 reportDay: this.reportDay,
