@@ -265,20 +265,41 @@ export default {
       showUsersByReport: false
     }
   },
-  mounted() {
+  updated() {
+
     this.toolInfo = this.rowInputText
     console.log(this.rowInputText)
 
-    this.job.budget = this.job.budget === null ? 0 : this.job.budget
-    this.job.taxes = this.job.taxes === null ? 0 : this.job.taxes
-    this.job.refund = this.job.refund === null ? 0 : this.job.refund
-    this.job.expenses = this.job.expenses === null ? 0 : this.job.expenses
-    this.job.bonus = this.job.bonus === null ? 0 : this.job.bonus
-    this.bonus = this.bonus === null ? 0 : this.bonus
+    this.job.budget = this.job.budget ? this.job.budget : 0
+    this.job.taxes = this.job.taxes ? this.job.taxes : 0
+    this.job.refund = this.job.refund ? this.job.refund : 0
+    this.job.expenses = this.job.expenses ? this.job.expenses : 0
+    this.job.bonus = this.job.bonus ? this.job.bonus : 0
+    this.bonus = this.bonus ? this.bonus : 0
 
     this.getUsersWithBonus()
 
     this.updateAssignedUsers(this.job)
+    this.userNameSelected = ''
+    this.newUserBonus = 0
+  },
+  mounted() {
+    this.toolInfo = this.rowInputText
+    console.log(this.rowInputText)
+
+    this.job.budget = this.job.budget ? this.job.budget : 0
+    this.job.taxes = this.job.taxes ? this.job.taxes : 0
+    this.job.refund = this.job.refund ? this.job.refund : 0
+    this.job.expenses = this.job.expenses ? this.job.expenses : 0
+    this.job.bonus = this.job.bonus ? this.job.bonus : 0
+    this.bonus = this.bonus ? this.bonus : 0
+    //
+    // console.log('thiiiissss joooob')
+    // console.log(this.job.taxes)
+    //
+    // this.getUsersWithBonus()
+    //
+    // this.updateAssignedUsers(this.job)
 
   },
   methods: {
@@ -569,6 +590,7 @@ export default {
       if(this.job.name === null || this.job.type === null || this.job.budget == 0){
         this.errorFields = true
       } else {
+
         this.axios.put(`api/job/${this.job.id}`, this.job).then(result => {
           if (result.status === 200) {
             this.showAddUserBtn = false
@@ -582,6 +604,10 @@ export default {
     },
     addNewBonus: function () {
       let usr = this.users.find(el => el.name == this.userNameSelected)
+
+      console.log('POST NEW USER FOR BONUS')
+      console.log(usr.name)
+      console.log(this.job)
 
       this.bonus = {
         value: this.newUserBonus,

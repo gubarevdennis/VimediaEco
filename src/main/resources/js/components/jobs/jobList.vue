@@ -1,5 +1,5 @@
 <template>
-  <html style="max-height: 80vh;">
+  <html style="max-height: 80vh; min-width: 40vh">
   <v-sheet
       rounded="lg"
       contained
@@ -161,6 +161,7 @@ export default {
           facility: {id : facility.id}}).then(result => {
       if (result.status === 200) {
         this.jobs.push(result.data)
+        this.selectJob(result.data)
       } else {
 
         }
@@ -172,6 +173,7 @@ export default {
         suFacility: {id : subFacility.id}}).then(result => {
       if (result.status === 200) {
         this.jobs.push(result.data)
+        this.selectJob(result.data)
       } else {
 
       }
