@@ -81,7 +81,7 @@
       ></v-checkbox>
 
       <div v-show="showConfirmBtn" style="margin-top: 5px">
-        <v-btn v-show="isOpenJob(job)" color="green"  @click="editJob" > Принять </v-btn>
+        <v-btn v-show="isOpenJob(job)" color="green"  @click="editCurrentJob" > Принять </v-btn>
         <v-btn v-show="isOpenJob(job)" color="red"  @click="hideConfirmBtnFunc" > Отмена </v-btn>
       </div>
 
@@ -415,7 +415,7 @@ export default {
           * (this.job.bonus/100)
     },
 
-    editJob: function () {
+    editCurrentJob: function () {
 
       console.log('job')
       console.log(this.job.name)

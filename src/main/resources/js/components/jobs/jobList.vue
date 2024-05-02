@@ -170,7 +170,7 @@ export default {
     addNewJobBySubFacility: function (subFacility) {
       this.axios.post("api/job", {name: 'Пустая работа', type: 'Пустая работа',
         budget: 0,
-        suFacility: {id : subFacility.id}}).then(result => {
+        subFacility: {id : subFacility.id}}).then(result => {
       if (result.status === 200) {
         this.jobs.push(result.data)
         this.selectJob(result.data)
