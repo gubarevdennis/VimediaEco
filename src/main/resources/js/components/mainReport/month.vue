@@ -25,7 +25,8 @@
             .filter(r => ((
                 (Number(r.reportDay.substr(3, 2)))
             ) === Number(nowMonth())))
-            .map(r => r.user ? r.user.salary ? r.hoursOfWorking * r.user.salary/8 : 0 : 0)
+            // .map(r => r.user ? r.user.salary ? r.hoursOfWorking * r.user.salary/8 : 0 : 0)
+            .map(r => r.cost ? parseInt(r.cost) : 0)
             .reduce((partialSum, a) => partialSum + a, 0))
           }} р
         </v-card-title>

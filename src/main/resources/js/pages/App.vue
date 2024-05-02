@@ -19,6 +19,7 @@
         <v-btn block to="/mainReportForEach" @click="changeAppBoardNameByEachUser">Мои отчеты</v-btn>
         <v-btn block v-if=" this.role.split(' ')[0] === 'Руководитель' /*|| this.role === 'Прораб'*/" to="/mainReportForDepDirectors" @click="changeAppBoardNameByUser">Отчет по отделу</v-btn>
         <v-btn block v-if=" this.role === 'Директор' || this.role === 'Диспетчер'" to="/mainReport" @click="changeAppBoardNameByUser">Все отчеты</v-btn>
+        <v-btn block v-if="this.role === 'Директор'" to="/editReportsCost" @click="editReportsCost">Стоимость отчетов</v-btn>
         <v-btn block to="/facilities" @click="changeAppBoardNameFacilities">Объекты</v-btn>
         <v-btn block to="/mainTableTools" @click="changeAppBoardTools">Мои инструменты</v-btn>
         <v-btn block v-if=" this.role === 'Директор' || this.role === 'Кладовщик'" to="/mainTableToolsAll" @click="changeAppBoardTools">Все инструменты</v-btn>
@@ -47,7 +48,7 @@
 
       <v-toolbar-title style="color: #F9F9F9">{{appBoardName}}</v-toolbar-title>
 
-      <v-btn style="color: #F9F9F9" href="http://reports.vimedia.ru/logout" variant="text" icon="mdi-logout"></v-btn>
+      <v-btn style="color: #F9F9F9" href="http://localhost:9000/logout" variant="text" icon="mdi-logout"></v-btn>
     </v-app-bar>
 
     <v-main style="background: #0B0B0B">
@@ -110,6 +111,9 @@ export default {
     },
     changeAppBoardNameByMyBonus() {
       this.appBoardName="Мои бонусы"
+    },
+    editReportsCost() {
+      this.appBoardName="Редактировать стоимость отчетов"
     }
 
   },

@@ -45,8 +45,9 @@ export default {
           r.reportDay.substr(0, 2))).toString() === day.toString())
 
 
-      filteredByDayReports.forEach(r => calcMoney += ((r.hoursOfWorking <= 8) && (r.user)) ? r.hoursOfWorking * r.user.salary : 0 )
-      return this.money =  Math.round(calcMoney/8) // попросил Антон
+      // filteredByDayReports.forEach(r => calcMoney += ((r.hoursOfWorking <= 8) && (r.user)) ? r.hoursOfWorking * r.user.salary : 0 )
+      filteredByDayReports.forEach(r => calcMoney += r.cost ? parseInt(r.cost) : 0 )
+      return this.money =  Math.round(calcMoney) // попросил Антон
     },
   }
 }
