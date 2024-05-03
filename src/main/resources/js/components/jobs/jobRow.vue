@@ -164,6 +164,7 @@
           density="compact"
           label="Добавить сотрудника"
           variant="solo"
+          v-model="userNameSelected"
           @update:model-value="userNameSelect"
           :items="users.map(u => u.name)"
           :item-value="userNameSelected"
@@ -332,9 +333,9 @@ export default {
     userNameSelect: function (userNameSelected) {
       this.showAddUserBtn = true;
       this.userNameSelected = userNameSelected;
-      var user = this.users.filter(u => (u.name === userNameSelected));
-      if (this.job.users)
-        this.job.users.push({id: user[0].id});
+      // var user = this.users.filter(u => (u.name === userNameSelected));
+      // if (this.job.users)
+      //   this.job.users.push({id: user[0].id});
     },
     hideConfirmBtnFunc: function () {
       this.showConfirmBtn = false
@@ -591,6 +592,15 @@ export default {
         this.errorFields = true
       } else {
 
+       let user = this.users.filter(u => u.name === this.userNameSelected)
+        //this.assignedUsers.push(user[0].id)
+        console.log('ALL USERS')
+        console.log(this.job)
+        if (!this.job.users)
+          this.job.users = []
+        this.job.users.push(user[0])
+
+        //this.job.users = this.assignedUsers
         this.axios.put(`api/job/${this.job.id}`, this.job).then(result => {
           if (result.status === 200) {
             this.showAddUserBtn = false
@@ -623,6 +633,7 @@ export default {
         if (result.status === 200) {
           this.bonuses.push(result.data)
           this.getUsersWithBonus()
+          this.userNameSelected = ''
 
           this.showBonusInput = false
         }

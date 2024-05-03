@@ -179,18 +179,18 @@ export default {
       }
       })
     },
-    assign: function () {
-      var user = this.users.filter(u => (u.name === this.userNameSelected));
-
-      this.axios.put(`api/job/${this.job.id}`, this.job).then(result => {
-        if (result.status === 200) {
-          this.editJob(result.data)
-          this.showConfirmBtn = false
-        } else {
-          this.showConfirmBtn = false
-        }
-      })
-    },
+    // assign: function () {
+    //   var user = this.users.filter(u => (u.name === this.userNameSelected));
+    //
+    //   this.axios.put(`api/job/${this.job.id}`, this.job).then(result => {
+    //     if (result.status === 200) {
+    //       this.editJob(result.data)
+    //       this.showConfirmBtn = false
+    //     } else {
+    //       this.showConfirmBtn = false
+    //     }
+    //   })
+    // },
     userNameSelect: function (userNameSelected) {
       this.userNameSelected = userNameSelected;
     // На всякий случай
