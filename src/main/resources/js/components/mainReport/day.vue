@@ -7,7 +7,7 @@
     <v-row align="center" align-content="center" justify="center">
       <day-number :day="day.day"></day-number>
     </v-row>
-    <v-row align="center" align-content="center" justify="center" >
+    <v-row v-if="role === 'Директор'" align="center" align-content="center" justify="center" >
       <money-per-day :reports="reports" :day="day.day"></money-per-day>
     </v-row>
     <v-row align="center" justify="center" style="" align-content="end">
