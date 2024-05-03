@@ -57,8 +57,8 @@
 
               <div v-if="showEditConfirmBtn">
                 <br>
-                <v-btn v-show="report.job.nds < 1" color="green"  @click="editJobType" > Сохранить </v-btn>
-                <v-btn v-show="report.job.nds < 1" color="red"  @click="showEditConfirmBtn = !showEditConfirmBtn" > Отменить </v-btn>
+                <v-btn v-show="report.job ? (report.job.nds < 1) : true" color="green"  @click="editJobType" > Сохранить </v-btn>
+                <v-btn v-show="report.job ? (report.job.nds < 1) : true" color="red"  @click="showEditConfirmBtn = !showEditConfirmBtn" > Отменить </v-btn>
               </div>
 
 
@@ -143,16 +143,30 @@ export default {
       if (this.report.hoursOfWorking > 8)
           this.isError = true
       else {
-        this.reportForSend = {
-          id: this.report.id,
-          cost: this.report.cost,
-          facility: {id: this.report.facility.id, name: this.report.facility.name},
-          subFacility: {name: this.report.subFacility ? this.report.subFacility : null},
-          typeOfWork: this.report.typeOfWork,
-          job: {id: this.report.job.id },
-          text: this.report.text,
-          hoursOfWorking: this.report.hoursOfWorking,
-          reportDay: this.report.reportDay
+        let job_id = this.report.job ? this.report.job.id : null
+        if(job_id) {
+          this.reportForSend = {
+            id: this.report.id,
+            cost: this.report.cost,
+            facility: {id: this.report.facility.id, name: this.report.facility.name},
+            subFacility: {name: this.report.subFacility ? this.report.subFacility : null},
+            typeOfWork: this.report.typeOfWork,
+            job: {id: job_id},
+            text: this.report.text,
+            hoursOfWorking: this.report.hoursOfWorking,
+            reportDay: this.report.reportDay
+          }
+        } else {
+          this.reportForSend = {
+            id: this.report.id,
+            cost: this.report.cost,
+            facility: {id: this.report.facility.id, name: this.report.facility.name},
+            subFacility: {name: this.report.subFacility ? this.report.subFacility : null},
+            typeOfWork: this.report.typeOfWork,
+            text: this.report.text,
+            hoursOfWorking: this.report.hoursOfWorking,
+            reportDay: this.report.reportDay
+          }
         }
         this.axios.post('api/report/' + this.report.id, this.reportForSend).then(data => {
 
