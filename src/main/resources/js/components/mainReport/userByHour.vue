@@ -121,6 +121,7 @@ export default {
 
       this.reportForSend = {
         id: this.report.id,
+        cost: this.report.cost,
         facility: {id: this.report.facility.id, name: this.report.facility.name},
         subFacility: {name: this.report.subFacility ? this.report.subFacility : null},
         typeOfWork: this.report.typeOfWork,
@@ -142,7 +143,18 @@ export default {
       if (this.report.hoursOfWorking > 8)
           this.isError = true
       else {
-        this.axios.post('api/report/' + this.report.id, this.report).then(data => {
+        this.reportForSend = {
+          id: this.report.id,
+          cost: this.report.cost,
+          facility: {id: this.report.facility.id, name: this.report.facility.name},
+          subFacility: {name: this.report.subFacility ? this.report.subFacility : null},
+          typeOfWork: this.report.typeOfWork,
+          job: {id: this.report.job.id },
+          text: this.report.text,
+          hoursOfWorking: this.report.hoursOfWorking,
+          reportDay: this.report.reportDay
+        }
+        this.axios.post('api/report/' + this.report.id, this.reportForSend).then(data => {
 
           this.showEditConfirmBtn = false
           this.isError = false

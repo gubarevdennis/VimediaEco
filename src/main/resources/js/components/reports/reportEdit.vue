@@ -207,6 +207,7 @@ export default {
 
         reportForSend = {
           id: this.report.id,
+          cost: this.report.cost,
           facility: {id: this.report.facility.id, name: this.report.facility.name},
           subFacility: {name: newSubFacility ? newSubFacility.name : ''},
           typeOfWork: newJob.name,
