@@ -73,7 +73,7 @@
               ></v-autocomplete>
 
               <v-row justify="center" align-content="center" style="margin-bottom: 5px">
-                <v-btn v-show="report.job.nds < 1" v-if="showConfirmBtn" color="green"  @click="PostJobType" > Сохранить </v-btn>
+                <v-btn v-show="report.job ? (report.job.nds < 1) : true" v-if="showConfirmBtn" color="green"  @click="PostJobType" > Сохранить </v-btn>
               </v-row>
 
             </v-card>
@@ -119,10 +119,16 @@ export default {
     PostJobType: function () {
       var foundJob = this.jobs.find(job => job.name === this.jobType)
 
-
-      Object.assign(this.reportForSend, this.report)
-      this.reportForSend.job = {id: foundJob.id }
-      console.log(this.reportForSend);
+      this.reportForSend = {
+        id: this.report.id,
+        facility: {id: this.report.facility.id, name: this.report.facility.name},
+        subFacility: {name: this.report.subFacility ? this.report.subFacility : null},
+        typeOfWork: this.report.typeOfWork,
+        job: {id: parseInt(foundJob.id) },
+        text: this.report.text,
+        hoursOfWorking: this.report.hoursOfWorking,
+        reportDay: this.report.reportDay
+      }
 
       this.axios.post('api/report/' + this.report.id, this.reportForSend).then(data => {
 
