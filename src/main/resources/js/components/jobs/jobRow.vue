@@ -592,23 +592,23 @@ export default {
         this.errorFields = true
       } else {
 
-       let user = this.users.filter(u => u.name === this.userNameSelected)
-        //this.assignedUsers.push(user[0].id)
-        console.log('ALL USERS')
-        console.log(this.job)
-        if (!this.job.users)
-          this.job.users = []
-        this.job.users.push(user[0])
-
-        //this.job.users = this.assignedUsers
-        this.axios.put(`api/job/${this.job.id}`, this.job).then(result => {
-          if (result.status === 200) {
+       // let user = this.users.filter(u => u.name === this.userNameSelected)
+       //  //this.assignedUsers.push(user[0].id)
+       //  console.log('ALL USERS')
+       //  console.log(this.job)
+       //  if (!this.job.users)
+       //    this.job.users = []
+       //  this.job.users.push(user[0])
+       //
+       //  //this.job.users = this.assignedUsers
+       //  this.axios.put(`api/job/${this.job.id}`, this.job).then(result => {
+       //    if (result.status === 200) {
             this.showAddUserBtn = false
             this.showBonusInput = true
             this.errorFields = false
-          }
-
-        })
+       //    }
+       //
+       //  })
       }
 
     },
