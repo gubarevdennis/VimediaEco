@@ -6,13 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import vimedia.service.ReportApp.TelegramBot.Bot;
 import vimedia.service.ReportApp.model.bonus.Bonus;
 import vimedia.service.ReportApp.model.report.*;
 import vimedia.service.ReportApp.repo.bonus.BonusRepo;
-import vimedia.service.ReportApp.repo.report.SubFacilityRepo;
-import vimedia.service.ReportApp.repo.report.UserRepo;
+import vimedia.service.ReportApp.repo.job.JobRepo;
 import vimedia.service.ReportApp.service.MyUserDetails;
 
 import java.util.Comparator;
@@ -24,10 +21,12 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/bonus")
 public class BonusController {
     private final BonusRepo bonusRepo;
+    private final JobRepo jobRepo;
 
     @Autowired
-    public BonusController(BonusRepo bonusRepo) {
+    public BonusController(BonusRepo bonusRepo, JobRepo jobRepo) {
         this.bonusRepo = bonusRepo;
+        this.jobRepo = jobRepo;
     }
 
     // Получаем все
@@ -53,7 +52,10 @@ public class BonusController {
     @GetMapping("/job/{id}")
     @JsonView(Views.IdName.class)
     public List<Bonus> getByJob(@PathVariable("id") Job job) {
-        return job.getBonuses();
+
+         Job jobForSending = jobRepo.findById(job.getId()).orElseThrow(() -> new UsernameNotFoundException("Работа не найдена!"));
+
+        return jobForSending.getBonuses();
     }
 
     // Получаем по пользователю

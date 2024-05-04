@@ -118,7 +118,7 @@ public class ReportController {
         report.setCreationDate(LocalDateTime.now());
         // Добавляем подобъект
         if (report.getSubFacility() != null) {
-            report.setSubFacility(subFacilityRepo.findByName(report.getSubFacility().getName()).orElse(null));
+            report.setSubFacility(subFacilityRepo.findById(report.getSubFacility().getId()).orElse(null));
         }
 
         // Проверяем указан ли день отчета
