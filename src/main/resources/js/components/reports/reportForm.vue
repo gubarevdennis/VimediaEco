@@ -438,6 +438,8 @@ export default {
                 this.reports.push(data.data)
                 console.log('post new report')
                 console.log(data.data)
+
+                this.text = ''
               }
             })
           })
