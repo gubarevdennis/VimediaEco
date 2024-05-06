@@ -166,7 +166,8 @@
           variant="solo"
           v-model="userNameSelected"
           @update:model-value="userNameSelect"
-          :items="users.map(u => u.name)"
+          :items="users.filter(u => u.status == 0)
+          .map(u => u.name)"
           :item-value="userNameSelected"
       >
       </v-autocomplete>

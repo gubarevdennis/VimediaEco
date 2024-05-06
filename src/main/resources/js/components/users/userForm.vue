@@ -63,7 +63,8 @@ export default {
       name: '',
       role: '',
       password: '',
-      salary: ''
+      salary: '',
+      status: 0
     }
   },
   methods: {
@@ -74,6 +75,7 @@ export default {
         role: this.role,
         salary: this.salary,
         password: this.password,
+        status: 0
       };
 
       if (this.id) {
@@ -84,6 +86,7 @@ export default {
           role: this.role,
           salary: this.salary,
           password: this.password,
+          status: 0
         };
 
       if ((this.password === undefined || this.password === '' || this.password === ' ') && (this.role)) {
@@ -92,6 +95,7 @@ export default {
           id: this.id,
           name: this.name,
           salary: this.salary,
+          status: 0
         };
       }
 
@@ -102,6 +106,7 @@ export default {
           name: this.name,
           role: this.role,
           salary: this.salary,
+          status: 0
         };
       }
 

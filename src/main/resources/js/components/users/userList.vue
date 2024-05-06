@@ -3,15 +3,18 @@
       v-if="this.role === 'admin' || this.role === 'HR' || this.role === 'Директор'"
       class="bg-surface-variant mb-6"
   >
-    <v-col>
-      <v-card v-for="user in sortedUsers" class="pa-2 ma-2">
-        <user-row v-bind:key="user.id"
-                      :user="user"
-                      :profile="profile"
-                      :role="role"
-                      :editUser="editUser" :users="users" />
-      </v-card>
-    </v-col>
+    <v-div class="d-flex flex-wrap ga-4">
+      <v-col cols="6" v-for="user in sortedUsers" sm="12" lg="6" md="12" xl="4">
+        <v-card  class="pa-2 ma-2" height="100%">
+          <user-row v-bind:key="user.id"
+                    :user="user"
+                    :profile="profile"
+                    :role="role"
+                    :editUser="editUser" :users="users" />
+        </v-card>
+      </v-col>
+    </v-div>
+
     <v-row
         align="start"
         no-gutters

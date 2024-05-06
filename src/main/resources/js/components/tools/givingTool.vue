@@ -143,7 +143,7 @@
             variant="outlined"
             @update:modelValue="selectUser"
             v-model="userNameSelected"
-            :items="userNames"
+            :items="users.filter(u => u.status == 0).map(u => u.name)"
             :item-value="userNameSelected"
         >
         </v-autocomplete>
@@ -188,6 +188,8 @@ export default {
   },
   mounted() {
     this.toolSendConfirmField = false
+    console.log('ALL USERS')
+    console.log(this.userNames)
 
     this.facilityNameSelected = this.toolFacilityNameIfPresent(this.tool)
   },
