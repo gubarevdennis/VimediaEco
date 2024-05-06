@@ -83,7 +83,7 @@ public class Tool {
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.SET_NULL)
-    @JsonIgnoreProperties({"tools", "subFacilities"})
+    @JsonIgnoreProperties({"tools", "subFacilities", "user"})
     @JsonView(Views.IdName.class)
     private Facility facility;
 

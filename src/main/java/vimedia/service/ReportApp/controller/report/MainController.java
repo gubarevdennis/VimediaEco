@@ -69,7 +69,7 @@ public class MainController {
 
     @GetMapping("/login")
     public String loginPage(Model model, HttpSession session) {
-        List<User> users = userRepo.findAll().stream().sorted(new Comparator<User>() {
+        List<User> users = userRepo.findAll().stream().filter(u -> u.getStatus() != null).filter(u -> u.getStatus() == null).sorted(new Comparator<User>() {
             @Override
             public int compare(User o1, User o2) {
                 return o1.getName().toUpperCase().compareTo(o2.getName().toUpperCase());

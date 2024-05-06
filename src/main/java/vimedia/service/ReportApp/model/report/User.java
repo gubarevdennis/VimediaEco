@@ -42,6 +42,9 @@ public class User {
     private String role;
 
     @JsonView(Views.IdName.class)
+    private Integer status;
+
+    @JsonView(Views.IdName.class)
     private Long salary;
 
     @OneToMany(mappedBy = "user")
@@ -297,5 +300,13 @@ public class User {
 
     public void setBonuses(List<Bonus> bonuses) {
         this.bonuses = bonuses;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 }
