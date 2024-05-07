@@ -50,13 +50,13 @@ public class WebSecurityConfig {
         http
                 .csrf().disable()
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers( "/api/**").permitAll()
+                        //.requestMatchers( "/api/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
                         .invalidSessionUrl("/logout")
-                        .maximumSessions(1500)
+                        .maximumSessions(3000)
                         .maxSessionsPreventsLogin(false)
                 )
                 .formLogin(formLogin -> formLogin
