@@ -15,21 +15,21 @@
       <v-list density="compact" nav>
         <v-btn block to="/cabinet" @click="changeAppBoardNameCabinet">Мой кабинет</v-btn>
         <v-btn block to="/reports" @click="changeAppBoardNameReports">Отправить отчет</v-btn>
-        <v-btn block to="/byUser" @click="changeAppBoardNameByUser">Календарь</v-btn>
+<!--        <v-btn block to="/byUser" @click="changeAppBoardNameByUser">Календарь</v-btn>-->
         <v-btn block to="/mainReportForEach" @click="changeAppBoardNameByEachUser">Мои отчеты</v-btn>
         <v-btn block v-if=" this.role.split(' ')[0] === 'Руководитель' /*|| this.role === 'Прораб'*/" to="/mainReportForDepDirectors" @click="changeAppBoardNameByUser">Отчет по отделу</v-btn>
         <v-btn block v-if=" this.role === 'Директор' || this.role === 'Диспетчер'" to="/mainReport" @click="changeAppBoardNameByUser">Все отчеты</v-btn>
         <v-btn block v-if="this.role === 'Директор'" to="/editReportsCost" @click="editReportsCost">Стоимость отчетов</v-btn>
         <v-btn block to="/facilities" @click="changeAppBoardNameFacilities">Объекты</v-btn>
-        <v-btn block to="/mainTableTools" @click="changeAppBoardTools">Мои инструменты</v-btn>
-        <v-btn block v-if=" this.role === 'Директор' || this.role === 'Кладовщик'" to="/mainTableToolsAll" @click="changeAppBoardTools">Все инструменты</v-btn>
-        <v-btn block v-if="this.role === 'admin' || this.role === 'Директор' || this.role === 'HR'" to="/users" @click="changeAppBoardNameUsers">Мои коллеги</v-btn>
-        <v-btn block to="/bonus" @click="changeAppBoardNameByMyBonus">Мои бонусы</v-btn>
+<!--        <v-btn block to="/mainTableTools" @click="changeAppBoardTools">Мои инструменты</v-btn>
+        <v-btn block v-if=" this.role === 'Директор' || this.role === 'Кладовщик'" to="/mainTableToolsAll" @click="changeAppBoardTools">Все инструменты</v-btn>-->
+        <v-btn block v-if="this.role === 'admin' || this.role === 'Директор' || this.role === 'HR'" to="/users" @click="changeAppBoardNameUsers">Сотрудники</v-btn>
+<!--        <v-btn block to="/bonus" @click="changeAppBoardNameByMyBonus">Мои бонусы</v-btn>-->
         <v-btn block v-if="this.role === 'Директор'" to="/bonusByUser" @click="changeAppBoardNameBonusByUser">Бонусы по сотруднику</v-btn>
         <v-btn block v-if=" this.role.split(' ')[0] === 'Руководитель' /*|| this.role === 'Прораб'*/" to="/bonusByMyObjects" @click="changeAppBoardNameByJobs">Бонусы сотрудникам</v-btn>
         <v-btn block v-if=" this.role === 'Директор' || this.role === 'Диспетчер'
-        || this.role.split(' ')[0] === 'Руководитель' /*|| this.role === 'Прораб'*/" to="/jobs" @click="changeAppBoardNameByJobs">Все бонусы</v-btn>
-        <v-btn block to="/events" @click="changeAppEvents">События</v-btn>
+        || this.role.split(' ')[0] === 'Руководитель' /*|| this.role === 'Прораб'*/" to="/jobs" @click="changeAppBoardNameByJobs">Работы</v-btn>
+<!--        <v-btn block to="/events" @click="changeAppEvents">События</v-btn>-->
       </v-list>
 
       <v-list-item
@@ -48,7 +48,7 @@
 
       <v-toolbar-title style="color: #F9F9F9">{{appBoardName}}</v-toolbar-title>
 
-      <v-btn style="color: #F9F9F9" href="http://reports.vimedia.ru/logout" variant="text" icon="mdi-logout"></v-btn>
+      <v-btn style="color: #F9F9F9" href="http://localhost:8000/logout" variant="text" icon="mdi-logout"></v-btn>
     </v-app-bar>
 
     <v-main style="background: #0B0B0B">
@@ -86,7 +86,7 @@ export default {
       this.appBoardName="Мои объекты"
     },
     changeAppBoardNameUsers() {
-      this.appBoardName="Мои сотрудники"
+      this.appBoardName="Cотрудники"
     },
     changeAppBoardNameBonusByUser() {
       this.appBoardName="Бонусы по сотруднику"

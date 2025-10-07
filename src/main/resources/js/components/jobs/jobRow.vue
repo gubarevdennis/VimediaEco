@@ -22,7 +22,7 @@
           :item-value="jobNameSelected"
       >
       </v-combobox>
-      <v-autocomplete
+<!--      <v-autocomplete
           density="compact"
           label="Виды работ"
           variant="solo"
@@ -31,7 +31,7 @@
           :items="jobTypes"
           :item-value="jobTypeSelected"
       >
-      </v-autocomplete>
+      </v-autocomplete>-->
 
       <v-col v-show="errorFields" style="color: #1a1515; background-color: #ca4141; border-radius: 10px; font-weight: bold;">
         <v-text>Ошибка</v-text>
@@ -230,9 +230,7 @@ export default {
       toolEdit: '',
       jobNameSelected:'',
       jobTypeSelected:'',
-      jobNames: ['Черновой монтаж', 'Чистовой монтаж','Шефмонтаж',  'Сборка щитов',
-        'Концептуальное проектирование', 'Рабочее проектирование', 'Расключение шкафов',
-        'ПНР', 'Сервис', 'Авторский надзор', 'Менеджмент' ],
+      jobNames: ['Черновой монтаж', 'Чистовой монтаж', 'Проектирование', 'Сборочные работы', 'Пусконаладочные работы'],
       jobTypes: ['Черновой монтаж', 'Чистовой монтаж','Шефмонтаж',  'Сборка щитов',
         'Концептуальное проектирование', 'Рабочее проектирование', 'Расключение шкафов',
         'ПНР','Сервис', 'Авторский надзор', 'Менеджмент' ],

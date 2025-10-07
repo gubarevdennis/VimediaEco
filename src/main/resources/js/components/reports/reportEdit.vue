@@ -27,12 +27,12 @@
     <v-card-text>
       <v-row v-if="report.subFacility != null">
         <v-col>
-          <div style="font-weight: bold">Подобъект</div>
+          <div style="font-weight: bold">Проект</div>
           <div>{{subFacilityNameAttr}}</div>
         </v-col>
         <v-col>
           <v-select
-              label="Подобъект"
+              label="Проект"
               density="compact"
               :items="subFacilities.map(el => el.name)"
               :item-value="subFacilityNameAttr"

@@ -110,6 +110,8 @@ export default {
     // ['Электроинструмент', 'Абразивный инструмент', 'Измерительный инструмент',
     //   'Слесарно-монтажный инструмент', 'Без категории']
     // console.log(this.toolSetNameSelected)
+    console.log('THIS FACILITY ID   ' + this.facility.id)
+    console.log('THIS SUB FACILITY ID   ' + this.subFacility.id)
 
     if (this.facility) {
       this.axios.get("api/job/facility/" + this.facility.id).then(result => {

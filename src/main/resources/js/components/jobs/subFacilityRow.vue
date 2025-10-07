@@ -33,6 +33,9 @@ export default {
     'deleteSubFacility', 'users', 'userNames'], // получаем переменную facility
   computed: {
   },
+  mounted() {
+    console.log('FACILITY ID IN SUBFAC ROW  ' + this.facility.id)
+  },
   methods: {
 
   }
